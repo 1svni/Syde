@@ -1301,6 +1301,18 @@ function syde:Init(library)
 				end
 			end
 		end
+		if window:FindFirstChild("shadow") then
+			if window.shadow:FindFirstChild("glow") then
+				window.shadow.glow.Size = UDim2.new(1, 0, 1, 0)
+				window.shadow.glow.Position = UDim2.new(0.5, 0, 0.5, 0)
+				window.shadow.glow.AnchorPoint = Vector2.new(0.5, 0.5)
+			end
+			if window.shadow:FindFirstChild("glow1") then
+				window.shadow.glow1.Size = UDim2.new(1, 0, 1, 0)
+				window.shadow.glow1.Position = UDim2.new(0.5, 0, 0.5, 0)
+				window.shadow.glow1.AnchorPoint = Vector2.new(0.5, 0.5)
+			end
+		end
 	end)
 	top.title.TextTransparency = 1
 	tweenservice:Create(top.title, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()
@@ -1389,6 +1401,14 @@ function syde:Init(library)
 			end
 		end
 	function opensettings()
+		if window.AbsoluteSize.X < 450 or window.AbsoluteSize.Y < 500 then
+			syde:Notify({
+				Title = "Syde needs to be bigger.",
+				Content = "Settings UI cannot be shown if the Main UI is smaller than it. Resizing it will fix this",
+				Duration = 5
+			})
+			return
+		end
 		window.settings.Visible = true
 		window.dim.Visible = true
 		tweenservice:Create(window.settings, TweenInfo.new(0.5, Enum.EasingStyle.Quart), { Size = UDim2.new(0, 450,0, 500)}):Play()
@@ -3636,6 +3656,7 @@ function syde:Init(library)
 			tweenservice:Create(Tab, TweenInfo.new(2, Enum.EasingStyle.Exponential), { BackgroundTransparency = 0 }):Play()
 			tweenservice:Create(Tab.indicator, TweenInfo.new(1, Enum.EasingStyle.Exponential), { BackgroundTransparency = 0 }):Play()
 			tweenservice:Create(Tab.indicator, TweenInfo.new(2, Enum.EasingStyle.Exponential), { BackgroundColor3 = syde.theme.Accent }):Play()
+		end
 		local positionTweenInfo = TweenInfo.new(0.7, Enum.EasingStyle.Quart)
 		local colorTweenInfo = TweenInfo.new(0.3, Enum.EasingStyle.Exponential)
 		local function ApplyTabStyle(tabButton, isSelected)
