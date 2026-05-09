@@ -15,7 +15,6 @@ local isMobile =        userinput.TouchEnabled or (screenSize.X < 1024 and scree
 local dragOffset =        255
 local dragOffsetMobile =  150
 local camera =          workspace.CurrentCamera
-
 Library.Enabled = false
 local syde = {
 	theme = {
@@ -33,6 +32,8 @@ local syde = {
 	ConfigFile = 'Config';
 	Flags = {};
 	SettingsFlags = {};
+	Autoload = false;
+	Autosave = false;
 }
 function syde:DeepMerge(target, source)
 	for k, v in pairs(source) do
@@ -902,8 +903,8 @@ local uiclosed = false
 local userinfodisabled = false
 local intro = false
 local bluron = false
-local glow = false
-local uitoggle = Enum.KeyCode.RightShift
+local glow = true
+local uitoggle = Enum.KeyCode.K
 function applyLayout(isMobile)
 	tweenservice:Create(Library.main, TweenInfo.new(0.4, Enum.EasingStyle.Quint), {Size = isMobile and UDim2.new(0, 543,0, 321) or UDim2.new(0, 715, 0, 575)}):Play()
 	local shadow = window:FindFirstChild("Shadow")
@@ -987,9 +988,10 @@ function syde:Notify(Notification)
 		end
 		table.insert(notifications, Notification)
 		updatePositions()
+		Notification.BackgroundColor3 = Color3.fromRGB(16, 16, 16)
 		Notification.close.ImageTransparency = 0.95
-		Notification.BackgroundTransparency = 0.75
-		Notification.Content.TextTransparency = 0.78
+		Notification.BackgroundTransparency = 0
+		Notification.Content.TextTransparency = 0
 		Notification.Position = UDim2.new(0, 600, 0, 637)
 		task.wait(0.45)
 		if NotifData.Icon ~= '' then
@@ -1000,7 +1002,6 @@ function syde:Notify(Notification)
 		end
 		tweenservice:Create(Notification.UIScale, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {Scale = 1}):Play()
 		tweenservice:Create(Notification.close, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {ImageTransparency = 0.75}):Play()
-		tweenservice:Create(Notification, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0}):Play()
 		tweenservice:Create(Notification.Content, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()
 		Notification.close.MouseEnter:Connect(function()
 			tweenservice:Create(Notification.close, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {ImageTransparency = 0.25}):Play()
@@ -1354,7 +1355,8 @@ window.top.functions.close.interact.MouseButton1Click:Connect(function()
 	mh = false
 	if rs then rs:Disconnect() end
 	if ss then ss:Disconnect() end
-	task.wait(1)
+	window:Destroy()
+	task.wait(5.5)
 	Library:Destroy()
 end)
 syde:HidePH(tabs, 'btn')
@@ -1434,7 +1436,7 @@ function syde:Init(library)
 	end
 	top.title.Text = Data.Title
 	top.title.sub.Text = Data.SubText
-	top.title.sub.Position = UDim2.new(0, 0, 1, 0)
+	top.title.sub.Position = UDim2.new(0, 0, 1, -2)
 	syde:AddDrag(top, window, true)
 	syde:MakeResizable(window.resize, window, Vector2.new(454, 228))
 	top.title.TextTransparency = 1
@@ -1833,19 +1835,19 @@ function syde:Init(library)
 	function opensettings()
 		window.settings.Visible = true
 		window.dim.Visible = true
-		tweenservice:Create(window.settings, TweenInfo.new(0.5, Enum.EasingStyle.Quart), { Size = UDim2.new(0, 360,0, 400)}):Play()
+		tweenservice:Create(window.settings, TweenInfo.new(0.5, Enum.EasingStyle.Quart), { Size = UDim2.new(0, 420,0, 480)}):Play()
 		tweenservice:Create(window.dim, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), { BackgroundTransparency = 0.2 }):Play()
 		tweenservice:Create(window.settings.UICorner, TweenInfo.new(0.5, Enum.EasingStyle.Quart), { CornerRadius = UDim.new(0,20)}):Play()
 		tweenservice:Create(window.settings, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), { BackgroundTransparency = 0}):Play()
 		window.settings.pages.Visible = true
-		window.settings.tabs.Visible = true
+		window.settings.tabs.Visible = false
 		tweenservice:Create(window.settings.top.title, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), { TextTransparency = 0}):Play()
 		tweenservice:Create(window.settings.top.separator, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), { BackgroundTransparency = 0}):Play()
 		tweenservice:Create(window.settings.top.functions.close, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), { BackgroundTransparency = 0}):Play()
 		tweenservice:Create(window.settings.top.functions.close.ImageLabel, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), { ImageTransparency = 0}):Play()
 	end
 	function closesettings()
-		tweenservice:Create(window.settings, TweenInfo.new(0.35, Enum.EasingStyle.Quart), { Size = UDim2.new(0, 360,0, 150)}):Play()
+		tweenservice:Create(window.settings, TweenInfo.new(0.35, Enum.EasingStyle.Quart), { Size = UDim2.new(0, 420,0, 150)}):Play()
 		tweenservice:Create(window.dim, TweenInfo.new(0.35, Enum.EasingStyle.Exponential), { BackgroundTransparency = 1}):Play()
 		tweenservice:Create(window.settings.UICorner, TweenInfo.new(0.35, Enum.EasingStyle.Quart), { CornerRadius = UDim.new(0, 90)}):Play()
 		tweenservice:Create(window.settings, TweenInfo.new(0.35, Enum.EasingStyle.Exponential), { BackgroundTransparency = 1}):Play()
@@ -2090,12 +2092,15 @@ function syde:Init(library)
 				local toggleConfiguration = ui.Render.ToggleConfiguration:Clone()
 				toggleConfiguration.Parent = ui.Render
 				toggleConfiguration.Visible = false
-				toggleConfiguration.Container.KeyBind.Bind.v.Text = 'None'
-				tweenservice:Create(toggleConfiguration.Container.KeyBind.Bind, TweenInfo.new(0.5, Enum.EasingStyle.Quint), { Size = UDim2.new(0, toggleConfiguration.Container.KeyBind.Bind.v.TextBounds.X + 20,0, 25) }):Play()
+				toggleConfiguration.BackgroundColor3 = Color3.fromRGB(16, 16, 16)
+				toggleConfiguration.Container.KeyBind.Name = "Keybind"
+				toggleConfiguration.Container.Keybind.Title.Text = "Keybind"
+				toggleConfiguration.Container.Keybind.Bind.v.Text = 'None'
+				tweenservice:Create(toggleConfiguration.Container.Keybind.Bind, TweenInfo.new(0.5, Enum.EasingStyle.Quint), { Size = UDim2.new(0, toggleConfiguration.Container.Keybind.Bind.v.TextBounds.X + 20,0, 25) }):Play()
 				toggleConfiguration.BackgroundTransparency = 1
-				toggleConfiguration.Container.KeyBind.Title.TextTransparency = 1
-				toggleConfiguration.Container.KeyBind.Bind.BackgroundTransparency = 1
-				toggleConfiguration.Container.KeyBind.Bind.v.TextTransparency = 1
+				toggleConfiguration.Container.Keybind.Title.TextTransparency = 1
+				toggleConfiguration.Container.Keybind.Bind.BackgroundTransparency = 1
+				toggleConfiguration.Container.Keybind.Bind.v.TextTransparency = 1
 				toggleConfiguration.Container.Clear.Title.TextTransparency = 1
 				toggleConfiguration.Container.Clear.clear.ImageLabel.ImageTransparency = 1
 				toggleConfiguration.Size = UDim2.new(0, 75,0, 53)
@@ -2118,7 +2123,6 @@ function syde:Init(library)
 					tweenservice:Create(toggle.tog.glow, toggleTween, { ImageColor3 = targetColor }):Play()
 					tweenservice:Create(toggle.title, toggleTween, { TextTransparency = textTransparency }):Play()
 				end
-				UpdateToggleUI(data.V)
 				toggle.interact.MouseButton1Click:Connect(function()
 					data.V = not data.V
 					UpdateToggleUI(data.V)
@@ -2127,7 +2131,9 @@ function syde:Init(library)
 							data.CallBack(data.V)
 						end
 					end)
-					if not success then
+					if syde.Autosave then
+						syde:SaveSettingsConfig()
+						SaveConfig()
 					end
 				end)
 				local descLabel = toggle:FindFirstChild("desc")
@@ -2198,16 +2204,33 @@ function syde:Init(library)
 						if debounce1 then return end
 						debounce1 = true
 						if not toggleConfiguration.Visible then
+							if syde.ActiveConfig and syde.ActiveConfig ~= ToggleConfigClose then
+								pcall(syde.ActiveConfig)
+							end
+							syde.ActiveConfig = ToggleConfigClose
+							local dismisser = Instance.new("TextButton")
+							dismisser.Size = UDim2.new(1, 0, 1, 0)
+							dismisser.BackgroundTransparency = 1
+							dismisser.Text = ""
+							dismisser.Parent = ui
+							dismisser.ZIndex = toggleConfiguration.ZIndex - 1
+							dismisser.MouseButton1Click:Connect(function()
+								ToggleConfigClose()
+								dismisser:Destroy()
+								syde.ActiveConfig = nil
+							end)
 							TogService = runservice.RenderStepped:Connect(function()
 								toggleConfiguration:TweenPosition(UDim2.new(0,toggle.configure.AbsolutePosition.X - 190,0,toggle.configure.AbsolutePosition.Y + toggle.configure.AbsoluteSize.Y + 65), Enum.EasingDirection.Out, Enum.EasingStyle.Quad, 0.1, true)
 								if not toggleConfiguration.Visible then
 									TogService:Disconnect()
+									if dismisser.Parent then dismisser:Destroy() end
 								end
 							end)
 							ToggleConfigOpen()
 						else
 							if TogService then TogService:Disconnect() end
 							ToggleConfigClose()
+							syde.ActiveConfig = nil
 						end
 						task.delay(0.4, function()
 							debounce1 = false
@@ -2304,7 +2327,9 @@ function syde:Init(library)
 							data.CallBack(NewValue)
 						end
 					end)
-					if not success then
+					if syde.Autosave then
+						syde:SaveSettingsConfig()
+						SaveConfig()
 					end
 				end
 				if data.SFlag then
@@ -2595,6 +2620,10 @@ function syde:Init(library)
 					if data.CallBack then
 						data.CallBack(data.Color)
 					end
+					if syde.Autosave then
+						syde:SaveSettingsConfig()
+						SaveConfig()
+					end
 				end
 				updatestuff()
 				local newColor = Color3.fromHSV(HSV[1], HSV[2], HSV[3])
@@ -2614,6 +2643,10 @@ function syde:Init(library)
 					GradientFrame.Gradient.Color = seq
 					if oldCallback then
 						oldCallback(seq, data.Color, data.Color2)
+					end
+					if syde.Autosave then
+						syde:SaveSettingsConfig()
+						SaveConfig()
 					end
 				end
 				if data.Type == "Gradient" then
@@ -3011,6 +3044,10 @@ function syde:Init(library)
 									otherPicker.HueSat.Value = draggedColorPicker.HueSat.Value
 									updatestuff() 
 									foundTarget = true
+									if syde.Autosave then
+										syde:SaveSettingsConfig()
+										SaveConfig()
+									end
 									TweenService:Create(
 										colorpicker.HueValues.Link.Frame,
 										TweenInfo.new(0.3, Enum.EasingStyle.Quint),
@@ -3074,6 +3111,10 @@ function syde:Init(library)
 					local h, s, v = RGBColor:ToHSV()
 					HSV[1], HSV[2], HSV[3] = h, s, v
 					updatestuff()
+					if syde.Autosave then
+						syde:SaveSettingsConfig()
+						SaveConfig()
+					end
 				end
 				if data.SFlag then
 					syde.SettingsFlags[data.SFlag] = data
@@ -3333,6 +3374,10 @@ function syde:Init(library)
 								if data.CallBack then
 									data.CallBack(OptionText)
 								end
+								if syde.Autosave then
+									syde:SaveSettingsConfig()
+									SaveConfig()
+								end
 								CloseDrop()
 							end
 							UpdateSelectedText()
@@ -3475,6 +3520,10 @@ function syde:Init(library)
 							if not success then
 							end
 							Options.StarterValue = newValue
+							if syde.Autosave then
+								syde:SaveSettingsConfig()
+								SaveConfig()
+							end
 						end
 					end
 					Slider.slide.Interact.MouseButton1Down:Connect(function()
@@ -3672,16 +3721,14 @@ function syde:Init(library)
 					local success, errorMsg = pcall(function()
 						data.CallBack(text)
 					end)
-					if not success then
+					if syde.Autosave then
+						syde:SaveSettingsConfig()
+						SaveConfig()
 					end
 				end
 				textBox.FocusLost:Connect(function(enterPressed)
 					if not enterPressed then return end
-					local success, errorMsg = pcall(function()
-						data.CallBack(textBox.Text)
-					end)
-					if not success then
-					end
+					ProcessInput(textBox.Text)
 					if data.ClearOnLost then
 						task.defer(function()
 							textBox.Text = ""
@@ -3692,11 +3739,7 @@ function syde:Init(library)
 					end
 				end)
 				textinput.TextFrame.Enter.MouseButton1Click:Connect(function()
-					local success, errorMsg = pcall(function()
-						data.CallBack(textBox.Text)
-					end)
-					if not success then
-					end
+					ProcessInput(textBox.Text)
 					if data.ClearOnLost then
 						task.defer(function()
 							textBox.Text = ""
@@ -3746,7 +3789,7 @@ function syde:Init(library)
 		})
 		local seq = syde.theme.DropShadow
 		local k = seq.Keypoints
-		local rotateGradient = false
+		local rotateGradient = true
 		local rotating = false
 		local function startGradientRotation()
 			if rotating then return end
@@ -3765,7 +3808,7 @@ function syde:Init(library)
 		a:Toggle({
 			Title = 'Rotate Gradient',
 			Description = 'Slowly rotates the gradient if enabled.',
-			Value = false,
+			Value = true,
 			CallBack = function(v)
 				rotateGradient = v
 				local grad = window.shadow.ImageLabel.UIGradient
@@ -3775,9 +3818,16 @@ function syde:Init(library)
 			end,
 			SFlag = 'RG',
 		})
+		task.spawn(function()
+			task.wait(1)
+			if rotateGradient then
+				startGradientRotation()
+			end
+		end)
 		a:Toggle({
 			Title = 'Glow',
 			Description = 'Shine on the ui.',
+			Value = true,
 			CallBack = function (v)
 				if v then
 					glow = true
@@ -3891,6 +3941,24 @@ function syde:Init(library)
 				Duration = 3
 			})
 		end
+		a:Toggle({
+			Title = 'Autoload Config?',
+			Description = 'Automatically load your config when the UI starts.',
+			Value = false,
+			CallBack = function(v)
+				syde.Autoload = v
+			end,
+			SFlag = 'ALC'
+		})
+		a:Toggle({
+			Title = 'Autosave Config?',
+			Description = 'Automatically save your config whenever a change is made.',
+			Value = false,
+			CallBack = function(v)
+				syde.Autosave = v
+			end,
+			SFlag = 'ASC'
+		})
 		a:Button({
 			Title = 'Save',
 			Description = 'Save all setting configurations.',
@@ -3906,6 +3974,22 @@ function syde:Init(library)
 			end
 		})
 	end
+	task.spawn(function()
+		task.wait(0.5)
+		local path = string.format("%s/SettingsConfig.lua", syde.ConfigFolder)
+		if isfile(path) then
+			local success, data = pcall(function()
+				return https:JSONDecode(readfile(path))
+			end)
+			if success and data and data.ALC == true then
+				syde:LoadSettingsConfig()
+				local mainConfigPath = string.format("%s/%s.json", syde.ConfigFolder, syde.ConfigFile)
+				if isfile(mainConfigPath) then
+					LoadConfig(readfile(mainConfigPath))
+				end
+			end
+		end
+	end)
 	workspace.CurrentCamera:GetPropertyChangedSignal("ViewportSize"):Connect(function()
 		screenSize = workspace.CurrentCamera.ViewportSize
 		isMobile = userinput.TouchEnabled
