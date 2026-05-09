@@ -8,63 +8,7 @@ local textservice =     game:GetService('TextService')
 local player =          game:GetService('Players')
 local textservice =     game:GetService('TextService')
 local coregui =         game:GetService("CoreGui")
-local update = false
-if update then
-	local updategui = game:GetObjects("rbxassetid://122225389943465")[1]
-	updategui.Parent = coregui
-	local cord = '/GzumVvz3QM'
-	task.wait(0.5)
-	updategui.Enabled = true
-	updategui.main.BackgroundTransparency = 1
-	updategui.main.Size = UDim2.new(0, 150,0, 150)
-	updategui.main.time.TextTransparency = 1
-	updategui.main.info.TextTransparency = 1
-	updategui.main.text.TextLabel.TextTransparency = 1
-	updategui.main.text.more.TextTransparency = 1
-	tweenservice:Create(updategui.main, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {Transparency = 0}):Play()
-	tweenservice:Create(updategui.main, TweenInfo.new(0.75, Enum.EasingStyle.Quart), {Size = UDim2.new(0, 350,0, 230)}):Play()
-	task.wait(0.07)
-	tweenservice:Create(updategui.main.time, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()
-	tweenservice:Create(updategui.main.info, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()
-	task.wait(0.07)
-	tweenservice:Create(updategui.main.text.TextLabel, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()
-	task.wait(0.07)
-	tweenservice:Create(updategui.main.text.more, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()
-	local duration = 25
-	local startTime = tick()
-	local connection
-	connection = runservice.Heartbeat:Connect(function()
-		local elapsed = tick() - startTime
-		local remaining = math.max(duration - elapsed, 0)
-		updategui.main.time.Text = "Destroying in " .. string.format("%.1f", remaining) .. " secs"
-		if remaining <= 0 then
-			connection:Disconnect()
-			tweenservice:Create(updategui.main.text.TextLabel, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()
-			task.wait(0.07)
-			tweenservice:Create(updategui.main.text.more, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()
-			task.wait(0.2)
-			tweenservice:Create(updategui.main, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {Transparency = 1}):Play()
-			tweenservice:Create(updategui.main, TweenInfo.new(0.75, Enum.EasingStyle.Quart), {Size = UDim2.new(0, 150,0, 130)}):Play()
-			updategui.main.s2.Visible = false
-			task.wait(0.07)
-			tweenservice:Create(updategui.main.time, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()
-			tweenservice:Create(updategui.main.info, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()
-			task.wait(0.75)
-			updategui:Destroy()
-		end
-	end)
-	updategui.main.s2.interact.MouseButton1Click:Connect(function()
-		tweenservice:Create(updategui.main.s2.Frame.UIStroke, TweenInfo.new(0.5, Enum.EasingStyle.Quart), {Color = Color3.fromRGB(74, 255, 33)}):Play()
-		tweenservice:Create(updategui.main.s2.Frame.UIStroke, TweenInfo.new(0.5, Enum.EasingStyle.Quart), {Transparency = 0}):Play()
-		task.wait(0.5)
-		tweenservice:Create(updategui.main.s2.Frame.UIStroke, TweenInfo.new(0.5, Enum.EasingStyle.Quart), {Color = Color3.fromRGB(87, 101, 242)}):Play()
-		tweenservice:Create(updategui.main.s2.Frame.UIStroke, TweenInfo.new(0.5, Enum.EasingStyle.Quart), {Transparency = 0.5}):Play()
-		setclipboard(cord)
-	end)
-end
-if update then return end
 local Library =         game:GetObjects("rbxassetid://123800669522471")[1]
-local Loader =          game:GetObjects("rbxassetid://110221114597158")[1]
 local resizing =        false
 local screenSize =      workspace.CurrentCamera.ViewportSize
 local isMobile =        userinput.TouchEnabled or (screenSize.X < 1024 and screenSize.Y < 768)
@@ -72,8 +16,6 @@ local dragOffset =        255
 local dragOffsetMobile =  150
 local camera =          workspace.CurrentCamera
 Library.Enabled = false
-Loader.Enabled = false
-local loaded = false
 local syde = {
 	theme = {
 		['Accent'] = Color3.fromRGB(255, 151, 227);
@@ -857,292 +799,6 @@ end
 local rs
 local ss
 local mh = true
-do
-	function syde:Load(Config)
-		task.wait(1)
-		local LOADER = Loader
-		LOADER.Enabled = true
-		LOADER.Parent = coregui
-		Config.Name = Config.Name or 'Syde™'
-		Config.Logo = Config.Logo or 'rbxassetid://14554547135'
-		Config.ConfigFolder = Config.ConfigFolder or 'syde'
-		Config.Status = Config.Status or false
-		Config.Accent = Config.Accent or syde.theme.Accent
-		Config.HitBox = Config.HitBox or syde.theme.HitBox
-		LOADER.loader.profile.Title.TextTransparency = 1
-		LOADER.loader.profile.ImageTransparency = 1
-		LOADER.loader.profile.Title.Text = Config.Name
-		local LoaderConfig = {
-			Name = Config.Name;
-			Logo = 'rbxassetid://'..Config.Logo;
-			ConfigFolder = Config.ConfigFolder;
-			Status = Config.Status;
-			Accent = Config.Accent or syde.theme.Accent;
-			Hitbox = Config.HitBox or syde.theme.HitBox;
-			Socials = {}
-		}
-		if LoaderConfig.Status == false then
-			LOADER.loader.profile.Title.Text = LoaderConfig.Name
-		end
-		local statusColors = {
-			Stable = { Color = Color3.fromRGB(25, 229, 22), Text = '<font color="#24bf48">Stable</font>' },
-			Unstable = { Color = Color3.fromRGB(227, 229, 81), Text = '<font color="#e3e551">Unstable</font>' },
-			Detected = { Color = Color3.fromRGB(229, 44, 47), Text = '<font color="#e52c2f">Detected</font>' },
-			Patched = { Color = Color3.fromRGB(229, 229, 229), Text = '<font color="#e52c2f">Patched</font>' }
-		}
-		local statusData = statusColors[LoaderConfig.Status]
-		if statusData then
-			LOADER.loader.profile.status.BackgroundColor3 = statusData.Color
-		end
-		LOADER.loader.profile.Image = LoaderConfig.Logo;
-		LOADER.loader.ImageLabel.Image = LoaderConfig.Logo;
-		local ti = TweenInfo.new(0.5, Enum.EasingStyle.Exponential)
-		task.spawn(function()
-			while LOADER and LOADER.Parent do
-				task.wait()
-				local loaderFrame = LOADER:FindFirstChild("loader")
-				if not loaderFrame then break end
-				local dots = loaderFrame:FindFirstChild("dots")
-				if not dots then break end
-				local function resetDots()
-					for _, v in ipairs(dots:GetChildren()) do
-						if v:IsA("Frame") then
-							tweenservice:Create(v, ti, {BackgroundTransparency = 0.6}):Play()
-						end
-					end
-				end
-				if dots:FindFirstChild("dot1") then
-					tweenservice:Create(dots.dot1, ti, {BackgroundTransparency = 0}):Play()
-				end
-				task.wait(0.5)
-				resetDots()
-				if dots:FindFirstChild("dot3") then
-					tweenservice:Create(dots.dot3, ti, {BackgroundTransparency = 0}):Play()
-				end
-				task.wait(0.5)
-				resetDots()
-				if dots:FindFirstChild("dot2") then
-					tweenservice:Create(dots.dot2, ti, {BackgroundTransparency = 0}):Play()
-				end
-				task.wait(0.5)
-				resetDots()
-			end
-		end)
-		local TweenWorkPos = 315
-		local TweenWorkAppear = 287
-		local TweenWorkDisappear = 270
-		local Styles = {
-			GitHub = {
-				BackGroundColor = Color3.fromRGB(39, 39, 39);
-				StrokeColor = Color3.fromRGB(39, 39, 39);
-				Icon = 'rbxassetid://112129825794851'
-			},
-			Discord = {
-				BackGroundColor = Color3.fromRGB(88, 141, 255);
-				StrokeColor = Color3.fromRGB(88, 141, 255);
-				Icon = 'rbxassetid://113723018301753'
-			},
-			Site = {
-				BackGroundColor = Color3.fromRGB(242, 83, 112);
-				StrokeColor = Color3.fromRGB(242, 83, 112);
-				Icon = 'rbxassetid://127485237503891'
-			}
-		}
-		local logo = LOADER.loader.profile
-		local loadedsocial = false
-		local Socials = Config.Socials or {}
-		local maxSocials = 3
-		local count = 0
-		local SocialTemplate = LOADER.loader.profile.socials.s1
-		for platform, value in pairs(Socials) do
-			if count >= maxSocials then break end
-			if not Styles[platform] then continue end
-			if not SocialTemplate then break end
-			count += 1
-			local clone = SocialTemplate:Clone()
-			clone.Visible = true
-			clone.Name = platform .. "_Social"
-			clone.Parent = SocialTemplate.Parent
-			clone.BackgroundColor3 = Styles[platform].BackGroundColor
-			clone.ImageLabel.Image = Styles[platform].Icon
-			if clone.Frame:FindFirstChild("UIStroke") then
-				clone.Frame.UIStroke.Color = Styles[platform].StrokeColor
-			end
-			if clone:FindFirstChild("Title") then
-				clone.Title.Text = value
-			end
-			clone.interact.MouseButton1Click:Connect(function()
-				if value ~= '' then
-					tweenservice:Create(clone.Frame.UIStroke, TweenInfo.new(0.5, Enum.EasingStyle.Quart), {Color = Color3.fromRGB(74, 255, 33)}):Play()
-					tweenservice:Create(clone.Frame.UIStroke, TweenInfo.new(0.5, Enum.EasingStyle.Quart), {Transparency = 0}):Play()
-					task.wait(0.5)
-					tweenservice:Create(clone.Frame.UIStroke, TweenInfo.new(0.5, Enum.EasingStyle.Quart), {Color = Styles[platform].BackGroundColor}):Play()
-					tweenservice:Create(clone.Frame.UIStroke, TweenInfo.new(0.5, Enum.EasingStyle.Quart), {Transparency = 0.5}):Play()
-				else
-					tweenservice:Create(clone.Frame.UIStroke, TweenInfo.new(0.5, Enum.EasingStyle.Quart), {Color = Color3.fromRGB(255, 41, 45)}):Play()
-					tweenservice:Create(clone.Frame.UIStroke, TweenInfo.new(0.5, Enum.EasingStyle.Quart), {Transparency = 0}):Play()
-					task.wait(0.5)
-					tweenservice:Create(clone.Frame.UIStroke, TweenInfo.new(0.5, Enum.EasingStyle.Quart), {Color = Styles[platform].BackGroundColor}):Play()
-					tweenservice:Create(clone.Frame.UIStroke, TweenInfo.new(0.5, Enum.EasingStyle.Quart), {Transparency = 0.5}):Play()
-				end
-				setclipboard(value)
-			end)
-			clone.MouseEnter:Connect(function()
-				tweenservice:Create(clone.Frame.UIStroke, TweenInfo.new(0.5, Enum.EasingStyle.Quart), {Transparency = 0.5}):Play()
-			end)
-			clone.MouseLeave:Connect(function()
-				tweenservice:Create(clone.Frame.UIStroke, TweenInfo.new(0.5, Enum.EasingStyle.Quart), {Transparency = 0}):Play()
-			end)
-			loadedsocial = true
-		end
-		tweenservice:Create(logo, TweenInfo.new(1, Enum.EasingStyle.Exponential), {ImageTransparency = 0}):Play()
-		tweenservice:Create(logo.Title, TweenInfo.new(2, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()
-		task.wait(1)
-		local function TweenWorkLabel(Finish, icon, Text)
-			LOADER.loader.work.Position = UDim2.new(0.5, 0,1, -40)
-			LOADER.loader.work.Text = Text
-			LOADER.loader.work.ImageLabel.Image = icon
-			tweenservice:Create( LOADER.loader.work, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), { TextTransparency = 0 }):Play()
-			tweenservice:Create( LOADER.loader.work.ImageLabel, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), { ImageTransparency = 0 }):Play()
-			tweenservice:Create( LOADER.loader.work, TweenInfo.new(0.5, Enum.EasingStyle.Quint), { Position = UDim2.new(0.5, 0,1, -73) }):Play()
-			task.wait(Finish)
-			tweenservice:Create(LOADER.loader.work, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), { TextTransparency = 1 }):Play()
-			tweenservice:Create( LOADER.loader.work.ImageLabel, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), { ImageTransparency = 1 }):Play()
-			tweenservice:Create( LOADER.loader.work, TweenInfo.new(0.5, Enum.EasingStyle.Quint), { Position = UDim2.new(0.5, 0,1, -100) }):Play()
-			task.wait(0.6)
-		end
-		local function load()
-			TweenWorkLabel(1,'rbxassetid://136002400178503', '')
-			if Config.ConfigurationSaving and Config.ConfigurationSaving.Enabled then
-				local folderName = Config.ConfigurationSaving.FolderName or "SydeSec"
-				local fileName = Config.ConfigurationSaving.FileName or "default_config"
-				local fullPath = folderName .. "/" .. fileName .. ".lua"
-				syde.ConfigEnabled = true
-				syde.ConfigFolder = folderName  
-				syde.ConfigFile = fileName     
-				if isfolder and not isfolder(folderName) then
-					local success, err = pcall(function()
-						makefolder(folderName)
-					end)
-					if not success then
-					end
-				end
-				local success, err = pcall(function()
-					if isfile and not isfile(fullPath) then
-						writefile(fullPath, "-- Protected UI Configuration")
-					else
-						local content = readfile(fullPath)
-					end
-				end)
-				if not success then
-				end
-			end
-			TweenWorkLabel(1,'rbxassetid://105810189969774', '')
-			local UI_TAG = "sydeUILoader"
-			local MARKER_NAME = "SYDEUIDetector"
-			local INTERNAL_UUID = ("SYDE-" .. tostring(game.JobId):gsub("-", "") .. tostring(tick())):gsub("%.", "")
-			local PROTECTION_EVENT = Instance.new("BindableEvent")
-			local HttpService = game:GetService("HttpService")
-			local function deepCleanup()
-				for _, v in ipairs(coregui:GetChildren()) do
-					if v:IsA("ScreenGui") and v:FindFirstChild(MARKER_NAME) then
-						pcall(function()
-							v:Destroy()
-						end)
-					end
-				end
-			end
-			deepCleanup()
-			local successLibrary, Library = pcall(function()
-				return Library 
-			end)
-			if not successLibrary or not Library then
-				return
-			end
-			Library.Name = UI_TAG
-			Library.ResetOnSpawn = false
-			local marker = Instance.new("StringValue")
-			marker.Name = MARKER_NAME
-			marker.Value = INTERNAL_UUID
-			marker.Parent = Library
-			pcall(function()
-				Library.Parent = coregui
-			end)
-			task.spawn(function()
-				while Library and Library.Parent do
-					task.wait(1)
-					if Library.Parent ~= coregui then
-						pcall(function()
-							Library.Parent = coregui
-						end)
-					end
-				end
-			end)
-			TweenWorkLabel(1,'rbxassetid://108012241529487', '')
-			if Config.AutoJoinDiscord and Config.AutoJoinDiscord.Enabled then
-				local discordConfig = Config.AutoJoinDiscord
-				local rootFolder = Config.ConfigurationSaving and Config.ConfigurationSaving.FolderName or "SydeSec"
-				local discordFolder = rootFolder .. "/DiscordInvites"
-				local inviteCode = discordConfig.Invite
-				local inviteFilePath = discordFolder .. "/" .. inviteCode .. ".txt"
-				if isfolder and not isfolder(discordFolder) then
-					local folderSuccess, folderErr = pcall(function()
-						makefolder(discordFolder)
-					end)
-					if folderSuccess then
-					else
-					end
-				end
-				local shouldPrompt = true
-				if isfile and discordConfig.RememberJoins and isfile(inviteFilePath) then
-					shouldPrompt = false
-				end
-				if shouldPrompt then
-					if request then
-						local reqSuccess, reqErr = pcall(function()
-							request({
-								Url = "http://127.0.0.1:6463/rpc?v=1",
-								Method = "POST",
-								Headers = {
-									["Content-Type"] = "application/json",
-									["Origin"] = "https://discord.com"
-								},
-								Body = https:JSONEncode({
-									cmd = "INVITE_BROWSER",
-									nonce = https:GenerateGUID(false),
-									args = {
-										code = inviteCode
-									}
-								})
-							})
-						end)
-						if reqSuccess then
-						else
-						end
-					else
-					end
-					if discordConfig.RememberJoins then
-						local writeSuccess, writeErr = pcall(function()
-							writefile(inviteFilePath, "Joined Discord via invite '" .. inviteCode .. "' at " .. os.date())
-						end)
-						if writeSuccess then
-						else
-						end
-					end
-				end
-			end
-			TweenWorkLabel(1,'rbxassetid://136405833725573', '')
-			task.wait(1)
-			loaded = true
-		end
-		task.wait(0.08)
-		load()
-		task.wait(2)
-		syde.theme.Accent = Config.Accent;
-		syde.theme.HitBox = Config.HitBox;
-		LOADER:Destroy()
-	end
-end
 local HttpService = https
 local CONFIG_VERSION = 1
 local SaveDebounce
@@ -1705,48 +1361,38 @@ syde:HidePH(tabs, 'btn')
 syde:HidePH(pages, 'page')
 function syde:Init(library)
 	ui.Enabled = true
-	if loaded == false then
-		local UI_TAG = "sydeUILoader"
-		local MARKER_NAME = "SYDEUIDetector"
-		local INTERNAL_UUID = ("SYDE-" .. tostring(game.JobId):gsub("-", "") .. tostring(tick())):gsub("%.", "")
-		local PROTECTION_EVENT = Instance.new("BindableEvent")
-		local HttpService = game:GetService("HttpService")
-		local function deepCleanup()
-			for _, v in ipairs(coregui:GetChildren()) do
-				if v:IsA("ScreenGui") and v:FindFirstChild(MARKER_NAME) then
-					pcall(function()
-						v:Destroy()
-					end)
-				end
+	local UI_TAG = "sydeUILoader"
+	local MARKER_NAME = "SYDEUIDetector"
+	local INTERNAL_UUID = ("SYDE-" .. tostring(game.JobId):gsub("-", "") .. tostring(tick())):gsub("%.", "")
+	local function deepCleanup()
+		for _, v in ipairs(coregui:GetChildren()) do
+			if v:IsA("ScreenGui") and v:FindFirstChild(MARKER_NAME) then
+				pcall(function()
+					v:Destroy()
+				end)
 			end
 		end
-		deepCleanup()
-		local successLibrary, Library = pcall(function()
-			return Library 
-		end)
-		if not successLibrary or not Library then
-			return
-		end
-		Library.Name = UI_TAG
-		Library.ResetOnSpawn = false
-		local marker = Instance.new("StringValue")
-		marker.Name = MARKER_NAME
-		marker.Value = INTERNAL_UUID
-		marker.Parent = Library
-		pcall(function()
-			Library.Parent = coregui
-		end)
-		task.spawn(function()
-			while Library and Library.Parent do
-				task.wait(1)
-				if Library.Parent ~= coregui then
-					pcall(function()
-						Library.Parent = coregui
-					end)
-				end
-			end
-		end)
 	end
+	deepCleanup()
+	Library.Name = UI_TAG
+	Library.ResetOnSpawn = false
+	local marker = Instance.new("StringValue")
+	marker.Name = MARKER_NAME
+	marker.Value = INTERNAL_UUID
+	marker.Parent = Library
+	pcall(function()
+		Library.Parent = coregui
+	end)
+	task.spawn(function()
+		while Library and Library.Parent do
+			task.wait(1)
+			if Library.Parent ~= coregui then
+				pcall(function()
+					Library.Parent = coregui
+				end)
+			end
+		end
+	end)
 	task.wait(0.1)
 	local Data = {
 		Title = library.Title or "Syde";
