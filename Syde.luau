@@ -1353,6 +1353,7 @@ window.top.functions.close.interact.MouseButton1Click:Connect(function()
 		Duration = 5
 	})
 	mh = false
+	ui.minihome.Visible = false
 	if rs then rs:Disconnect() end
 	if ss then ss:Disconnect() end
 	window:Destroy()
@@ -1458,67 +1459,27 @@ function syde:Init(library)
 	end)
 	local RunService = game:GetService("RunService")
 	local TweenService = game:GetService("TweenService")
-	local RainbowStates = {}
 	for _, v in ipairs(top.functions:GetChildren()) do
 		if not v:IsA("Frame") then continue end
+		if v.Name == "plugins" then v:Destroy() continue end
 		if not v:FindFirstChild("ImageLabel") then continue end
 		local image = v.ImageLabel
-		local rain
-		local gradient
-		if v.Name == "plugins" then
-			rain = v.rainbow
-			gradient = rain:FindFirstChildOfClass("UIGradient")
-		end
-		if v.Name == "plugins" then
-			RainbowStates[v] = {
-				hue = math.random(),
-				connection = nil,
-			}
-		end
 		v.MouseEnter:Connect(function()
 			if not uiclosed then
-				if v.Name ~= "plugins" then
-					TweenService:Create(
-						image,
-						TweenInfo.new(0.5, Enum.EasingStyle.Exponential),
-						{ ImageTransparency = 0.7 }
-					):Play()
-				end
-			end
-			if v.Name == "plugins" and gradient then
-				tweenservice:Create(v.rainbow, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), { ImageTransparency = 0 }):Play()
-				local state = RainbowStates[v]
-				if state.connection then return end
-				state.connection = RunService.RenderStepped:Connect(function(dt)
-					state.hue = (state.hue + dt * 0.6) % 1
-					gradient.Color = ColorSequence.new({
-						ColorSequenceKeypoint.new(0, Color3.fromHSV(state.hue, 1, 1)),
-						ColorSequenceKeypoint.new(0.2, Color3.fromHSV((state.hue + 0.2) % 1, 1, 1)),
-						ColorSequenceKeypoint.new(0.4, Color3.fromHSV((state.hue + 0.4) % 1, 1, 1)),
-						ColorSequenceKeypoint.new(0.6, Color3.fromHSV((state.hue + 0.6) % 1, 1, 1)),
-						ColorSequenceKeypoint.new(0.8, Color3.fromHSV((state.hue + 0.8) % 1, 1, 1)),
-						ColorSequenceKeypoint.new(1, Color3.fromHSV((state.hue + 1) % 1, 1, 1)),
-					})
-				end)
+				TweenService:Create(
+					image,
+					TweenInfo.new(0.5, Enum.EasingStyle.Exponential),
+					{ ImageTransparency = 0.7 }
+				):Play()
 			end
 		end)
 		v.MouseLeave:Connect(function()
 			if not uiclosed then
-				if v.Name ~= "plugins" then
-					TweenService:Create(
-						image,
-						TweenInfo.new(0.5, Enum.EasingStyle.Exponential),
-						{ ImageTransparency = 0 }
-					):Play()
-				end
-			end
-			if v.Name == "plugins" then
-				tweenservice:Create(v.rainbow, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), { ImageTransparency = 1 }):Play()
-				local state = RainbowStates[v]
-				if state and state.connection then
-					state.connection:Disconnect()
-					state.connection = nil
-				end
+				TweenService:Create(
+					image,
+					TweenInfo.new(0.5, Enum.EasingStyle.Exponential),
+					{ ImageTransparency = 0 }
+				):Play()
 			end
 		end)
 	end
@@ -3908,13 +3869,15 @@ function syde:Init(library)
 				Duration = 3
 			})
 		end
-		function syde:LoadSettingsConfig()
+		function syde:LoadSettingsConfig(silent)
 			local path = string.format("%s/SettingsConfig.lua", syde.ConfigFolder)
 			if not isfile(path) then
-				syde:Toast({
-					Content = 'No settings found';
-					Duration = 3
-				})
+				if not silent then
+					syde:Toast({
+						Content = 'No settings found';
+						Duration = 3
+					})
+				end
 				return
 			end
 			local success, data = pcall(function()
@@ -3936,19 +3899,19 @@ function syde:Init(library)
 				else
 				end
 			end
-			syde:Toast({
-				Content = 'Loaded setting config';
-				Duration = 3
-			})
+			if not silent then
+				syde:Toast({
+					Content = 'Loaded setting config';
+					Duration = 3
+				})
+			end
 		end
-		a:Toggle({
-			Title = 'Autoload Config?',
-			Description = 'Automatically load your config when the UI starts.',
-			Value = false,
-			CallBack = function(v)
-				syde.Autoload = v
-			end,
-			SFlag = 'ALC'
+		a:Button({
+			Title = 'Save',
+			Description = 'Save all setting configurations.',
+			CallBack = function ()
+				syde:SaveSettingsConfig()
+			end
 		})
 		a:Toggle({
 			Title = 'Autosave Config?',
@@ -3960,18 +3923,20 @@ function syde:Init(library)
 			SFlag = 'ASC'
 		})
 		a:Button({
-			Title = 'Save',
-			Description = 'Save all setting configurations.',
-			CallBack = function ()
-				syde:SaveSettingsConfig()
-			end
-		})
-		a:Button({
 			Title = 'Load',
 			Description = 'Load all setting configurations.',
 			CallBack = function ()
 				syde:LoadSettingsConfig()
 			end
+		})
+		a:Toggle({
+			Title = 'Autoload Config?',
+			Description = 'Automatically load your config when the UI starts.',
+			Value = false,
+			CallBack = function(v)
+				syde.Autoload = v
+			end,
+			SFlag = 'ALC'
 		})
 	end
 	task.spawn(function()
@@ -3982,11 +3947,15 @@ function syde:Init(library)
 				return https:JSONDecode(readfile(path))
 			end)
 			if success and data and data.ALC == true then
-				syde:LoadSettingsConfig()
+				syde:LoadSettingsConfig(true)
 				local mainConfigPath = string.format("%s/%s.json", syde.ConfigFolder, syde.ConfigFile)
 				if isfile(mainConfigPath) then
 					LoadConfig(readfile(mainConfigPath))
 				end
+				syde:Toast({
+					Content = 'Loaded Save Config',
+					Duration = 3
+				})
 			end
 		end
 	end)
