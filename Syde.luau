@@ -177,7 +177,7 @@ function syde:BindFrame(frame, properties)
 	end
 	local function UpdateOrientation(fetchProps)
 		local zIndex = 1 - 0.05*frame.ZIndex
-		local tl, br = frame.AbsolutePosition, frame.AbsolutePosition + frame.AbsoluteSize
+		local tl, br = frame.AbsolutePosition + Vector2.new(6, 6), frame.AbsolutePosition + frame.AbsoluteSize - Vector2.new(6, 6)
 		local tr, bl = Vector2.new(br.x, tl.y), Vector2.new(tl.x, br.y)
 		do
 			local rot = 0;
@@ -1442,6 +1442,26 @@ function syde:Init(library)
 	top.title.sub.Position = UDim2.new(0, 0, 1, -5)
 	syde:AddDrag(top, window, true)
 	syde:MakeResizable(window.resize, window, Vector2.new(454, 228))
+	window:GetPropertyChangedSignal("AbsoluteSize"):Connect(function()
+		local size = window.AbsoluteSize
+		local minDim = math.min(size.X, size.Y)
+		local newRadius = math.min(20, minDim / 4)
+		window.UICorner.CornerRadius = UDim.new(0, newRadius)
+		if window:FindFirstChild("shadow") then
+			window.shadow.Position = UDim2.new(0.5, 0, 0.5, 0)
+			window.shadow.AnchorPoint = Vector2.new(0.5, 0.5)
+			window.shadow.Size = UDim2.new(1, 60, 1, 60)
+		end
+		if window:FindFirstChild("clipframe") then
+			for _, g in ipairs(window.clipframe:GetChildren()) do
+				if g:IsA("ImageLabel") then
+					g.Size = UDim2.new(1, 0, 1, 0)
+					g.Position = UDim2.new(0.5, 0, 0.5, 0)
+					g.AnchorPoint = Vector2.new(0.5, 0.5)
+				end
+			end
+		end
+	end)
 	top.title.TextTransparency = 1
 	tweenservice:Create(top.title, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()
 	top.title.sub.TextTransparency = 1
@@ -1828,6 +1848,14 @@ function syde:Init(library)
 		closesettings()
 	end
 	window.top.functions.settings.interact.MouseButton1Click:Connect(function()
+		if window.AbsoluteSize.X < 420 or window.AbsoluteSize.Y < 480 then
+			syde:Notify({
+				Title = "Syde needs to be bigger.",
+				Content = "Settings UI cannot be shown if the Main UI is smaller than it. Resizing it will fix this",
+				Duration = 5
+			})
+			return
+		end
 		if not settingsOpen then
 			settingsOpen = true
 			opensettings()
@@ -1866,6 +1894,13 @@ function syde:Init(library)
 			local Page = pagesContainer.page:Clone()
 			Page.Visible = false
 			Page.Parent = pagesContainer
+			local Padding = Page:FindFirstChildOfClass("UIPadding") or Instance.new("UIPadding", Page)
+			Padding.PaddingTop = UDim.new(0, 0)
+			local list = Page:FindFirstChildOfClass("UIListLayout")
+			if list then
+				list.Padding = UDim.new(0, 5)
+			end
+			local layoutCounter = 0
 			Page.Name = tdata.Title
 			for _, v in ipairs(Page:GetChildren()) do
 				if v:IsA("Frame") then
@@ -3803,7 +3838,7 @@ function syde:Init(library)
 			end
 		end)
 		a:Toggle({
-			Title = 'Blur',
+			Title = 'Glass',
 			Description = 'Toggle the blur on the UI.',
 			Value = false,
 			CallBack = function(v)
