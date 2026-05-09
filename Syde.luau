@@ -115,9 +115,6 @@ function syde:UpdateTheme(Config)
 				end
 				table.insert(updatedKeys, key)
 			else
-				"):format(
-					key, typeof(self.theme[key]), typeof(value)
-					))
 			end
 		else
 		end
@@ -286,7 +283,6 @@ function syde:Modify(frame, properties)
 			end
 		end
 	else
-		:format(frame:GetFullName()))
 	end
 end
 function syde:UnbindFrame(frame)
@@ -298,7 +294,6 @@ function syde:UnbindFrame(frame)
 		end
 		binds[frame] = nil
 	else
-		:format(frame:GetFullName()))
 	end
 end
 function syde:HasBinding(frame)
@@ -309,7 +304,6 @@ function syde:GetBoundParts(frame)
 end
 function syde:GetDark(Color, val, mode)
 	if typeof(Color) ~= "Color3" or type(val) ~= "number" then
-		")
 		return Color
 	end
 	local H, S, V = Color:ToHSV()
@@ -351,18 +345,15 @@ function syde:ColorUnpack(color)
 end
 function syde:HidePH(instance, placeholder, recursive)
 	if typeof(instance) ~= "Instance" or type(placeholder) ~= "string" then
-		")
 		return
 	end
 	local target = instance:FindFirstChild(placeholder)
 	if not target then
-		:format(placeholder, instance.Name))
 		return
 	end
 	if target:IsA("GuiObject") then
 		target.Visible = false
 	else
-		:format(placeholder))
 		return
 	end
 	if recursive then
@@ -375,10 +366,8 @@ function syde:HidePH(instance, placeholder, recursive)
 end
 function syde:AddConnection(Type, Callback)
 	if typeof(Type) ~= "RBXScriptSignal" then
-		)
 	end
 	if typeof(Callback) ~= "function" then
-		)
 	end
 	local Connection = Type:Connect(Callback)
 	local ConnectionData = { Connection = Connection }
@@ -846,18 +835,15 @@ function syde:AddDrag(Object, Main, ConstrainToParent)
 end
 function syde:HidePlaceHolder(instance, placeholder, recursive)
 	if typeof(instance) ~= "Instance" or type(placeholder) ~= "string" then
-		")
 		return
 	end
 	local target = instance:FindFirstChild(placeholder)
 	if not target then
-		:format(placeholder, instance.Name))
 		return
 	end
 	if target:IsA("GuiObject") then
 		target.Visible = false
 	else
-		:format(placeholder))
 		return
 	end
 	if recursive then
@@ -2495,7 +2481,6 @@ function syde:Init(library)
 						end
 					end)
 					if not success then
-						)
 					end
 				end)
 				local descLabel = toggle:FindFirstChild("desc")
@@ -2627,7 +2612,6 @@ function syde:Init(library)
 									data.CallBack(data.V)
 								end)
 								if not success then
-									)
 								end
 							end
 						end
@@ -2674,7 +2658,6 @@ function syde:Init(library)
 						end
 					end)
 					if not success then
-						)
 					end
 				end
 				if data.SFlag then
@@ -3334,7 +3317,6 @@ function syde:Init(library)
 						else
 						end
 					else
-						.")
 					end
 				end)
 				local UserInputService = game:GetService("UserInputService")
@@ -3844,7 +3826,6 @@ function syde:Init(library)
 								Options.CallBack(newValue)
 							end)
 							if not success then
-								)
 							end
 							Options.StarterValue = newValue
 						end
@@ -4045,7 +4026,6 @@ function syde:Init(library)
 						data.CallBack(text)
 					end)
 					if not success then
-						)
 					end
 				end
 				textBox.FocusLost:Connect(function(enterPressed)
@@ -4054,7 +4034,6 @@ function syde:Init(library)
 						data.CallBack(textBox.Text)
 					end)
 					if not success then
-						)
 					end
 					if data.ClearOnLost then
 						task.defer(function()
@@ -4070,7 +4049,6 @@ function syde:Init(library)
 						data.CallBack(textBox.Text)
 					end)
 					if not success then
-						)
 					end
 					if data.ClearOnLost then
 						task.defer(function()
@@ -5100,7 +5078,6 @@ function syde:Init(library)
 					end
 				end)
 				if not success then
-					)
 				end
 				SaveConfig()
 			end)
@@ -5232,7 +5209,6 @@ function syde:Init(library)
 								data.CallBack(data.V)
 							end)
 							if not success then
-								)
 							end
 							SaveConfig()
 						end
@@ -5279,7 +5255,6 @@ function syde:Init(library)
 						data.CallBack(data.V)
 					end)
 					if not success then
-						)
 					end
 				end
 				if not skipSave then
@@ -5428,7 +5403,6 @@ function syde:Init(library)
 							Options.CallBack(newValue)
 						end)
 						if not success then
-							)
 						end
 						Options:Set(newValue)
 						SaveConfig()
@@ -5665,7 +5639,6 @@ function syde:Init(library)
 					data.CallBack(text)
 				end)
 				if not success then
-					)
 				end
 			end
 			textBox.FocusLost:Connect(function(enterPressed)
@@ -5674,7 +5647,6 @@ function syde:Init(library)
 					data.CallBack(textBox.Text)
 				end)
 				if not success then
-					)
 				end
 				if data.ClearOnLost then
 					task.defer(function()
@@ -5690,7 +5662,6 @@ function syde:Init(library)
 					data.CallBack(textBox.Text)
 				end)
 				if not success then
-					)
 				end
 				if data.ClearOnLost then
 					task.defer(function()
@@ -6816,7 +6787,6 @@ function syde:Init(library)
 					else
 					end
 				else
-					.")
 				end
 			end)
 			local UserInputService = game:GetService("UserInputService")
@@ -6961,7 +6931,6 @@ function syde:Init(library)
 						Duration = 3
 					})
 				elseif not success then
-					)
 				end
 			end
 		end
