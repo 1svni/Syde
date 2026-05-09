@@ -1,4 +1,4 @@
-local cryable = loadstring(game:HttpGet("YOUR_LINK_HERE"))()
+local cryable = loadstring(game:HttpGet("https://raw.githubusercontent.com/1svni/Cryable/refs/heads/main/Cryable.luau"))()
 
 local window = cryable:Init({
     Title = "Cryable Example UI",
