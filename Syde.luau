@@ -15,7 +15,6 @@ local isMobile =        userinput.TouchEnabled or (screenSize.X < 1024 and scree
 local dragOffset =        255
 local dragOffsetMobile =  150
 local camera =          workspace.CurrentCamera
-
 Library.Enabled = false
 local syde = {
 	theme = {
@@ -35,7 +34,6 @@ local syde = {
 	SettingsFlags = {};
 	Autoload = false;
 	Autosave = false;
-	Loading = false;
 }
 function syde:DeepMerge(target, source)
 	for k, v in pairs(source) do
@@ -1439,7 +1437,7 @@ function syde:Init(library)
 	end
 	top.title.Text = Data.Title
 	top.title.sub.Text = Data.SubText
-	top.title.sub.Position = UDim2.new(0, 0, 1, -5)
+	top.title.sub.Position = UDim2.new(0, 0, 1, -2)
 	syde:AddDrag(top, window, true)
 	syde:MakeResizable(window.resize, window, Vector2.new(454, 228))
 	top.title.TextTransparency = 1
@@ -1852,7 +1850,6 @@ function syde:Init(library)
 		}
 		function settings:inittab(tab)
 			local telement = {}
-			local layoutCounter = 0
 			local tdata = {
 				Title = tab.Title
 			}
@@ -1916,8 +1913,6 @@ function syde:Init(library)
 				}
 				local button = window.settings.pages.page.Button:Clone()
 				button.Visible = true
-				layoutCounter = layoutCounter + 1
-				button.LayoutOrder = layoutCounter
 				button.Parent = Page
 				button.title.Text = data.Title
 				button.Name = data.Title
@@ -2052,8 +2047,6 @@ function syde:Init(library)
 				}
 				local toggle = window.settings.pages.page.Toggle:Clone()
 				toggle.Visible = true
-				layoutCounter = layoutCounter + 1
-				toggle.LayoutOrder = layoutCounter
 				toggle.Parent = Page
 				toggle.title.Text = data.Title
 				toggle.Name = data.Title
@@ -2316,8 +2309,6 @@ function syde:Init(library)
 				}
 				local KeyBind = window.settings.pages.page.KeyBind:Clone()
 				KeyBind.Visible = true
-				layoutCounter = layoutCounter + 1
-				KeyBind.LayoutOrder = layoutCounter
 				KeyBind.Parent = Page
 				KeyBind.title.Text = data.Title
 				KeyBind.Name = data.Title
@@ -2397,8 +2388,6 @@ function syde:Init(library)
 				ColorPicker.Linkable = ColorPicker.Linkable or true
 				local colorpicker = window.settings.pages.page.ColorPicker:Clone()
 				colorpicker.Visible = true
-				layoutCounter = layoutCounter + 1
-				colorpicker.LayoutOrder = layoutCounter
 				colorpicker.Parent = Page
 				colorpicker.title.Text = data.Title
 				colorpicker.Name = data.Title
@@ -3111,8 +3100,6 @@ function syde:Init(library)
 				}
 				local dropdown = window.settings.pages.page.Dropdown:Clone()
 				dropdown.Visible = true
-				layoutCounter = layoutCounter + 1
-				dropdown.LayoutOrder = layoutCounter
 				dropdown.Parent = Page
 				dropdown.title.Text = data.Title
 				dropdown.Name = data.Title
@@ -3372,8 +3359,6 @@ function syde:Init(library)
 				}
 				local slider = window.settings.pages.page.Slider:Clone()
 				slider.Visible = true
-				layoutCounter = layoutCounter + 1
-				slider.LayoutOrder = layoutCounter
 				slider.Parent = Page
 				slider.title.Text = data.Title
 				slider.Name = data.Title
@@ -3609,8 +3594,6 @@ function syde:Init(library)
 				}
 				local Para = window.settings.pages.page.Paragraph:Clone()
 				Para.Visible = true
-				layoutCounter = layoutCounter + 1
-				Para.LayoutOrder = layoutCounter
 				Para.Parent = Page
 				Para.Frame.title.Text = ParaData.Title
 				Para.Content.Text = ParaData.Content
@@ -3623,7 +3606,7 @@ function syde:Init(library)
 						Vector2.new(Para.Content.AbsoluteSize.X, math.huge) 
 					)
 					local newDescSize = UDim2.new(1, -20, 0, textSize.Y)
-					local newButtonSize = UDim2.new(Para.Size.X.Scale, Para.Size.X.Offset, 0, textSize.Y + 65) 
+					local newButtonSize = UDim2.new(Para.Size.X.Scale, Para.Size.X.Offset, 0, textSize.Y + 120) 
 					local descTween = tweenservice:Create(Para.Content, TweenInfo.new(0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), { Size = newDescSize })
 					descTween:Play()
 					local buttonTween = tweenservice:Create(Para, TweenInfo.new(0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), { Size = newButtonSize })
@@ -3803,25 +3786,6 @@ function syde:Init(library)
 			end
 		end)
 		a:Toggle({
-			Title = 'Blur',
-			Description = 'Toggle the blur on the UI.',
-			Value = false,
-			CallBack = function(v)
-				bluron = v
-				if bluron then
-					syde:BindFrame(window, {
-						Transparency = 0.98;
-						BrickColor = BrickColor.new('Institutional white');
-					})
-					tweenservice:Create(window, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0.45 }):Play()
-				else
-					syde:UnbindFrame(window)
-					tweenservice:Create(window, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0 }):Play()
-				end
-			end,
-			SFlag = 'BLUR'
-		})
-		a:Toggle({
 			Title = 'Glow',
 			Description = 'Shine on the ui.',
 			Value = true,
@@ -3886,7 +3850,6 @@ function syde:Init(library)
 			}
 		})
 		function syde:SaveSettingsConfig()
-			if syde.Loading then return end
 			local Data = {}
 			for flag, v in pairs(syde.SettingsFlags or {}) do
 				if v.Type == "ColorPicker" and v.Color then
@@ -3907,7 +3870,6 @@ function syde:Init(library)
 			})
 		end
 		function syde:LoadSettingsConfig(silent)
-			syde.Loading = true
 			local path = string.format("%s/SettingsConfig.lua", syde.ConfigFolder)
 			if not isfile(path) then
 				if not silent then
@@ -3916,14 +3878,12 @@ function syde:Init(library)
 						Duration = 3
 					})
 				end
-				syde.Loading = false
 				return
 			end
 			local success, data = pcall(function()
 				return https:JSONDecode(readfile(path))
 			end)
 			if not success or typeof(data) ~= "table" then
-				syde.Loading = false
 				return
 			end
 			for flag, val in pairs(data) do
@@ -3945,7 +3905,6 @@ function syde:Init(library)
 					Duration = 3
 				})
 			end
-			syde.Loading = false
 		end
 		a:Button({
 			Title = 'Save',
@@ -3988,13 +3947,11 @@ function syde:Init(library)
 				return https:JSONDecode(readfile(path))
 			end)
 			if success and data and data.ALC == true then
-				syde.Loading = true
 				syde:LoadSettingsConfig(true)
 				local mainConfigPath = string.format("%s/%s.json", syde.ConfigFolder, syde.ConfigFile)
 				if isfile(mainConfigPath) then
 					LoadConfig(readfile(mainConfigPath))
 				end
-				syde.Loading = false
 				syde:Toast({
 					Content = 'Loaded Save Config',
 					Duration = 3
@@ -4393,7 +4350,6 @@ function syde:Init(library)
 			end
 		end)
 		local initelement = {}
-		local layoutCounter = 0
 		function initelement:Button(Button)
 			local data = {
 				Title = Button.Title or "Temp Button";
@@ -4404,8 +4360,6 @@ function syde:Init(library)
 			}
 			local button = pages.page.Button:Clone()
 			button.Visible = true
-			layoutCounter = layoutCounter + 1
-			button.LayoutOrder = layoutCounter
 			button.Parent = Page
 			button.title.Text = data.Title
 			button.Name = data.Title
@@ -4539,8 +4493,6 @@ function syde:Init(library)
 			}
 			local toggle = pages.page.Toggle:Clone()
 			toggle.Visible = true
-			layoutCounter = layoutCounter + 1
-			toggle.LayoutOrder = layoutCounter
 			toggle.Parent = Page
 			toggle.title.Text = data.Title
 			toggle.Name = data.Title
@@ -4787,8 +4739,6 @@ function syde:Init(library)
 			}
 			local slider = pages.page.Slider:Clone()
 			slider.Visible = true
-			layoutCounter = layoutCounter + 1
-			slider.LayoutOrder = layoutCounter
 			slider.Parent = Page
 			slider.title.Text = data.Title
 			slider.Name = data.Title
@@ -5024,8 +4974,6 @@ function syde:Init(library)
 			}
 			local KeyBind = pages.page.KeyBind:Clone()
 			KeyBind.Visible = true
-			layoutCounter = layoutCounter + 1
-			KeyBind.LayoutOrder = layoutCounter
 			KeyBind.Parent = Page
 			KeyBind.title.Text = data.Title
 			KeyBind.Name = data.Title
@@ -5099,8 +5047,6 @@ function syde:Init(library)
 			}
 			local textinput = pages.page.Input:Clone()
 			textinput.Visible = true
-			layoutCounter = layoutCounter + 1
-			textinput.LayoutOrder = layoutCounter
 			textinput.Parent = Page
 			textinput.Name = data.Title
 			textinput.title.Text = data.Title
@@ -5196,8 +5142,6 @@ function syde:Init(library)
 			}
 			local EnchancedView = pages.page["3DView"]:Clone()
 			EnchancedView.Visible = true
-			layoutCounter = layoutCounter + 1
-			EnchancedView.LayoutOrder = layoutCounter
 			EnchancedView.Parent = Page
 			EnchancedView.Title.Text = Viewdata.Title
 			EnchancedView:SetAttribute("Searchable", true)
@@ -5401,8 +5345,6 @@ function syde:Init(library)
 			}
 			local Para = pages.page.Paragraph:Clone()
 			Para.Visible = true
-			layoutCounter = layoutCounter + 1
-			Para.LayoutOrder = layoutCounter
 			Para.Parent = Page
 			Para.Frame.title.Text = ParaData.Title
 			Para.Content.Text = ParaData.Content
@@ -5416,7 +5358,7 @@ function syde:Init(library)
 					Vector2.new(Para.Content.AbsoluteSize.X, math.huge) 
 				)
 				local newDescSize = UDim2.new(1, -20, 0, textSize.Y)
-				local newButtonSize = UDim2.new(Para.Size.X.Scale, Para.Size.X.Offset, 0, textSize.Y + 65) 
+				local newButtonSize = UDim2.new(Para.Size.X.Scale, Para.Size.X.Offset, 0, textSize.Y + 120) 
 				local descTween = tweenservice:Create(Para.Content, TweenInfo.new(0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), { Size = newDescSize })
 				descTween:Play()
 				local buttonTween = tweenservice:Create(Para, TweenInfo.new(0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), { Size = newButtonSize })
@@ -5428,8 +5370,6 @@ function syde:Init(library)
 		function initelement:Label(Text, Alignment)
 			local Label = pages.page.Label:Clone()
 			Label.Visible = true
-			layoutCounter = layoutCounter + 1
-			Label.LayoutOrder = layoutCounter
 			Label.Parent = Page
 			Label.text.Text = Text
 			Label:SetAttribute("Searchable", true)
@@ -5437,7 +5377,6 @@ function syde:Init(library)
 				Label.text.TextXAlignment = Enum.TextXAlignment.Center
 			elseif Alignment == 'Right' then
 				Label.text.TextXAlignment = Enum.TextXAlignment.Right
-				Label.text.Size = UDim2.new(1, -15, 1, 0)
 			end
 		end
 		function initelement:Section(Title, Icon)
@@ -5446,8 +5385,6 @@ function syde:Init(library)
 			}
 			local Section =  pages.page.Section:Clone()
 			Section.Visible = true
-			layoutCounter = layoutCounter + 1
-			Section.LayoutOrder = layoutCounter
 			Section.Title.Text = Title
 			Section.Parent = Page
 			Section.Title.Position = UDim2.new(0, 0,0, 0)
@@ -5469,8 +5406,6 @@ function syde:Init(library)
 			}
 			local dropdown = pages.page.Dropdown:Clone()
 			dropdown.Visible = true
-			layoutCounter = layoutCounter + 1
-			dropdown.LayoutOrder = layoutCounter
 			dropdown.Parent = Page
 			dropdown.title.Text = data.Title
 			dropdown.Name = data.Title
@@ -5731,8 +5666,6 @@ function syde:Init(library)
 			ColorPicker.Linkable = ColorPicker.Linkable or true
 			local colorpicker = pages.page.ColorPicker:Clone()
 			colorpicker.Visible = true
-			layoutCounter = layoutCounter + 1
-			colorpicker.LayoutOrder = layoutCounter
 			colorpicker.Parent = Page
 			colorpicker.title.Text = data.Title
 			colorpicker.Name = data.Title
