@@ -1345,17 +1345,16 @@ function ToggleUI()
 	end)
 end
 window.top.functions.close.interact.MouseButton1Click:Connect(function()
-	syde:Modal({
-		Title = 'Please Confirm Below.',
-		Content = 'Are You Sure You Want To Close This UI?',
-		ConfimCallBack = function()
-			mh = false
-			rs:Disconnect()
-			ss:Disconnect()
-			task.wait(1)
-			Library:Destroy()
-		end,
+	syde:Notify({
+		Title = "Goodbye :(",
+		Content = "Thank you for using Syde, we love you!",
+		Duration = 5
 	})
+	mh = false
+	if rs then rs:Disconnect() end
+	if ss then ss:Disconnect() end
+	task.wait(1)
+	Library:Destroy()
 end)
 syde:HidePH(tabs, 'btn')
 syde:HidePH(pages, 'page')
@@ -1434,6 +1433,7 @@ function syde:Init(library)
 	end
 	top.title.Text = Data.Title
 	top.title.sub.Text = Data.SubText
+	top.title.sub.Position = UDim2.new(0, 0, 1, 0)
 	syde:AddDrag(top, window, true)
 	syde:MakeResizable(window.resize, window, Vector2.new(454, 228))
 	top.title.TextTransparency = 1
@@ -3709,8 +3709,6 @@ function syde:Init(library)
 			return telement
 		end
 		local a = settings:inittab({Title = 'Theme'})
-		local b = settings:inittab({Title = 'Privacy'})
-		local c = settings:inittab({Title = 'Info'})
 		a:Keybind({
 			Title = 'Toggle UI',
 			Key = uitoggle,
@@ -3734,7 +3732,7 @@ function syde:Init(library)
 			SFlag = 'AC'
 		})
 		a:ColorPicker({
-			Title = 'Hitbox',
+			Title = 'Element Color',
 			RD = false,
 			Linkable = true,
 			Color = syde.theme.HitBox;
@@ -3812,42 +3810,6 @@ function syde:Init(library)
 			end,
 			SFlag = 'GLW',
 		})
-		a:Toggle({
-			Title = 'Blur',
-			Description = 'Make sure your graphics are above 8.',
-			CallBack = function (v)
-				if v then
-					window.shadow.ImageLabel.Visible = false
-					window.BackgroundTransparency = 0.45
-					window.pages.v1.Visible = false
-					window.pages.v0.Visible = false
-					window.pages.clipframe.v1.Visible = false
-					window.pages.clipframe.v0.Visible = false
-					syde:BindFrame(window, {
-						Transparency = 0.98;
-						BrickColor = BrickColor.new('Institutional white');
-					})
-					local dof = Instance.new('DepthOfFieldEffect')
-					dof.Parent = game.Lighting
-					dof.Enabled = true
-					dof.FocusDistance = 51.6
-					dof.InFocusRadius = 50
-					dof.NearIntensity = 1
-					dof.FarIntensity = 0
-					bluron = true
-				else
-					window.shadow.ImageLabel.Visible = true
-					window.BackgroundTransparency = 0
-					window.pages.v1.Visible = true
-					window.pages.v0.Visible = true
-					window.pages.clipframe.v1.Visible = true
-					window.pages.clipframe.v0.Visible = true
-					syde:UnbindFrame(window)
-					bluron = false
-				end
-			end,
-			SFlag = 'BLUR',
-		})
 		a:Slider({
 			Title = 'Modifiers',
 			Sliders = {
@@ -3874,170 +3836,6 @@ function syde:Init(library)
 					SettingConfig = true
 				},
 			}
-		})
-		a:Toggle({
-			Title = 'Wallpaper';
-			Description = 'Displays personalized wallpaper';
-			Value = LockToScreen,
-			CallBack = function (v)
-				if v then
-					window.wallpaper.Visible = true
-					window.pages.clipframe.v0.Visible = false
-					window.pages.clipframe.v1.Visible = false
-					window.pages.v0.Visible = false
-					window.pages.v1.Visible = false
-					window.wallpaper.ison.Value = true
-				else
-					window.wallpaper.Visible = false
-					window.wallpaper.ison.Value = false
-					if bluron then
-						window.pages.clipframe.v0.Visible = false
-						window.pages.clipframe.v1.Visible = false
-						window.pages.v0.Visible = false
-						window.pages.v1.Visible = false
-					else
-						window.pages.clipframe.v0.Visible = true
-						window.pages.clipframe.v1.Visible = true
-						window.pages.v0.Visible = true
-						window.pages.v1.Visible = true
-					end
-				end
-			end,
-			SFlag = 'WALLP',
-		})
-		a:TextInput({
-			Title = 'Wallpaper ID';
-			NumberOnly = true;
-			PlaceHolder = 'Input your wallpaper ID here.';
-			CallBack = function (v)
-				if v then
-					window.wallpaper.Image = 'rbxassetid://'..v
-					syde:Toast({
-						Content = 'Wallpaper applied.'
-					})
-				end
-			end
-		})
-		a:Toggle({
-			Title = 'LockToScreen',
-			Description = 'Prevents UI from moving off screen.',
-			Value = LockToScreen,
-			CallBack = function (v)
-				LockToScreen = v
-			end,
-			SFlag = 'LS'
-		})
-		local HttpService = game:GetService("HttpService")
-		local isDev = false
-		local baseUrl = isDev and "http://localhost:3000" or "https://syde-auth.vercel.app"
-		local loginUrl = baseUrl .. "/api/login"
-		local VERIFY_ENDPOINT = baseUrl .. "/api/verify?id="
-		local currentDiscordId = nil
-		local lastCheck = 0
-		local debounceTime = 1.5 
-		local function openURL(url)
-			local success = false
-			pcall(function()
-				if syn and syn.openurl then
-					syn.openurl(url)
-					success = true
-				elseif getgenv().is_sirhurt_closure then
-					game:GetService("GuiService"):OpenBrowserWindow(url)
-					success = true
-				elseif KRNL_LOADED then
-					setclipboard(url)
-					success = true
-				end
-			end)
-			if not success and setclipboard then
-				setclipboard(url)
-				syde:Notify({
-					Title = "Link Copied",
-					Content = "OAuth link copied to clipboard. Paste in your browser.",
-					Duration = 5
-				})
-			end
-		end
-		b:Button({
-			Title = "Connect Discord",
-			Description = "Authenticate your Discord account.",
-			CallBack = function()
-				openURL(loginUrl)
-			end,
-		})
-		local function verifyDiscord(id)
-			if HttpService.HttpEnabled then
-				local ok, res = pcall(function()
-					return HttpService:GetAsync(VERIFY_ENDPOINT .. id, true)
-				end)
-				if ok and res then
-					local decodedOk, decoded = pcall(function()
-						return HttpService:JSONDecode(res)
-					end)
-					if decodedOk and type(decoded) == "table" and decoded.verified then
-						return true, decoded.discordUsername or nil
-					end
-				end
-				return false, nil
-			end
-			local success, result = pcall(function()
-				if syn and syn.request then
-					local r = syn.request({ Url = VERIFY_ENDPOINT .. id, Method = "GET" })
-					local decoded = HttpService:JSONDecode(r.Body)
-					if decoded.verified then
-						return decoded.discordUsername or nil
-					end
-				elseif request then
-					local r = request({ Url = VERIFY_ENDPOINT .. id, Method = "GET" })
-					local decoded = HttpService:JSONDecode(r.Body)
-					if decoded.verified then
-						return decoded.discordUsername or nil
-					end
-				end
-				return nil
-			end)
-			if success and result then
-				return true, result
-			end
-			return false, nil
-		end
-		b:TextInput({
-			Title = "Discord ID",
-			PlaceHolder = "Paste your Discord ID after verifying",
-			ClearOnLost = false,
-			CallBack = function(v)
-				currentDiscordId = v
-				if not currentDiscordId or currentDiscordId == "" then
-					window.user.headshot.Status.BackgroundColor3 = Color3.fromRGB(255, 101, 104)
-					return
-				end
-				if tick() - lastCheck < debounceTime then
-					return
-				end
-				lastCheck = tick()
-				window.user.headshot.Status.BackgroundColor3 = Color3.fromRGB(255, 238, 49)
-				task.spawn(function()
-					local verified, discordUsername = verifyDiscord(currentDiscordId)
-					if verified then
-						window.user.headshot.Status.BackgroundColor3 = Color3.fromRGB(59, 255, 29)
-						if discordUsername then
-							window.user.headshot.id.username.Text = discordUsername
-						end
-						syde:Notify({
-							Title = "Success",
-							Content = "Discord verified successfully",
-							Duration = 4
-						})
-					else
-						window.user.headshot.Status.BackgroundColor3 = Color3.fromRGB(255, 101, 104)
-						syde:Notify({
-							Title = "Verification Failed",
-							Content = "Discord ID is not verified",
-							Duration = 4
-						})
-					end
-				end)
-			end,
 		})
 		function syde:SaveSettingsConfig()
 			local Data = {}
@@ -4106,44 +3904,6 @@ function syde:Init(library)
 				syde:LoadSettingsConfig()
 			end
 		})
-		b:Toggle({
-			Title = 'Anonymous',
-			Description = 'Hides your info in User Info.',
-			CallBack = function (v)
-				if v then
-					window.user.headshot.id.username.Text = '?'
-					window.user.headshot.id.displayname.Text = '@?'
-					window.user.headshot.Image = 'rbxassetid://139956761561818'
-				else
-					SetUserInfo()
-				end
-			end,
-			SFlag = 'ANON',
-		})
-		c:Paragraph({
-			Title = 'Status',
-			Content = 'Your Up To Date!'
-		})
-		local startTime = tick()
-		local uptimeParagraph = c:Paragraph({
-			Title = 'Session UpTime',
-			Content = 'Calculating...'
-		})
-		local function formatTime(seconds)
-			local days = math.floor(seconds / 86400)
-			seconds = seconds % 86400
-			local hours = math.floor(seconds / 3600)
-			seconds = seconds % 3600
-			local minutes = math.floor(seconds / 60)
-			seconds = math.floor(seconds % 60)
-			return string.format("%02d:%02d:%02d:%02d", days, hours, minutes, seconds)
-		end
-		local startTime = tick()
-		ss = syde:AddConnection(runservice.Heartbeat, function()
-			local uptime = tick() - startTime
-			local formatted = formatTime(uptime)
-			uptimeParagraph:Set("Session Uptime: " .. formatted, 'Session UpTime')
-		end)
 	end
 	workspace.CurrentCamera:GetPropertyChangedSignal("ViewportSize"):Connect(function()
 		screenSize = workspace.CurrentCamera.ViewportSize
