@@ -9,84 +9,8 @@ local player =          game:GetService('Players')
 local textservice =     game:GetService('TextService')
 local coregui =         game:GetService("CoreGui")
 
--- update check
-local update = false
-if update then
-	local updategui = game:GetObjects("rbxassetid://122225389943465")[1]
-	updategui.Parent = coregui
-
-	local cord = '/GzumVvz3QM'
-
-	task.wait(0.5)
-	updategui.Enabled = true
-
-	updategui.main.BackgroundTransparency = 1
-	updategui.main.Size = UDim2.new(0, 150,0, 150)
-	updategui.main.time.TextTransparency = 1
-	updategui.main.info.TextTransparency = 1
-	updategui.main.text.TextLabel.TextTransparency = 1
-	updategui.main.text.more.TextTransparency = 1
-
-	tweenservice:Create(updategui.main, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {Transparency = 0}):Play()
-	tweenservice:Create(updategui.main, TweenInfo.new(0.75, Enum.EasingStyle.Quart), {Size = UDim2.new(0, 350,0, 230)}):Play()
-
-	task.wait(0.07)
-
-	tweenservice:Create(updategui.main.time, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()
-	tweenservice:Create(updategui.main.info, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()
-	task.wait(0.07)
-	tweenservice:Create(updategui.main.text.TextLabel, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()
-	task.wait(0.07)
-	tweenservice:Create(updategui.main.text.more, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()
-
-	local duration = 25
-	local startTime = tick()
-
-	local connection
-	connection = runservice.Heartbeat:Connect(function()
-		local elapsed = tick() - startTime
-		local remaining = math.max(duration - elapsed, 0)
-
-		updategui.main.time.Text = "Destroying in " .. string.format("%.1f", remaining) .. " secs"
-
-		if remaining <= 0 then
-			connection:Disconnect()
-
-			tweenservice:Create(updategui.main.text.TextLabel, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()
-			task.wait(0.07)
-			tweenservice:Create(updategui.main.text.more, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()
-			task.wait(0.2)
-			tweenservice:Create(updategui.main, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {Transparency = 1}):Play()
-			tweenservice:Create(updategui.main, TweenInfo.new(0.75, Enum.EasingStyle.Quart), {Size = UDim2.new(0, 150,0, 130)}):Play()
-			updategui.main.s2.Visible = false
-
-
-
-			task.wait(0.07)
-
-			tweenservice:Create(updategui.main.time, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()
-			tweenservice:Create(updategui.main.info, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()
-
-			task.wait(0.75)
-			updategui:Destroy()
-		end
-	end)
-
-	updategui.main.s2.interact.MouseButton1Click:Connect(function()
-
-		tweenservice:Create(updategui.main.s2.Frame.UIStroke, TweenInfo.new(0.5, Enum.EasingStyle.Quart), {Color = Color3.fromRGB(74, 255, 33)}):Play()
-		tweenservice:Create(updategui.main.s2.Frame.UIStroke, TweenInfo.new(0.5, Enum.EasingStyle.Quart), {Transparency = 0}):Play()
-		task.wait(0.5)
-		tweenservice:Create(updategui.main.s2.Frame.UIStroke, TweenInfo.new(0.5, Enum.EasingStyle.Quart), {Color = Color3.fromRGB(87, 101, 242)}):Play()
-		tweenservice:Create(updategui.main.s2.Frame.UIStroke, TweenInfo.new(0.5, Enum.EasingStyle.Quart), {Transparency = 0.5}):Play()
-		setclipboard(cord)
-	end)
-end
-
-if update then return end
 
 local Library =         game:GetObjects("rbxassetid://123800669522471")[1]
-local Loader =          game:GetObjects("rbxassetid://110221114597158")[1]
 
 local resizing =        false
 local screenSize =      workspace.CurrentCamera.ViewportSize
@@ -96,11 +20,10 @@ local dragOffsetMobile =  150
 local camera =          workspace.CurrentCamera
 
 Library.Enabled = false
-Loader.Enabled = false
 
 local loaded = false
 
-local syde = {
+local cryable = {
 
 	theme = {
 		['Accent'] = Color3.fromRGB(255, 151, 227);
@@ -114,15 +37,13 @@ local syde = {
 	Build = 'Sv0';
 	plugins = {};
 	ConfigEnabled = false;
-	ConfigFolder = 'Syde';
+	ConfigFolder = 'Cryable';
 	ConfigFile = 'Config';
 	Flags = {};
 	SettingsFlags = {};
 }
 
--- @Utilities
-
-function syde:DeepMerge(target, source)
+function cryable:DeepMerge(target, source)
 	for k, v in pairs(source) do
 		if type(v) == "table" and type(target[k]) == "table" then
 			self:DeepMerge(target[k], v) 
@@ -132,9 +53,9 @@ function syde:DeepMerge(target, source)
 	end
 end
 
-function syde:UpdateTheme(Config)
+function cryable:UpdateTheme(Config)
 	if type(Config) ~= "table" then
-		warn("[UpdateTheme] Invalid configuration table")
+
 		return
 	end
 
@@ -150,12 +71,12 @@ function syde:UpdateTheme(Config)
 				end
 				table.insert(updatedKeys, key)
 			else
-				warn(("[UpdateTheme] Type mismatch for key '%s' (expected %s, got %s)"):format(
+				"):format(
 					key, typeof(self.theme[key]), typeof(value)
 					))
 			end
 		else
-			warn("[UpdateTheme] Key '" .. key .. "' does not exist in theme")
+
 		end
 	end
 
@@ -166,11 +87,8 @@ function syde:UpdateTheme(Config)
 	end
 end
 
--- fractality
-
 local RunService = game:GetService'RunService'
 local camera = workspace.CurrentCamera
-
 
 do
 	local function IsNotNaN(x)
@@ -187,8 +105,7 @@ local binds = {}
 local root = Instance.new('Folder', camera)
 root.Name = 'neon'
 
-
-local GenUid; do -- Generate unique names for RenderStepped bindings
+local GenUid; do 
 	local id = 0
 	function GenUid()
 		id = id + 1
@@ -200,7 +117,7 @@ local DrawQuad; do
 	local acos, max, pi, sqrt = math.acos, math.max, math.pi, math.sqrt
 	local sz = 0.2
 
-	function DrawTriangle(v1, v2, v3, p0, p1) -- I think Stravant wrote this function
+	function DrawTriangle(v1, v2, v3, p0, p1) 
 		local s1 = (v1 - v2).magnitude
 		local s2 = (v2 - v3).magnitude
 		local s3 = (v3 - v1).magnitude
@@ -273,14 +190,7 @@ local DrawQuad; do
 	end
 end
 
-
---------------------------------
----- Module API --------------------------------
-----------------------------------------------------------------
-
-
--- Create a part binding for a GuiObject.
-function syde:BindFrame(frame, properties)
+function cryable:BindFrame(frame, properties)
 	if binds[frame] then
 		return binds[frame].parts
 	end
@@ -290,7 +200,7 @@ function syde:BindFrame(frame, properties)
 	local f = Instance.new('Folder', root)
 	f.Name = frame.Name
 
-	local parents = {} -- construct hierarchy tree for rotation
+	local parents = {} 
 	do
 		local function add(child)
 			if child:IsA'GuiObject' then
@@ -303,7 +213,7 @@ function syde:BindFrame(frame, properties)
 
 	local function UpdateOrientation(fetchProps)
 		local zIndex = 1 - 0.05*frame.ZIndex
-		-- the transparency inversion bug still surfaces when there's z-fighting
+
 		local tl, br = frame.AbsolutePosition, frame.AbsolutePosition + frame.AbsoluteSize
 		local tr, bl = Vector2.new(br.x, tl.y), Vector2.new(tl.x, br.y)
 		do
@@ -350,9 +260,8 @@ function syde:BindFrame(frame, properties)
 	return binds[frame].parts
 end
 
--- Applies the `properties` table to bound parts.
-function syde:Modify(frame, properties)
-	local parts = syde:GetBoundParts(frame)
+function cryable:Modify(frame, properties)
+	local parts = cryable:GetBoundParts(frame)
 	if parts then
 		for propName, propValue in pairs(properties) do
 			for _, pt in pairs(parts) do
@@ -360,12 +269,11 @@ function syde:Modify(frame, properties)
 			end
 		end
 	else
-		warn(('No part bindings exist for %s'):format(frame:GetFullName()))
+		:format(frame:GetFullName()))
 	end
 end
 
--- Removes the part binding from a gui object if one exists.
-function syde:UnbindFrame(frame)
+function cryable:UnbindFrame(frame)
 	local cb = binds[frame]
 	if cb then
 		RunService:UnbindFromRenderStep(cb.uid)
@@ -374,25 +282,21 @@ function syde:UnbindFrame(frame)
 		end
 		binds[frame] = nil
 	else
-		warn(('No part bindings exist for %s'):format(frame:GetFullName()))
+		:format(frame:GetFullName()))
 	end
 end
 
--- Returns true if a part binding exists for the gui object.
-function syde:HasBinding(frame)
+function cryable:HasBinding(frame)
 	return binds[frame] ~= nil
 end
 
--- Returns an array using this.
-function syde:GetBoundParts(frame)
+function cryable:GetBoundParts(frame)
 	return binds[frame] and binds[frame].parts
 end
 
-
-
-function syde:GetDark(Color, val, mode)
+function cryable:GetDark(Color, val, mode)
 	if typeof(Color) ~= "Color3" or type(val) ~= "number" then
-		warn("[getdark] Invalid input: Expected (Color3, number)")
+		")
 		return Color
 	end
 
@@ -409,7 +313,7 @@ function syde:GetDark(Color, val, mode)
 	return Color3.fromHSV(H, S, V)
 end
 
-function syde:GetLighter(color: Color3, strength: number)
+function cryable:GetLighter(color: Color3, strength: number)
 	strength = math.clamp(strength or 0.2, 0, 1)
 
 	return Color3.new(
@@ -419,10 +323,9 @@ function syde:GetLighter(color: Color3, strength: number)
 	)
 end
 
-function syde:ColorPack(color)
+function cryable:ColorPack(color)
 	assert(typeof(color) == "Color3", "PackColor expects a Color3 value.")
 
-	-- Convert to RGB integer values
 	return {
 		R = math.round(color.R * 255),
 		G = math.round(color.G * 255),
@@ -430,7 +333,7 @@ function syde:ColorPack(color)
 	}
 end
 
-function syde:ColorUnpack(color)
+function cryable:ColorUnpack(color)
 	assert(type(color) == "table" or type(color) == "string", "Invalid color format. Expected table (RGB) or string (HEX).")
 
 	if type(color) == "table" then
@@ -446,23 +349,23 @@ function syde:ColorUnpack(color)
 	end
 end
 
-function syde:HidePH(instance, placeholder, recursive)
+function cryable:HidePH(instance, placeholder, recursive)
 	if typeof(instance) ~= "Instance" or type(placeholder) ~= "string" then
-		warn("[removeplaceholder] Invalid input: Expected (Instance, string)")
+		")
 		return
 	end
 
 	local target = instance:FindFirstChild(placeholder)
 
 	if not target then
-		warn(("[removeplaceholder] Placeholder '%s' not found in instance '%s'"):format(placeholder, instance.Name))
+		:format(placeholder, instance.Name))
 		return
 	end
 
 	if target:IsA("GuiObject") then
 		target.Visible = false
 	else
-		warn(("[removeplaceholder] '%s' is not a GuiObject and cannot be hidden"):format(placeholder))
+		:format(placeholder))
 		return
 	end
 
@@ -475,28 +378,28 @@ function syde:HidePH(instance, placeholder, recursive)
 	end
 end
 
-function syde:AddConnection(Type, Callback)
+function cryable:AddConnection(Type, Callback)
 	if typeof(Type) ~= "RBXScriptSignal" then
-		error("[AddConnection] Invalid Type: Expected RBXScriptSignal, got " .. typeof(Type))
+		)
 	end
 	if typeof(Callback) ~= "function" then
-		error("[AddConnection] Invalid Callback: Expected function, got " .. typeof(Callback))
+		)
 	end
 
 	local Connection = Type:Connect(Callback)
 	local ConnectionData = { Connection = Connection }
 
-	syde.Connections = syde.Connections or {}
-	table.insert(syde.Connections, ConnectionData)
+	cryable.Connections = cryable.Connections or {}
+	table.insert(cryable.Connections, ConnectionData)
 
 	local function Disconnect()
 		if Connection.Connected then
 			Connection:Disconnect()
 		end
 
-		for i = #syde.Connections, 1, -1 do
-			if syde.Connections[i] == ConnectionData then
-				table.remove(syde.Connections, i)
+		for i = #cryable.Connections, 1, -1 do
+			if cryable.Connections[i] == ConnectionData then
+				table.remove(cryable.Connections, i)
 				break
 			end
 		end
@@ -504,9 +407,9 @@ function syde:AddConnection(Type, Callback)
 
 	task.spawn(function()
 		task.wait(10)
-		for i = #syde.Connections, 1, -1 do
-			if not syde.Connections[i].Connection.Connected then
-				table.remove(syde.Connections, i)
+		for i = #cryable.Connections, 1, -1 do
+			if not cryable.Connections[i].Connection.Connected then
+				table.remove(cryable.Connections, i)
 			end
 		end
 	end)
@@ -514,19 +417,16 @@ function syde:AddConnection(Type, Callback)
 	return Connection, Disconnect
 end
 
---@@Bento
-
 local Bento = {}
 Bento.__index = Bento
 
--- create layout
 function Bento.new(container, config)
 	local self = setmetatable({}, Bento)
 
 	self.Container = container
 	self.Items = {}
 
-	self.Rows = {} -- NEW (optional manual rows)
+	self.Rows = {} 
 
 	self.Gap = config.Gap or 8
 	self.RightPadding = config.RightPadding or 16
@@ -540,15 +440,12 @@ function Bento.new(container, config)
 	return self
 end
 
--- NEW (optional)
 function Bento:NewRow()
 	local row = {}
 	table.insert(self.Rows,row)
 	return row
 end
 
-
--- register frame
 function Bento:AddItem(frame, options, row)
 
 	frame.AnchorPoint = Vector2.new(0,0)
@@ -556,7 +453,7 @@ function Bento:AddItem(frame, options, row)
 	local item = {
 		Frame = frame,
 		Bottom = options and options.Bottom,
-		Row = row -- NEW
+		Row = row 
 	}
 
 	self.Original[frame] = {
@@ -572,7 +469,6 @@ function Bento:AddItem(frame, options, row)
 
 end
 
--- tween helper
 function Bento:Tween(frame, goal)
 
 	if self.ActiveTweens[frame] then
@@ -600,7 +496,6 @@ function Bento:Tween(frame, goal)
 
 end
 
--- calculate layout
 function Bento:Update()
 
 	local containerWidth = self.Container.AbsoluteSize.X
@@ -616,14 +511,8 @@ function Bento:Update()
 		end
 	end
 
-
-	---------------------------------
-	-- rows
-	---------------------------------
-
 	local sortedRows = {}
 
-	-- if manual rows exist, use them
 	if #self.Rows > 0 then
 
 		for _,row in ipairs(self.Rows) do
@@ -633,7 +522,6 @@ function Bento:Update()
 		end
 
 	else
-		-- fallback to original Y-based grouping
 
 		local rows = {}
 
@@ -662,12 +550,6 @@ function Bento:Update()
 
 	end
 
-
-
-	---------------------------------
-	-- detect stack mode
-	---------------------------------
-
 	local widestRow = 0
 
 	for _,row in ipairs(sortedRows) do
@@ -686,14 +568,7 @@ function Bento:Update()
 
 	end
 
-
 	local stacked = widestRow > containerWidth
-
-
-
-	---------------------------------
-	-- STACK MODE
-	---------------------------------
 
 	if stacked then
 
@@ -716,10 +591,9 @@ function Bento:Update()
 
 		end
 
-
 		for _,row in ipairs(sortedRows) do
 			for _,item in ipairs(row.Items) do
-				if not item.Bottom then -- FIX
+				if not item.Bottom then 
 					stackItem(item)
 				end
 			end
@@ -728,7 +602,6 @@ function Bento:Update()
 		for _,item in ipairs(bottomItems) do
 			stackItem(item)
 		end
-
 
 		self.Container.Size = UDim2.new(
 			self.OriginalContainerSize.X.Scale,
@@ -740,12 +613,6 @@ function Bento:Update()
 		return
 	end
 
-
-
-	---------------------------------
-	-- NORMAL MODE
-	---------------------------------
-
 	for _,row in ipairs(sortedRows) do
 
 		table.sort(row.Items,function(a,b)
@@ -756,8 +623,6 @@ function Bento:Update()
 			return ax < bx
 
 		end)
-
-
 
 		for i,item in ipairs(row.Items) do
 
@@ -790,7 +655,6 @@ function Bento:Update()
 
 			end
 
-
 			self:Tween(frame,{
 				Position = original.Position,
 				Size = UDim2.fromOffset(width,height)
@@ -800,9 +664,6 @@ function Bento:Update()
 
 	end
 
-
-
-	-- bottom items stay at original positions
 	for _,item in ipairs(bottomItems) do
 
 		local frame = item.Frame
@@ -819,8 +680,6 @@ function Bento:Update()
 		})
 
 	end
-
-
 
 	self.Container.Size = self.OriginalContainerSize
 
@@ -847,7 +706,7 @@ function Bento:Bind()
 
 end
 
-function syde:MakeResizable(Dragger, Object, MinSize, Callback, LockAspectRatio)
+function cryable:MakeResizable(Dragger, Object, MinSize, Callback, LockAspectRatio)
 	assert(typeof(Dragger) == "Instance" and Dragger:IsA("GuiObject"), "[MakeResizable] Dragger must be a GuiObject")
 	assert(typeof(Object) == "Instance" and Object:IsA("GuiObject"), "[MakeResizable] Object must be a GuiObject")
 	assert(typeof(MinSize) == "Vector2", "[MakeResizable] MinSize must be a Vector2")
@@ -858,7 +717,6 @@ function syde:MakeResizable(Dragger, Object, MinSize, Callback, LockAspectRatio)
 	local startPosition, startSize = nil, nil
 	local isResizing = false
 
-	-- helper for both mouse and touch
 	local function getInputPos(input)
 		if input.UserInputType == Enum.UserInputType.Touch then
 			return Vector2.new(input.Position.X, input.Position.Y)
@@ -917,15 +775,14 @@ function syde:MakeResizable(Dragger, Object, MinSize, Callback, LockAspectRatio)
 		end
 	end
 
-	syde:AddConnection(Dragger.InputBegan, onInputBegan)
-	syde:AddConnection(userInput.InputChanged, onInputChanged)
-	syde:AddConnection(Dragger.InputEnded, onInputEnded)
+	cryable:AddConnection(Dragger.InputBegan, onInputBegan)
+	cryable:AddConnection(userInput.InputChanged, onInputChanged)
+	cryable:AddConnection(Dragger.InputEnded, onInputEnded)
 end
-
 
 local loadTweens = {}
 
-function syde:registerLoadTween(object, properties, initialState, tweenInfo)
+function cryable:registerLoadTween(object, properties, initialState, tweenInfo)
 	assert(typeof(object) == "Instance", "[registerLoadTween] Object must be an Instance")
 	assert(typeof(properties) == "table", "[registerLoadTween] Properties must be a table")
 	assert(typeof(initialState) == "table", "[registerLoadTween] Initial state must be a table")
@@ -939,7 +796,7 @@ function syde:registerLoadTween(object, properties, initialState, tweenInfo)
 	}
 end
 
-function syde:resetToInitialState(animated, resetTweenInfo)
+function cryable:resetToInitialState(animated, resetTweenInfo)
 	for object, tweenData in pairs(loadTweens) do
 		if object and object.Parent then
 			tweenData.tween:Cancel()
@@ -958,8 +815,8 @@ function syde:resetToInitialState(animated, resetTweenInfo)
 	end
 end
 
-function syde:replayLoadTweens(targetObject)
-	syde:resetToInitialState(false)
+function cryable:replayLoadTweens(targetObject)
+	cryable:resetToInitialState(false)
 
 	for object, tweenData in pairs(loadTweens) do
 		if object and object.Parent then
@@ -971,7 +828,7 @@ function syde:replayLoadTweens(targetObject)
 	end
 end
 
-function syde:removeLoadTween(object)
+function cryable:removeLoadTween(object)
 	if loadTweens[object] then
 		loadTweens[object].tween:Cancel()
 		loadTweens[object] = nil
@@ -980,11 +837,10 @@ end
 
 local RunService = game:GetService("RunService")
 
-function syde:WiggleText(label)
+function cryable:WiggleText(label)
 	if not label or not label:IsA("TextLabel") then return end
 	if not label.Text or label.Text == "" then return end
 
-	-- Remove old animation
 	if label:FindFirstChild("WiggleContainer") then
 		label.WiggleContainer:Destroy()
 	end
@@ -993,10 +849,9 @@ function syde:WiggleText(label)
 	container.Name = "WiggleContainer"
 	container.Parent = label
 
-	-- Hide original label text
 	label.TextTransparency = 1
 
-	local baseText = label.Text:gsub("<.->", "") -- remove RichText tags
+	local baseText = label.Text:gsub("<.->", "") 
 	local fontFace = label.FontFace
 	local baseSize = label.TextSize
 	local textColor = label.TextColor3
@@ -1004,7 +859,6 @@ function syde:WiggleText(label)
 	local chars = {}
 	local xOffset = 0
 
-	-- Create a label for each character
 	for i = 1, #baseText do
 		local char = baseText:sub(i, i)
 		local charLabel = Instance.new("TextLabel")
@@ -1024,13 +878,12 @@ function syde:WiggleText(label)
 		table.insert(chars, charLabel)
 	end
 
-	-- Animate characters
 	local t = 0
 	local id = "Wiggle_" .. tostring(math.random(1, 999999))
 	RunService:BindToRenderStep(id, Enum.RenderPriority.First.Value, function(dt)
 		t += dt * 6
 		for i, charLabel in ipairs(chars) do
-			local offset = math.sin(t + i * 0.3) * 3 -- wiggle amplitude
+			local offset = math.sin(t + i * 0.3) * 3 
 			charLabel.Position = UDim2.new(0, charLabel.Position.X.Offset, 0.5, offset)
 		end
 	end)
@@ -1040,8 +893,7 @@ function syde:WiggleText(label)
 	end)
 end
 
-
-function syde:StopWiggle(label)
+function cryable:StopWiggle(label)
 	for i, data in ipairs(self.Connections) do
 		if data.label == label then
 			data.conn:Disconnect()
@@ -1051,9 +903,7 @@ function syde:StopWiggle(label)
 	end
 end
 
-
-
-function syde:updateLayout(container, spacing)
+function cryable:updateLayout(container, spacing)
 	spacing = spacing or 5
 	local yOffset = 0
 	local containerWidth = container.AbsoluteSize.X 
@@ -1067,14 +917,12 @@ function syde:updateLayout(container, spacing)
 	if resizing == false then
 		for _, child in ipairs(container:GetChildren()) do
 			if (child:IsA("Frame") or child:IsA("ImageLabel") or child:IsA("TextLabel") or child:IsA("TextButton")) and child.Visible then
-				--child.Size = UDim2.new(1, -10, 0, child.Size.Y.Offset) -- Full width, fixed height
-				-- child.Position = UDim2.new(0, 0, 0, yOffset)
+
 				tweenservice:Create(child, TweenInfo.new(0.45, Enum.EasingStyle.Exponential), {Position = UDim2.new(0, 0, 0, yOffset)}):Play()
 				yOffset = yOffset + child.AbsoluteSize.Y + spacing
 			end
 		end
 	end
-
 
 	container.CanvasSize = UDim2.new(0, 0, 0, yOffset)
 end
@@ -1082,7 +930,7 @@ end
 local dragSpeed = 0.6
 local LockToScreen = false
 
-function syde:AddDrag(Object, Main, ConstrainToParent)
+function cryable:AddDrag(Object, Main, ConstrainToParent)
 	assert(typeof(Object) == "Instance" and Object:IsA("GuiObject"), "[AddDrag] Object must be a GuiObject")
 	assert(typeof(Main) == "Instance" and Main:IsA("GuiObject"), "[AddDrag] Main must be a GuiObject")
 
@@ -1100,7 +948,6 @@ function syde:AddDrag(Object, Main, ConstrainToParent)
 		local frameSize = Main.AbsoluteSize
 		local anchorPoint = Main.AnchorPoint
 
-		-- Calculate the absolute position based on newPos
 		local absX = newPos.X.Offset
 		local absY = newPos.Y.Offset
 
@@ -1124,10 +971,7 @@ function syde:AddDrag(Object, Main, ConstrainToParent)
 		end
 	end
 
-
-
-
-	syde:AddConnection(Object.InputBegan, function(input)
+	cryable:AddConnection(Object.InputBegan, function(input)
 		if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
 			dragging = true
 			startMousePos = getInputPos(input)
@@ -1141,8 +985,7 @@ function syde:AddDrag(Object, Main, ConstrainToParent)
 		end
 	end)
 
-
-	syde:AddConnection(userInput.InputChanged, function(input)
+	cryable:AddConnection(userInput.InputChanged, function(input)
 		if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
 			local currentMousePos = getInputPos(input)
 			if currentMousePos and startMousePos then
@@ -1158,30 +1001,30 @@ function syde:AddDrag(Object, Main, ConstrainToParent)
 		end
 	end)
 
-	syde:AddConnection(Object.InputEnded, function(input)
+	cryable:AddConnection(Object.InputEnded, function(input)
 		if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
 			dragging = false
 		end
 	end)
 end
 
-function syde:HidePlaceHolder(instance, placeholder, recursive)
+function cryable:HidePlaceHolder(instance, placeholder, recursive)
 	if typeof(instance) ~= "Instance" or type(placeholder) ~= "string" then
-		warn("[removeplaceholder] Invalid input: Expected (Instance, string)")
+		")
 		return
 	end
 
 	local target = instance:FindFirstChild(placeholder)
 
 	if not target then
-		warn(("[removeplaceholder] Placeholder '%s' not found in instance '%s'"):format(placeholder, instance.Name))
+		:format(placeholder, instance.Name))
 		return
 	end
 
 	if target:IsA("GuiObject") then
 		target.Visible = false
 	else
-		warn(("[removeplaceholder] '%s' is not a GuiObject and cannot be hidden"):format(placeholder))
+		:format(placeholder))
 		return
 	end
 
@@ -1198,282 +1041,50 @@ local rs
 local ss
 local mh = true
 
-
---@Loader
 do
 
-	function syde:Load(Config)
-		task.wait(1)
-		print('[SYED] Loader Loaded')
-		local LOADER = Loader
-		LOADER.Enabled = true
-		LOADER.Parent = coregui
-
-		-- PreLoad
-		Config.Name = Config.Name or 'Syde™'
-		Config.Logo = Config.Logo or 'rbxassetid://14554547135'
-		Config.ConfigFolder = Config.ConfigFolder or 'syde'
-		Config.Status = Config.Status or false
-		Config.Accent = Config.Accent or syde.theme.Accent
-		Config.HitBox = Config.HitBox or syde.theme.HitBox
-
-		LOADER.loader.profile.Title.TextTransparency = 1
-		LOADER.loader.profile.ImageTransparency = 1
-		LOADER.loader.profile.Title.Text = Config.Name
-		--	LOADER.load.logo.stroke.UIStroke.Transparency = 1
-
-		local LoaderConfig = {
-			Name = Config.Name;
-			Logo = 'rbxassetid://'..Config.Logo;
-			ConfigFolder = Config.ConfigFolder;
-			Status = Config.Status;
-			Accent = Config.Accent or syde.theme.Accent;
-			Hitbox = Config.HitBox or syde.theme.HitBox;
-			Socials = {}
-		}
-
-		if LoaderConfig.Status == false then
-			--	LOADER.load.logo.stroke.UIStroke.Color = Color3.fromRGB(24, 24, 24)
-			LOADER.loader.profile.Title.Text = LoaderConfig.Name
-		end
-
-		local statusColors = {
-			Stable = { Color = Color3.fromRGB(25, 229, 22), Text = '<font color="#24bf48">Stable</font>' },
-			Unstable = { Color = Color3.fromRGB(227, 229, 81), Text = '<font color="#e3e551">Unstable</font>' },
-			Detected = { Color = Color3.fromRGB(229, 44, 47), Text = '<font color="#e52c2f">Detected</font>' },
-			Patched = { Color = Color3.fromRGB(229, 229, 229), Text = '<font color="#e52c2f">Patched</font>' }
-		}
-
-		local statusData = statusColors[LoaderConfig.Status]
-		if statusData then
-			LOADER.loader.profile.status.BackgroundColor3 = statusData.Color
-			--	LOADER.load.logo["Title/Status"].Text = string.format('%s  <font color="#363636">•</font>  %s', LoaderConfig.Name, statusData.Text)
-		end
-
-		LOADER.loader.profile.Image = LoaderConfig.Logo;
-		LOADER.loader.ImageLabel.Image = LoaderConfig.Logo;
-		--	LOADER.load.info.build.Text = syde.Build
-
-		local ti = TweenInfo.new(0.5, Enum.EasingStyle.Exponential)
-
-		task.spawn(function()
-			while LOADER and LOADER.Parent do
-				task.wait()
-
-				local loaderFrame = LOADER:FindFirstChild("loader")
-				if not loaderFrame then break end
-
-				local dots = loaderFrame:FindFirstChild("dots")
-				if not dots then break end
-
-				local function resetDots()
-					for _, v in ipairs(dots:GetChildren()) do
-						if v:IsA("Frame") then
-							tweenservice:Create(v, ti, {BackgroundTransparency = 0.6}):Play()
-						end
-					end
-				end
-
-				-- 1
-
-				if dots:FindFirstChild("dot1") then
-					tweenservice:Create(dots.dot1, ti, {BackgroundTransparency = 0}):Play()
-				end
-				task.wait(0.5)
-				resetDots()
-
-
-				-- 2
-				if dots:FindFirstChild("dot3") then
-					tweenservice:Create(dots.dot3, ti, {BackgroundTransparency = 0}):Play()
-				end
-				task.wait(0.5)
-				resetDots()
-
-
-				-- 3
-				if dots:FindFirstChild("dot2") then
-					tweenservice:Create(dots.dot2, ti, {BackgroundTransparency = 0}):Play()
-				end
-				task.wait(0.5)
-				resetDots()
-
-			end
-		end)
-
-
-		local TweenWorkPos = 315
-		local TweenWorkAppear = 287
-		local TweenWorkDisappear = 270
-
-		local Styles = {
-			GitHub = {
-				BackGroundColor = Color3.fromRGB(39, 39, 39);
-				--	GradColor = ColorSequence.new{ColorSequenceKeypoint.new(0.00, Color3.fromRGB(255, 255, 255)), ColorSequenceKeypoint.new(1.00, Color3.fromRGB(129, 129, 129))};
-				StrokeColor = Color3.fromRGB(39, 39, 39);
-				Icon = 'rbxassetid://112129825794851'
-			},
-			Discord = {
-				BackGroundColor = Color3.fromRGB(88, 141, 255);
-				--	GradColor = ColorSequence.new{ColorSequenceKeypoint.new(0.00, Color3.fromRGB(255, 255, 255)), ColorSequenceKeypoint.new(1.00, Color3.fromRGB(91, 125, 147))};
-				StrokeColor = Color3.fromRGB(88, 141, 255);
-				Icon = 'rbxassetid://113723018301753'
-			},
-			Site = {
-				BackGroundColor = Color3.fromRGB(242, 83, 112);
-				--	GradColor = ColorSequence.new{ColorSequenceKeypoint.new(0.00, Color3.fromRGB(255, 255, 255)), ColorSequenceKeypoint.new(1.00, Color3.fromRGB(181, 33, 255))};
-				StrokeColor = Color3.fromRGB(242, 83, 112);
-				Icon = 'rbxassetid://127485237503891'
-			}
-		}
-
-		local logo = LOADER.loader.profile
-		--	local sl = logo.sl
-		--	local strokeGradient = logo.stroke.UIStroke.UIGradient
-
-		local loadedsocial = false
-
-		local Socials = Config.Socials or {}
-		local maxSocials = 3
-		local count = 0
-
-
-		local SocialTemplate = LOADER.loader.profile.socials.s1
-
-		for platform, value in pairs(Socials) do
-			if count >= maxSocials then break end
-			if not Styles[platform] then continue end
-			if not SocialTemplate then break end
-
-			count += 1
-
-			local clone = SocialTemplate:Clone()
-			clone.Visible = true
-			clone.Name = platform .. "_Social"
-			clone.Parent = SocialTemplate.Parent
-
-			-- Positioning (stack horizontally)
-			--	clone.Position = UDim2.new(0, (count - 1) * 110, 1, -40)
-
-			-- Apply Style
-			clone.BackgroundColor3 = Styles[platform].BackGroundColor
-			clone.ImageLabel.Image = Styles[platform].Icon
-
-			if clone.Frame:FindFirstChild("UIStroke") then
-				clone.Frame.UIStroke.Color = Styles[platform].StrokeColor
-			end
-
-			-- Set Text (change if your text label has different name)
-			if clone:FindFirstChild("Title") then
-				clone.Title.Text = value
-			end
-
-			clone.interact.MouseButton1Click:Connect(function()
-				if value ~= '' then
-					tweenservice:Create(clone.Frame.UIStroke, TweenInfo.new(0.5, Enum.EasingStyle.Quart), {Color = Color3.fromRGB(74, 255, 33)}):Play()
-					tweenservice:Create(clone.Frame.UIStroke, TweenInfo.new(0.5, Enum.EasingStyle.Quart), {Transparency = 0}):Play()
-					task.wait(0.5)
-					tweenservice:Create(clone.Frame.UIStroke, TweenInfo.new(0.5, Enum.EasingStyle.Quart), {Color = Styles[platform].BackGroundColor}):Play()
-					tweenservice:Create(clone.Frame.UIStroke, TweenInfo.new(0.5, Enum.EasingStyle.Quart), {Transparency = 0.5}):Play()
-					print(value)
-				else
-					tweenservice:Create(clone.Frame.UIStroke, TweenInfo.new(0.5, Enum.EasingStyle.Quart), {Color = Color3.fromRGB(255, 41, 45)}):Play()
-					tweenservice:Create(clone.Frame.UIStroke, TweenInfo.new(0.5, Enum.EasingStyle.Quart), {Transparency = 0}):Play()
-					task.wait(0.5)
-					tweenservice:Create(clone.Frame.UIStroke, TweenInfo.new(0.5, Enum.EasingStyle.Quart), {Color = Styles[platform].BackGroundColor}):Play()
-					tweenservice:Create(clone.Frame.UIStroke, TweenInfo.new(0.5, Enum.EasingStyle.Quart), {Transparency = 0.5}):Play()
-				end
-
-				setclipboard(value)
-			end)
-
-			clone.MouseEnter:Connect(function()
-				tweenservice:Create(clone.Frame.UIStroke, TweenInfo.new(0.5, Enum.EasingStyle.Quart), {Transparency = 0.5}):Play()
-			end)
-			clone.MouseLeave:Connect(function()
-				tweenservice:Create(clone.Frame.UIStroke, TweenInfo.new(0.5, Enum.EasingStyle.Quart), {Transparency = 0}):Play()
-			end)
-
-			loadedsocial = true
-		end
-
-		tweenservice:Create(logo, TweenInfo.new(1, Enum.EasingStyle.Exponential), {ImageTransparency = 0}):Play()
-		--	tweenservice:Create(logo, TweenInfo.new(1, Enum.EasingStyle.Quint), {Position = UDim2.new(0.5, 0,0, 105)}):Play()
-
-		tweenservice:Create(logo.Title, TweenInfo.new(2, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()
-		task.wait(1)
-
-
-		--	local function initLoader()
-		--	tweenservice:Create( LOADER.load.Salt, TweenInfo.new(0.65, Enum.EasingStyle.Quint), {Size = UDim2.new(0, 25,0, 25)}):Play()
-		--	tweenservice:Create( LOADER.load.Salt, TweenInfo.new(0.65, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()
-		--	end
-
-		local function TweenWorkLabel(Finish, icon, Text)
-			LOADER.loader.work.Position = UDim2.new(0.5, 0,1, -40)
-			LOADER.loader.work.Text = Text
-			LOADER.loader.work.ImageLabel.Image = icon
-			tweenservice:Create( LOADER.loader.work, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), { TextTransparency = 0 }):Play()
-			tweenservice:Create( LOADER.loader.work.ImageLabel, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), { ImageTransparency = 0 }):Play()
-			tweenservice:Create( LOADER.loader.work, TweenInfo.new(0.5, Enum.EasingStyle.Quint), { Position = UDim2.new(0.5, 0,1, -73) }):Play()
-			--	tweenservice:Create(game.Workspace.Camera, TweenInfo.new(1, Enum.EasingStyle.Exponential), { FieldOfView  = game.Workspace.Camera.FieldOfView - 3 }):Play()
-			task.wait(Finish)
-			tweenservice:Create(LOADER.loader.work, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), { TextTransparency = 1 }):Play()
-			tweenservice:Create( LOADER.loader.work.ImageLabel, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), { ImageTransparency = 1 }):Play()
-			tweenservice:Create( LOADER.loader.work, TweenInfo.new(0.5, Enum.EasingStyle.Quint), { Position = UDim2.new(0.5, 0,1, -100) }):Play()
-			task.wait(0.6)
-
-			-- reset
-
-		end
+	function cryable:Load(Config)
 
 		local function load()
-			TweenWorkLabel(1,'rbxassetid://136002400178503', '')
-
+			
 			if Config.ConfigurationSaving and Config.ConfigurationSaving.Enabled then
-				local folderName = Config.ConfigurationSaving.FolderName or "SydeSec"
+				local folderName = Config.ConfigurationSaving.FolderName or "CryableSec"
 				local fileName = Config.ConfigurationSaving.FileName or "default_config"
 				local fullPath = folderName .. "/" .. fileName .. ".lua"
 
-				syde.ConfigEnabled = true
-				syde.ConfigFolder = folderName  
-				syde.ConfigFile = fileName     
+				cryable.ConfigEnabled = true
+				cryable.ConfigFolder = folderName  
+				cryable.ConfigFile = fileName     
 
-				-- Ensure folder exists
 				if isfolder and not isfolder(folderName) then
 					local success, err = pcall(function()
 						makefolder(folderName)
 					end)
 					if not success then
-						warn("[SYDE] Failed to create folder:", err)
+
 					end
 				end
 
-				-- File validation
 				local success, err = pcall(function()
 					if isfile and not isfile(fullPath) then
-						writefile(fullPath, "-- Protected UI Configuration")
+						writefile(fullPath, "
 					else
 						local content = readfile(fullPath)
 					end
 				end)
 
 				if not success then
-					warn("[SYDE] File write/read blocked or failed:", err)
+
 				end
 			end
 
-
-			TweenWorkLabel(1,'rbxassetid://105810189969774', '')
-
-			local UI_TAG = "sydeUILoader"
-			local MARKER_NAME = "SYDEUIDetector"
-			local INTERNAL_UUID = ("SYDE-" .. tostring(game.JobId):gsub("-", "") .. tostring(tick())):gsub("%.", "")
+			
+			local UI_TAG = "cryableUILoader"
+			local MARKER_NAME = "CRYABLEUIDetector"
+			local INTERNAL_UUID = ("CRYABLE-" .. tostring(game.JobId):gsub("-", "") .. tostring(tick())):gsub("%.", "")
 			local PROTECTION_EVENT = Instance.new("BindableEvent")
 			local HttpService = game:GetService("HttpService")
 
-
-			-- Cleanup old UI 
 			local function deepCleanup()
 				for _, v in ipairs(coregui:GetChildren()) do
 					if v:IsA("ScreenGui") and v:FindFirstChild(MARKER_NAME) then
@@ -1485,13 +1096,12 @@ do
 			end
 			deepCleanup()
 
-			-- Load the Library
 			local successLibrary, Library = pcall(function()
-				return Library -- Replace with actual GetObjects if needed
+				return Library 
 			end)
 
 			if not successLibrary or not Library then
-				warn("[SYDE] Failed to load Library.")
+
 				return
 			end
 
@@ -1507,12 +1117,11 @@ do
 				Library.Parent = coregui
 			end)
 
-			-- Ensure Library stays in CoreGui
 			task.spawn(function()
 				while Library and Library.Parent do
 					task.wait(1)
 					if Library.Parent ~= coregui then
-						warn("Syde 〡 UI moved. Restoring...")
+
 						pcall(function()
 							Library.Parent = coregui
 						end)
@@ -1520,33 +1129,12 @@ do
 				end
 			end)
 
-			TweenWorkLabel(1,'rbxassetid://108012241529487', '')
-
-
-			if Config.AutoJoinDiscord and Config.AutoJoinDiscord.Enabled then
-				local discordConfig = Config.AutoJoinDiscord
-				local rootFolder = Config.ConfigurationSaving and Config.ConfigurationSaving.FolderName or "SydeSec"
-				local discordFolder = rootFolder .. "/DiscordInvites"
-				local inviteCode = discordConfig.Invite
-				local inviteFilePath = discordFolder .. "/" .. inviteCode .. ".txt"
-
-				warn("[SYDE] Discord AutoJoin enabled. Preparing to send invite:", inviteCode)
-
-				-- Ensure folder exists
-				if isfolder and not isfolder(discordFolder) then
-					local folderSuccess, folderErr = pcall(function()
-						makefolder(discordFolder)
-					end)
-					if folderSuccess then
-						print("[SYDE] Created DiscordInvites folder at:", discordFolder)
-					else
-						warn("[SYDE] Failed to create DiscordInvites folder:", folderErr)
-					end
-				end
+			
+							end
 
 				local shouldPrompt = true
 				if isfile and discordConfig.RememberJoins and isfile(inviteFilePath) then
-					print("[SYDE] Discord invite '" .. inviteCode .. "' already joined. Skipping prompt.")
+
 					shouldPrompt = false
 				end
 
@@ -1571,12 +1159,12 @@ do
 						end)
 
 						if reqSuccess then
-							print("[SYDE] Discord invite sent successfully to:", inviteCode)
+
 						else
-							warn("[SYDE] Failed to send Discord invite:", reqErr)
+
 						end
 					else
-						warn("[SYDE] Request function not available — cannot send Discord invite.")
+
 					end
 
 					if discordConfig.RememberJoins then
@@ -1585,30 +1173,26 @@ do
 						end)
 
 						if writeSuccess then
-							print("[SYDE] Logged Discord invite join for:", inviteCode)
+
 						else
-							warn("[SYDE] Failed to write join log for invite:", writeErr)
+
 						end
 					end
 				end
 			end
 
-			TweenWorkLabel(1,'rbxassetid://136405833725573', '')
-			task.wait(1)
+						task.wait(1)
 			loaded = true
-			--	tweenservice:Create( LOADER.load.Salt, TweenInfo.new(0.65, Enum.EasingStyle.Quint), {Size = UDim2.new(0, 146,0, 25)}):Play()
-			--	tweenservice:Create( LOADER.load.Salt.ImageLabel, TweenInfo.new(0.65, Enum.EasingStyle.Exponential), {ImageTransparency = 0}):Play()
+
 		end
 
-		--	initLoader()
 		task.wait(0.08)
 		load()
 
 		task.wait(2)
 
-		--	Library.Enabled = true
-		syde.theme.Accent = Config.Accent;
-		syde.theme.HitBox = Config.HitBox;
+		cryable.theme.Accent = Config.Accent;
+		cryable.theme.HitBox = Config.HitBox;
 		LOADER:Destroy()
 
 	end
@@ -1631,9 +1215,8 @@ end
 local function ApplyFlag(Flag, Value)
 	if Value == nil then return false end
 
-	-- ColorPicker Handling
 	if Flag.Type == "ColorPicker" then
-		local unpacked = syde:ColorUnpack(Value)
+		local unpacked = cryable:ColorUnpack(Value)
 
 		if Flag.Set then
 			Flag:Set(unpacked)
@@ -1644,13 +1227,11 @@ local function ApplyFlag(Flag, Value)
 		return true
 	end
 
-	-- Standard Setter
 	if Flag.Set then
 		Flag:Set(Value)
 		return true
 	end
 
-	-- Raw Value fallback
 	if Flag.V ~= nil then
 		Flag.V = Value
 		return true
@@ -1661,30 +1242,28 @@ local function ApplyFlag(Flag, Value)
 		return true
 	end
 
-	warn("Syde 〡 Unsupported flag type for:", Flag)
 	return false
 end
 
 function LoadConfig(Configuration)
 	if type(Configuration) ~= "string" then
-		warn("Syde 〡 Invalid config format.")
+
 		return false
 	end
 
 	local Decoded = SafeDecode(Configuration)
 	if not Decoded then
-		warn("Syde 〡 Failed to decode config.")
+
 		return false
 	end
 
-	-- Version check (future ready)
 	if Decoded._version and Decoded._version ~= CONFIG_VERSION then
-		warn("Syde 〡 Config version mismatch.")
+
 	end
 
 	local changed = false
 
-	for FlagName, Flag in pairs(syde.Flags) do
+	for FlagName, Flag in pairs(cryable.Flags) do
 		local SavedValue = Decoded[FlagName]
 
 		if SavedValue ~= nil then
@@ -1694,24 +1273,22 @@ function LoadConfig(Configuration)
 			end
 		end
 
-		print("Loading Flag:", FlagName, "Value:", SavedValue)
 	end
 
 	return changed
 end
 
--- Internal Save Logic
 local function PerformSave()
-	if not syde.ConfigEnabled then return end
+	if not cryable.ConfigEnabled then return end
 	if not writefile then return end
 
 	local Data = {
 		_version = CONFIG_VERSION
 	}
 
-	for FlagName, Flag in pairs(syde.Flags) do
+	for FlagName, Flag in pairs(cryable.Flags) do
 		if Flag.Type == "ColorPicker" then
-			Data[FlagName] = syde:ColorPack(Flag.Color)
+			Data[FlagName] = cryable:ColorPack(Flag.Color)
 		else
 			Data[FlagName] =
 				Flag.V ~= nil and Flag.V
@@ -1721,23 +1298,21 @@ local function PerformSave()
 		end
 	end
 
-	-- Ensure folder exists
-	if makefolder and not isfolder(syde.ConfigFolder) then
-		makefolder(syde.ConfigFolder)
+	if makefolder and not isfolder(cryable.ConfigFolder) then
+		makefolder(cryable.ConfigFolder)
 	end
 
-	local path = string.format("%s/%s.json", syde.ConfigFolder, syde.ConfigFile)
+	local path = string.format("%s/%s.json", cryable.ConfigFolder, cryable.ConfigFile)
 
 	local success, err = pcall(function()
 		writefile(path, HttpService:JSONEncode(Data))
 	end)
 
 	if not success then
-		warn("Syde 〡 Failed to save config:", err)
+
 	end
 end
 
--- Public Save (Debounced)
 function SaveConfig()
 	if SaveDebounce then
 		task.cancel(SaveDebounce)
@@ -1746,15 +1321,11 @@ function SaveConfig()
 	SaveDebounce = task.delay(SAVE_DELAY, PerformSave)
 end
 
-
---@UiSetup
 local ui = Library
 local window = ui.main
 local top = window.top
 local tabs = window.tabs.tab
 local pages = window.pages
-
---
 
 local Connected = false
 local settingsOpen = false
@@ -1766,10 +1337,9 @@ local bluron = false
 local glow = false
 
 local uitoggle = Enum.KeyCode.RightShift
---
 
 function applyLayout(isMobile)
-	--	Library.lib.Size = isMobile and UDim2.new(0, 543,0, 321) or UDim2.new(0, 715, 0, 575)
+
 	tweenservice:Create(Library.main, TweenInfo.new(0.4, Enum.EasingStyle.Quint), {Size = isMobile and UDim2.new(0, 543,0, 321) or UDim2.new(0, 715, 0, 575)}):Play()
 	local shadow = window:FindFirstChild("Shadow")
 	if shadow then
@@ -1777,14 +1347,12 @@ function applyLayout(isMobile)
 	end
 end
 
-
 local function updateLayout()
 	local screenSize = camera.ViewportSize
 	local mobile = userinput.TouchEnabled
 	applyLayout(mobile)
 end
 
---@@Notification
 local notifications = {}
 local notificationSpacing = 10
 
@@ -1808,7 +1376,7 @@ for _, temp in ipairs(Library.Notification:GetChildren()) do
 	end
 end 
 
-function syde:Notify(Notification)
+function cryable:Notify(Notification)
 	task.spawn(function()
 
 		local NotifData = {
@@ -1821,8 +1389,6 @@ function syde:Notify(Notification)
 			ConfirmCallback = Notification.ConfirmCallback
 		}
 
-
-
 		local Notification = Library.Notification.Default:Clone()
 		Notification.Visible = true
 		Notification.Parent = Library.Notification
@@ -1830,10 +1396,8 @@ function syde:Notify(Notification)
 		Notification.Content.Text = NotifData.Content
 		Notification.Content.Size = UDim2.new(0, 200,0, Notification.Content.TextBounds.Y )
 		Notification.icon.Image = 'rbxassetid://'..NotifData.Icon
-		print(NotifData.Icon)
+
 		Notification.icon.Visible = true
-
-
 
 		local function CloseNotif()
 
@@ -1842,7 +1406,7 @@ function syde:Notify(Notification)
 				tweenservice:Create(Notification.UIScale, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {Scale = 0.9}):Play()
 				tweenservice:Create(Notification.close, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {ImageTransparency = 0.95}):Play()
 				tweenservice:Create(Notification, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0.75}):Play()
-				--	tweenservice:Create(Notification.Title, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {TextTransparency = 0.5}):Play()
+
 				tweenservice:Create(Notification.Content, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {TextTransparency = 0.78}):Play()
 
 				task.wait(0.15)
@@ -1856,7 +1420,7 @@ function syde:Notify(Notification)
 		end
 
 		if NotifData.Animation == 'Wiggle' then
-			syde:WiggleText(Notification.Title)
+			cryable:WiggleText(Notification.Title)
 		end
 
 		if NotifData.Varient == 'Options' then
@@ -1875,19 +1439,15 @@ function syde:Notify(Notification)
 			Notification.Size = UDim2.new(1, 0,0, Notification.Content.TextBounds.Y + 45)
 		end
 
-
 		table.insert(notifications, Notification)
 		updatePositions()
 
-		--	Notification.UIScale.Scale = 0.9
 		Notification.close.ImageTransparency = 0.95
 		Notification.BackgroundTransparency = 0.75
-		--	Notification.Title.TextTransparency = 0.5
+
 		Notification.Content.TextTransparency = 0.78
 
 		Notification.Position = UDim2.new(0, 600, 0, 637)
-
-
 
 		task.wait(0.45)
 
@@ -1899,11 +1459,10 @@ function syde:Notify(Notification)
 			tweenservice:Create(Notification.icon, TweenInfo.new(1, Enum.EasingStyle.Exponential), {ImageTransparency = 0}):Play()
 		end
 
-
 		tweenservice:Create(Notification.UIScale, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {Scale = 1}):Play()
 		tweenservice:Create(Notification.close, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {ImageTransparency = 0.75}):Play()
 		tweenservice:Create(Notification, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0}):Play()
-		--	tweenservice:Create(Notification.Title, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()
+
 		tweenservice:Create(Notification.Content, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()
 
 		Notification.close.MouseEnter:Connect(function()
@@ -1924,11 +1483,9 @@ function syde:Notify(Notification)
 	end)
 end
 
+local activeModals = 0 
 
---@@Modal
-local activeModals = 0 -- track how many modals are currently open
-
-function syde:Modal(Modal)
+function cryable:Modal(Modal)
 	task.spawn(function()
 		local ModalData = {
 			Title = Modal.Title;
@@ -1941,7 +1498,7 @@ function syde:Modal(Modal)
 		ModalInstance.Parent = ui.main
 		ModalInstance.Title.Text = ModalData.Title
 		ModalInstance.Content.Text = ModalData.Content
-		--	ModalInstance.Content.Size = UDim2.new(1, ModalInstance.Content.Size.X.Offset, 1, ModalInstance.Content.TextBounds.Y)
+
 		ModalInstance.Size = UDim2.new(0, 350,0, 144)
 		ModalInstance.BackgroundTransparency = 1
 		ModalInstance.Title.TextTransparency = 1
@@ -1949,7 +1506,6 @@ function syde:Modal(Modal)
 
 		ModalInstance.Buttons.Confirm.BackgroundTransparency = 1
 		ModalInstance.Buttons.Confirm.TextLabel.TextTransparency = 1
-		--	ModalInstance.Buttons.Confirm.UIStroke.Transparency = 1
 
 		ModalInstance.Buttons.Cancel.BackgroundTransparency = 1
 		ModalInstance.Buttons.Cancel.TextLabel.TextTransparency = 1
@@ -1958,7 +1514,7 @@ function syde:Modal(Modal)
 		local function openModal()
 			tweenservice:Create(ModalInstance.Content, TweenInfo.new(0.75, Enum.EasingStyle.Quint), {Size = UDim2.new(1, ModalInstance.Content.Size.X.Offset, 1, ModalInstance.Content.TextBounds.Y)}):Play()
 			activeModals += 1
-			--	ModalInstance.Size = UDim2.new(0, ModalInstance.Size.X.Offset, 0, ModalInstance.Content.TextBounds.Y + 120)
+
 			tweenservice:Create(ModalInstance, TweenInfo.new(0.65, Enum.EasingStyle.Quint), {Size = UDim2.new(0, 350,0,  ModalInstance.Content.TextBounds.Y + 150)}):Play()
 
 			tweenservice:Create(ModalInstance, TweenInfo.new(1, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0}):Play()
@@ -1968,7 +1524,6 @@ function syde:Modal(Modal)
 
 			tweenservice:Create(ModalInstance.Buttons.Confirm, TweenInfo.new(1, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0.5}):Play()
 			tweenservice:Create(ModalInstance.Buttons.Confirm.TextLabel, TweenInfo.new(1, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()
-			--	tweenservice:Create(ModalInstance.Buttons.Confirm.UIStroke, TweenInfo.new(1, Enum.EasingStyle.Exponential), {Transparency = 0}):Play()
 
 			tweenservice:Create(ModalInstance.Buttons.Cancel, TweenInfo.new(1, Enum.EasingStyle.Exponential), {BackgroundTransparency = 1}):Play()
 			tweenservice:Create(ModalInstance.Buttons.Cancel.TextLabel, TweenInfo.new(1, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()
@@ -1979,7 +1534,7 @@ function syde:Modal(Modal)
 
 		local function closeModal()
 			activeModals -= 1
-			print(activeModals)
+
 			ModalInstance.Buttons.Cancel.Interactable = false
 			ModalInstance.Buttons.Confirm.Interactable = false
 			tweenservice:Create(ModalInstance, TweenInfo.new(0.75, Enum.EasingStyle.Quint), {Size = UDim2.new(0, 350,0, 147)}):Play()
@@ -1990,7 +1545,6 @@ function syde:Modal(Modal)
 
 			tweenservice:Create(ModalInstance.Buttons.Confirm, TweenInfo.new(1, Enum.EasingStyle.Exponential), {BackgroundTransparency = 1}):Play()
 			tweenservice:Create(ModalInstance.Buttons.Confirm.TextLabel, TweenInfo.new(1, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()
-			--	tweenservice:Create(ModalInstance.Buttons.Confirm.UIStroke, TweenInfo.new(1, Enum.EasingStyle.Exponential), {Transparency = 1}):Play()
 
 			tweenservice:Create(ModalInstance.Buttons.Cancel, TweenInfo.new(1, Enum.EasingStyle.Exponential), {BackgroundTransparency = 1}):Play()
 			tweenservice:Create(ModalInstance.Buttons.Cancel.TextLabel, TweenInfo.new(1, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()
@@ -1998,8 +1552,6 @@ function syde:Modal(Modal)
 			task.wait(0.45)
 			ModalInstance:Destroy()
 		end
-
-
 
 		if activeModals == 1 then
 			ui.main.dim.Visible = true
@@ -2036,8 +1588,6 @@ function syde:Modal(Modal)
 	end)
 end
 
-
---@@Toast
 local toasts = {}
 local toastSpacing = 8
 
@@ -2048,7 +1598,7 @@ local tweenInfo = TweenInfo.new(
 )
 
 local function updateToastPositions()
-	local startY = 10 -- padding from top of toastholder
+	local startY = 10 
 	local currentY = startY
 
 	for i = 1, #toasts do
@@ -2068,7 +1618,7 @@ local function updateToastPositions()
 	end
 end
 
-function syde:Toast(Toasty)
+function cryable:Toast(Toasty)
 	task.spawn(function()
 		local Data = {
 			Content = Toasty.Content or "",
@@ -2081,31 +1631,23 @@ function syde:Toast(Toasty)
 		Toast.Parent = ui.toastholder
 		Toast.AnchorPoint = Vector2.new(0.5, 0)
 
-		-- Content
 		Toast.Content.Text = Data.Content
-		-- task.wait(0) -- allow TextBounds update
 
 		Toast.Size = UDim2.new(1, Toast.Content.TextBounds.X - 140 ,0, 40)
-		--  tweenservice:Create(Toast, TweenInfo.new(0.4, Enum.EasingStyle.Quart), {Size = UDim2.new(1, Toast.Content.TextBounds.X - 140 ,0, 40)}):Play()
 
 		if Data.Icon ~= "" then
 			Toast.icon.ImageLabel.Image = "rbxassetid://" .. Data.Icon
 			Toast.icon.ImageLabel.ImageTransparency = 0
 		end
 
-
-
-		-- Spawn ABOVE holder
 		Toast.Position = UDim2.new(
 			0.5, 0,
 			0, -Toast.Size.Y.Offset - 20
 		)
 
-		-- Insert at TOP
 		table.insert(toasts, 1, Toast)
 		updateToastPositions()
 
-		-- Auto remove
 		task.delay(Data.Duration, function()
 			if not Toast or not Toast.Parent then return end
 
@@ -2143,11 +1685,8 @@ function syde:Toast(Toasty)
 	end)
 end
 
-
-
---@SetupFunctionst
 function SetUserInfo()
-	print('set')
+
 	local LocalPlayer = player.LocalPlayer
 
 	local PLACEHOLDER_IMAGE = "rbxassetid://0" 
@@ -2170,7 +1709,6 @@ function SetUserInfo()
 	end
 end
 
---@ Toggle Search
 local searchopen = false
 
 function opensearch()
@@ -2179,7 +1717,6 @@ function opensearch()
 	window.search.Visible = true
 	window.search.Container.Visible = true
 	window.search.Visible = true
-
 
 	if window.search.Frame.TextBox.Text ~= '' then
 		tweenservice:Create(window.search, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), { Size = UDim2.new(0, 350,0, 230) }):Play()
@@ -2214,8 +1751,6 @@ function closesearch()
 	window.search.Visible = false
 end
 
---@ ToggleUI
-
 function openui()
 	pages.Visible = true
 	window.tabs.Visible = true
@@ -2224,7 +1759,7 @@ function openui()
 	uiclosed = false
 
 	if bluron then
-		syde:BindFrame(window, {
+		cryable:BindFrame(window, {
 			Transparency = 0.98;
 			BrickColor = BrickColor.new('Institutional white');
 		})
@@ -2243,7 +1778,6 @@ function openui()
 	if window.wallpaper.ison.Value  then
 		tweenservice:Create(window.wallpaper, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {ImageTransparency = 0.84 }):Play()
 	end
-
 
 	for i,v in pairs(window.top.functions:GetChildren()) do
 		if v:IsA("Frame") then
@@ -2276,7 +1810,6 @@ function openui()
 		tweenservice:Create(window.shadow.glow1, TweenInfo.new(0.5, Enum.EasingStyle.Exponential),{ImageTransparency = 0.9}):Play()
 	end
 
-
 end
 
 function closeui()
@@ -2295,9 +1828,7 @@ function closeui()
 		tweenservice:Create(window.wallpaper, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {ImageTransparency = 1 }):Play()
 	end
 
-
-	syde:UnbindFrame(window)
-
+	cryable:UnbindFrame(window)
 
 	tweenservice:Create(window.top.functions, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {BackgroundTransparency = 1 }):Play()
 	for i,v in pairs(window.top.functions:GetChildren()) do
@@ -2329,17 +1860,12 @@ function closeui()
 	closesearch()
 	settingsOpen = false
 
-
-
-	--task.wait(0.5)
-
 	window.Visible = false
 	uiclosed = true
-	syde:Toast({
+	cryable:Toast({
 		Content = 'UI Hidden, Use '.. uitoggle.Name ..' To Open Back.',
 		Duration = 2,
 	})
-
 
 end
 
@@ -2350,8 +1876,7 @@ function ToggleUI()
 	bounce = true
 
 	if uiclosed then
-		--	task.wait(0.2)
-		print('open')
+
 		openui()
 
 		workspace.CurrentCamera:GetPropertyChangedSignal("ViewportSize"):Connect(function()
@@ -2366,7 +1891,7 @@ function ToggleUI()
 		userinput:GetPropertyChangedSignal("TouchEnabled"):Connect(updateLayout)
 	else
 		closeui()
-		print('close')
+
 	end
 
 	task.delay(0.2, function()
@@ -2375,36 +1900,33 @@ function ToggleUI()
 end
 
 window.top.functions.close.interact.MouseButton1Click:Connect(function()
-	syde:Modal({
+	cryable:Modal({
 		Title = 'Please Confirm Below.',
 		Content = 'Are You Sure You Want To Close This UI?',
 		ConfimCallBack = function()
 			mh = false
 			rs:Disconnect()
 			ss:Disconnect()
-			--	if not ui.Parent then return end
+
 			task.wait(1)
 			Library:Destroy()
 		end,
 	})
 end)
 
+cryable:HidePH(tabs, 'btn')
+cryable:HidePH(pages, 'page')
 
-syde:HidePH(tabs, 'btn')
-syde:HidePH(pages, 'page')
-
---@@Initialize
-function syde:Init(library)
+function cryable:Init(library)
 
 	ui.Enabled = true
 	if loaded == false then
-		local UI_TAG = "sydeUILoader"
-		local MARKER_NAME = "SYDEUIDetector"
-		local INTERNAL_UUID = ("SYDE-" .. tostring(game.JobId):gsub("-", "") .. tostring(tick())):gsub("%.", "")
+		local UI_TAG = "cryableUILoader"
+		local MARKER_NAME = "CRYABLEUIDetector"
+		local INTERNAL_UUID = ("CRYABLE-" .. tostring(game.JobId):gsub("-", "") .. tostring(tick())):gsub("%.", "")
 		local PROTECTION_EVENT = Instance.new("BindableEvent")
 		local HttpService = game:GetService("HttpService")
 
-		-- Cleanup old UI 
 		local function deepCleanup()
 			for _, v in ipairs(coregui:GetChildren()) do
 				if v:IsA("ScreenGui") and v:FindFirstChild(MARKER_NAME) then
@@ -2416,13 +1938,12 @@ function syde:Init(library)
 		end
 		deepCleanup()
 
-		-- Load the Library
 		local successLibrary, Library = pcall(function()
-			return Library -- Replace with actual GetObjects if needed
+			return Library 
 		end)
 
 		if not successLibrary or not Library then
-			warn("[SYDE] Failed to load Library.")
+
 			return
 		end
 
@@ -2438,12 +1959,11 @@ function syde:Init(library)
 			Library.Parent = coregui
 		end)
 
-		-- Ensure Library stays in CoreGui
 		task.spawn(function()
 			while Library and Library.Parent do
 				task.wait(1)
 				if Library.Parent ~= coregui then
-					warn("[SYDE] UI moved. Restoring...")
+
 					pcall(function()
 						Library.Parent = coregui
 					end)
@@ -2455,30 +1975,28 @@ function syde:Init(library)
 	task.wait(0.1)
 
 	local Data = {
-		Title = library.Title or "Syde";
+		Title = library.Title or "Cryable";
 		SubText = library.SubText or "Google";
 		Home = library.Home or {} 
 	}
 
-	-- Now we fill in the missing pieces if they weren't provided
-	Data.Home.Enabled = (Data.Home.Enabled == true) -- Forces true/false
+	Data.Home.Enabled = (Data.Home.Enabled == true) 
 	Data.Home.hTitle = Data.Home.hTitle or Data.Title
 	Data.Home.hSubText = Data.Home.hSubText or Data.SubText
 	Data.Home.profileImage = Data.Home.profileImage or Data.profileImage
-	
+
 	local Minihome = ui.minihome
 
 	local MinihomeData = {
 		QuickActions = library.QuickActions or false;
 	}
 
-	-- FPS tracking
 	local lastTime = tick()
 	local frames = 0
 
 	if mh then
 		rs = RunService.RenderStepped:Connect(function()
-			-- FPS
+
 			frames += 1
 			local now = tick()
 
@@ -2490,11 +2008,9 @@ function syde:Init(library)
 				Minihome.info.fps.Text = fps .. " FPS"
 			end
 
-			-- Time → 8:45
 			local hour = tonumber(os.date("%I"))
 			Minihome.info.time.Text = hour .. os.date(":%M")
 		end)
-
 
 		if MinihomeData.QuickActions == false then
 			ui.minihome.quick.Visible = false
@@ -2502,22 +2018,18 @@ function syde:Init(library)
 		end
 	end
 
-
 	if not uiclosed then
 		ui.minihome.open.quickfunc.interact.MouseButton1Click:Connect(function()
 			ToggleUI()
 		end)
 	end
 
-	--ui elements
 	top.title.Text = Data.Title
 	top.title.sub.Text = Data.SubText
 
-	--dragging
-	syde:AddDrag(top, window, true)
-	syde:MakeResizable(window.resize, window, Vector2.new(454, 228))
+	cryable:AddDrag(top, window, true)
+	cryable:MakeResizable(window.resize, window, Vector2.new(454, 228))
 
-	--initial transparency setup
 	top.title.TextTransparency = 1
 	tweenservice:Create(top.title, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()
 	top.title.sub.TextTransparency = 1
@@ -2544,7 +2056,6 @@ function syde:Init(library)
 	local TweenService = game:GetService("TweenService")
 
 	local RainbowStates = {}
-
 
 	for _, v in ipairs(top.functions:GetChildren()) do
 		if not v:IsA("Frame") then continue end
@@ -2576,7 +2087,6 @@ function syde:Init(library)
 				end
 			end
 
-
 			if v.Name == "plugins" and gradient then
 				tweenservice:Create(v.rainbow, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), { ImageTransparency = 0 }):Play()
 				local state = RainbowStates[v]
@@ -2598,7 +2108,6 @@ function syde:Init(library)
 			end
 		end)
 
-
 		v.MouseLeave:Connect(function()
 			if not uiclosed then
 				if v.Name ~= "plugins" then
@@ -2609,7 +2118,6 @@ function syde:Init(library)
 					):Play()
 				end
 			end
-
 
 			if v.Name == "plugins" then
 				tweenservice:Create(v.rainbow, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), { ImageTransparency = 1 }):Play()
@@ -2623,15 +2131,12 @@ function syde:Init(library)
 		end)
 	end
 
-
-	--[[if not searchopen then
 			closesearch()
 	end]]
 
 	window.search.close.interact.MouseButton1Click:Connect(function()
 		closesearch()
 	end)
-
 
 	local debounce = false
 	local DEBOUNCE_TIME = 0.1
@@ -2651,9 +2156,7 @@ function syde:Init(library)
 		end)
 	end)
 
-
-
-	syde:AddConnection(syde.Comms.Event, function(p, value)
+	cryable:AddConnection(cryable.Comms.Event, function(p, value)
 		if p == "Accent" then
 			for i, glow in pairs(window.clipframe:GetChildren()) do
 				if glow:IsA("ImageLabel") then
@@ -2665,7 +2168,6 @@ function syde:Init(library)
 		end
 	end)
 
-	-- Syde Connection (Coming Soon)
 	SetUserInfo()
 	tweenservice:Create(window.user.headshot.id.username, TweenInfo.new(0.5, Enum.EasingStyle.Quart), {Size = UDim2.new(0, window.user.headshot.id.username.TextBounds.X + 10,0, 10)}):Play()
 
@@ -2689,13 +2191,11 @@ function syde:Init(library)
 
 		window.pages.home.general.presence.Profile.ImageLabel.Image = 'rbxassetid://'..Data.Home.profileImage
 		window.pages.home.general.presence.wallpaper.Image = 'rbxassetid://'..Data.Home.profileImage
-		
+
 		local placeId = game.PlaceId
 
 		window.pages.home.general.presence.PlaceID.Text =
 			"Place ID: "..placeId
-
-	--[[	local executor = "Undetected"
 
 		local function detect()
 
@@ -2754,19 +2254,15 @@ function syde:Init(library)
 
 		end
 
-		--	detect()
-
 		local ExecutorUI =
 			window.pages.home.general.presence.Executor
 
 		local Frame = ExecutorUI.Frame
 		local Label = Frame.TextLabel
 
-
 		Label.Text = executor
 
-		task.wait() -- allow TextBounds to update
-
+		task.wait() 
 
 		local textWidth =
 			math.max(Label.TextBounds.X, 40)
@@ -2777,7 +2273,6 @@ function syde:Init(library)
 		local containerWidth =
 			frameWidth + 65
 
-
 		TweenService:Create(
 			Label,
 			TweenInfo.new(.4, Enum.EasingStyle.Quart, Enum.EasingDirection.Out),
@@ -2786,7 +2281,6 @@ function syde:Init(library)
 			}
 		):Play()
 
-
 		TweenService:Create(
 			Frame,
 			TweenInfo.new(.4, Enum.EasingStyle.Quart, Enum.EasingDirection.Out),
@@ -2794,7 +2288,6 @@ function syde:Init(library)
 				Size = UDim2.fromOffset(frameWidth, Frame.AbsoluteSize.Y)
 			}
 		):Play()
-
 
 		TweenService:Create(
 			ExecutorUI,
@@ -2813,7 +2306,6 @@ function syde:Init(library)
 			TweenTime = 0.35
 		})
 
-		-- optional manual rows
 		local row1 = layout:NewRow()
 		local row2 = layout:NewRow()
 		local row3 = layout:NewRow()
@@ -2828,11 +2320,8 @@ function syde:Init(library)
 			row2
 		)
 
-
 		layout:Bind()
 		layout:Update()
-
-		print("LATENCY SCRIPT RUNNING")
 
 		local Stats = game:GetService("Stats")
 		local TweenService = game:GetService("TweenService")
@@ -2860,7 +2349,6 @@ function syde:Init(library)
 
 		repeat task.wait() until graph.AbsoluteSize.X > 0
 
-
 		local Players = game:GetService("Players")
 		local RunService = game:GetService("RunService")
 
@@ -2879,8 +2367,6 @@ function syde:Init(library)
 
 		end
 
-
-
 		local function clear()
 
 			for _,obj in ipairs(graph:GetChildren()) do
@@ -2895,7 +2381,6 @@ function syde:Init(library)
 			end
 
 		end
-
 
 		local function createGrid()
 
@@ -2915,7 +2400,6 @@ function syde:Init(library)
 				gridLine.BackgroundTransparency = 0.85
 				gridLine.BorderSizePixel = 0
 				gridLine.Parent = graph
-
 
 				local label = Instance.new("TextLabel")
 				label.Size = UDim2.fromOffset(40,14)
@@ -2938,8 +2422,6 @@ function syde:Init(library)
 
 		end
 
-
-
 		local function draw()
 
 			clear()
@@ -2960,14 +2442,12 @@ function syde:Init(library)
 				local x = (i-1)*step
 				local y = h - (percent*h)
 
-
 				local point = pointTemplate:Clone()
 				point.Visible = false
 				point.Position = UDim2.fromOffset(x,y)
 				point.AnchorPoint = Vector2.new(0.5,0.5)
 
 				point.Parent = graph
-
 
 				if lastX then
 
@@ -3000,7 +2480,6 @@ function syde:Init(library)
 
 				end
 
-
 				lastX = x
 				lastY = y
 
@@ -3008,14 +2487,10 @@ function syde:Init(library)
 
 		end
 
-
-
 		task.spawn(function()
 			while true do
 
 				local ping = getPing()
-				-- replace with getPing() when ready
-				print(ping)
 
 				table.insert(history,ping)
 
@@ -3023,8 +2498,6 @@ function syde:Init(library)
 					table.remove(history,1)
 				end
 
-
-				-- smooth values
 				for i,v in ipairs(history) do
 
 					local current =
@@ -3034,7 +2507,6 @@ function syde:Init(library)
 						current + (v-current)*SMOOTH_SPEED
 
 				end
-
 
 				draw()
 
@@ -3114,7 +2586,6 @@ function syde:Init(library)
 
 			until cursor == nil or #servers > 0
 
-
 			if #servers > 0 then
 
 				TeleportService:TeleportToPlaceInstance(
@@ -3132,10 +2603,10 @@ function syde:Init(library)
 			ServerHop()
 
 		end)
-		
+
 		local Players = game:GetService("Players")
 
-		local label = window.pages.home.general.Quick.Player.Frame.TextLabel -- put script inside TextLabel
+		local label = window.pages.home.general.Quick.Player.Frame.TextLabel 
 
 		local function update()
 
@@ -3150,24 +2621,21 @@ function syde:Init(library)
 
 		end
 
-
 		update()
 
 		Players.PlayerAdded:Connect(update)
 		Players.PlayerRemoving:Connect(update)
-		
+
 		local QuickPlay = window.pages.home.general.Quick.QuickPlay
 
 		local HttpService = game:GetService("HttpService")
 		local MarketplaceService = game:GetService("MarketplaceService")
 		local TeleportService = game:GetService("TeleportService")
 
-		local FILE = syde.ConfigFolder .. "/last_game.json"
+		local FILE = cryable.ConfigFolder .. "/last_game.json"
 
-
-		-- save last played game
 		local function SaveLastGame(placeId)
-			if not syde.ConfigEnabled then return end
+			if not cryable.ConfigEnabled then return end
 
 			local data = {
 				PlaceId = placeId,
@@ -3179,10 +2647,8 @@ function syde:Init(library)
 			end)
 		end
 
-
-		-- load last played game
 		local function LoadLastGame()
-			if not syde.ConfigEnabled then return nil end
+			if not cryable.ConfigEnabled then return nil end
 			if not isfile(FILE) then return nil end
 
 			local success, result = pcall(function()
@@ -3194,9 +2660,6 @@ function syde:Init(library)
 			end
 		end
 
-
-
-		-- get placeId from file FIRST
 		local lastGame = LoadLastGame()
 
 		local placeId = game.PlaceId
@@ -3204,7 +2667,6 @@ function syde:Init(library)
 		if lastGame and lastGame.PlaceId then
 			placeId = lastGame.PlaceId
 		end
-
 
 		local success, info = pcall(function()
 			return MarketplaceService:GetProductInfoAsync(placeId, Enum.InfoType.Asset)
@@ -3214,28 +2676,20 @@ function syde:Init(library)
 
 			QuickPlay.gtitle.Text = info.Name
 
-			local id=placeId -- your game id
+			local id=placeId 
 			local thumbnailUrl="https://www.roblox.com/asset-thumbnail/image?assetId="..id.."&width=768&height=432&format=png"
 			QuickPlay.thumb.Image=thumbnailUrl
 
 		else
 
-			warn("Failed to get game info for", placeId)
-
 		end
 
-
-
-
-		-- save current game after 2 minutes
 		task.delay(120, function()
-			if syde and syde.ConfigEnabled then
+			if cryable and cryable.ConfigEnabled then
 				SaveLastGame(game.PlaceId)
 			end
 		end)
 
-
-		-- resume button
 		QuickPlay.Resume.interact.MouseButton1Click:Connect(function()
 
 			local lastGame = LoadLastGame()
@@ -3250,8 +2704,6 @@ function syde:Init(library)
 		window.pages.home.Visible = false
 		window.tabs.Home.homeicon.interact.Interactable = false
 	end
-
-
 
 	function opensettings()
 		window.settings.Visible = true
@@ -3313,17 +2765,14 @@ function syde:Init(library)
 		end
 	end)
 
-	--[[
-	
 	 ______     ______     ______   ______   __     __   __     ______     ______    
 	/\  ___\   /\  ___\   /\__  _\ /\__  _\ /\ \   /\ "-.\ \   /\  ___\   /\  ___\   
 	\ \___  \  \ \  __\   \/_/\ \/ \/_/\ \/ \ \ \  \ \ \-.  \  \ \ \__ \  \ \___  \  
  	 \/\_____\  \ \_____\    \ \_\    \ \_\  \ \_\  \ \_\\"\_\  \ \_____\  \/\_____\ 
  	  \/_____/   \/_____/     \/_/     \/_/   \/_/   \/_/ \/_/   \/_____/   \/_____/ 
-                                                                                 
+
 	@@Settings
 	]]
-
 
 	do
 		local settings = {}
@@ -3342,14 +2791,12 @@ function syde:Init(library)
 			local tabsContainer = window.settings.tabs.ScrollingFrame
 			local pagesContainer = window.settings.pages
 
-			-- === Tab Setup ===
 			local Tab = tabsContainer.tb:Clone()
 			Tab.Visible = true
 			Tab.Parent = tabsContainer
 			Tab.Name = tdata.Title
 			Tab.title.Text = tdata.Title
 
-			-- === Page Setup ===
 			local Page = pagesContainer.page:Clone()
 			Page.Visible = false
 			Page.Parent = pagesContainer
@@ -3361,7 +2808,6 @@ function syde:Init(library)
 				end
 			end
 
-			-- === Tween Info ===
 			local bgTween = TweenInfo.new(0.4, Enum.EasingStyle.Exponential)
 			local textTween = TweenInfo.new(0.25, Enum.EasingStyle.Exponential)
 
@@ -3377,7 +2823,6 @@ function syde:Init(library)
 				}):Play()
 			end
 
-			-- === First tab auto-select ===
 			if not tbdata.selectedTab then
 				tbdata.selectedTab = Tab
 				Page.Visible = true
@@ -3386,18 +2831,15 @@ function syde:Init(library)
 				ApplyTabStyle(Tab, false)
 			end
 
-			-- === Click logic ===
 			Tab.interact.MouseButton1Click:Connect(function()
 				if tbdata.selectedTab == Tab then return end
 
-				-- hide all pages
 				for _, p in ipairs(pagesContainer:GetChildren()) do
 					if p:IsA("ScrollingFrame") then
 						p.Visible = false
 					end
 				end
 
-				-- update tab styles
 				for _, t in ipairs(tabsContainer:GetChildren()) do
 					if t:IsA("Frame") then
 						ApplyTabStyle(t, t == Tab)
@@ -3428,12 +2870,10 @@ function syde:Init(library)
 
 				c = data.CallBack
 
-
 				local fOTween = TweenInfo.new(0.7, Enum.EasingStyle.Exponential)
 				local fITween = TweenInfo.new(0.7, Enum.EasingStyle.Exponential)
 
 				if data.Type == 'Default' then
-					-- UI Stroke effect on button press
 
 					button.interact.MouseButton1Down:Connect(function()
 						tweenservice:Create(button.UIStroke, fOTween, { Transparency = 1 }):Play()
@@ -3445,22 +2885,19 @@ function syde:Init(library)
 						tweenservice:Create(button.UIStroke, fITween, { Transparency = 0 }):Play()
 						tweenservice:Create(button.ImageLabel, TweenInfo.new(0.8, Enum.EasingStyle.Exponential), { ImageTransparency = 0.95 }):Play()
 
-
 					end)
 
 					button.interact.MouseButton1Click:Connect(function()
 						if data.CallBack then
 							local success, errorMsg = pcall(c)
 							if not success then
-								warn(`[ Button Error: { button.Name } ] Callback Error: { errorMsg }`)
 
 							end
 						else
-							warn(`[ CallBack Missing: { button.Name } ] No Function Assigned`)
+
 						end
 					end)
 
-					-- Extra Check 
 					button.interact.MouseLeave:Connect(function()
 						tweenservice:Create(button.UIStroke, fITween, { Transparency = 0 }):Play()
 						tweenservice:Create(button.ImageLabel, TweenInfo.new(0.8, Enum.EasingStyle.Exponential), { ImageTransparency = 0.95 }):Play()
@@ -3492,11 +2929,6 @@ function syde:Init(library)
 							tweenservice:Create(button.UIStroke, TweenInfo.new(1, Enum.EasingStyle.Exponential), { Transparency = 0 }):Play()
 						end
 
-						-- did not complete 
-
-						--	button.UIStroke.UIGradient.Offset = Vector2.new(-1, 0)
-						--	tweenservice:Create(button.UIStroke, TweenInfo.new(HoldTime, Enum.EasingStyle.Linear), { Offset = Vector2.new(-1, 0) }):Play()
-
 						TimeLeft = HoldTime
 						button.title.timer.Text = tostring(HoldTime)
 						task.wait(0.1)
@@ -3513,7 +2945,6 @@ function syde:Init(library)
 						tweenservice:Create(button.UIStroke.UIGradient, TweenInfo.new(HoldTime, Enum.EasingStyle.Linear), { Offset = Vector2.new(0.7, 0) }):Play()
 						tweenservice:Create(button.UIStroke, TweenInfo.new(1, Enum.EasingStyle.Exponential), { Transparency = 0}):Play()
 
-						-- Countdown loop
 						while Holding and TimeLeft > 0 do
 							TimeLeft = math.max(0, TimeLeft - runservice.Heartbeat:Wait())
 							button.title.timer.Text = string.format("%.1f", TimeLeft) 
@@ -3526,10 +2957,10 @@ function syde:Init(library)
 							if data.CallBack then
 								local success, errorMsg = pcall(data.CallBack)
 								if not success then
-									warn("[CALLBACK ERROR]:", errorMsg)
+
 								end
 							else
-								warn("[CALLBACK MISSING]: No Function Assigned To", data.Title)
+
 							end
 
 							tweenservice:Create(button, TweenInfo.new(0.34, Enum.EasingStyle.Exponential), { BackgroundColor3 = Color3.fromRGB(24, 24, 24) }):Play()
@@ -3550,7 +2981,6 @@ function syde:Init(library)
 					end)
 				end
 
-				--[DESC]
 				local descLabel = button:FindFirstChild("desc")
 
 				if descLabel then
@@ -3604,7 +3034,6 @@ function syde:Init(library)
 				toggle.title.Text = data.Title
 				toggle.Name = data.Title
 
-
 				local toggleConfiguration = ui.Render.ToggleConfiguration:Clone()
 				toggleConfiguration.Parent = ui.Render
 				toggleConfiguration.Visible = false
@@ -3628,7 +3057,7 @@ function syde:Init(library)
 				local fadeTween = TweenInfo.new(0.57, Enum.EasingStyle.Exponential, Enum.EasingDirection.Out)
 
 				local function UpdateToggleUI(state)
-					local targetColor = state and syde.theme.HitBox or Color3.fromRGB(28, 28, 28)
+					local targetColor = state and cryable.theme.HitBox or Color3.fromRGB(28, 28, 28)
 					local strokeTransparency = state and 1 or 0
 					local checkTransparency = state and 0 or 1
 					local gradientTransparency = state and 0 or 1
@@ -3636,7 +3065,7 @@ function syde:Init(library)
 					local textTransparency = state and 0 or 0.5
 
 					tweenservice:Create(toggle.tog, toggleTween, { BackgroundColor3 = targetColor }):Play()
-					--	tweenservice:Create(toggle.tog.UIStroke, toggleTween, { Transparency = strokeTransparency }):Play()
+
 					tweenservice:Create(toggle.tog.check, toggleTween, { ImageTransparency = checkTransparency }):Play()
 					tweenservice:Create(toggle.tog.gradfr, fadeTween, { BackgroundTransparency = gradientTransparency }):Play()
 					tweenservice:Create(toggle.tog.glow, toggleTween, { ImageTransparency = glowTransparency }):Play()
@@ -3657,11 +3086,10 @@ function syde:Init(library)
 					end)
 
 					if not success then
-						warn("[CALLBACK ERROR][" .. toggle.Name .. "]: " .. tostring(errorMsg))
+						)
 					end
 				end)
 
-				--[DESC]
 				local descLabel = toggle:FindFirstChild("desc")
 
 				if descLabel then
@@ -3679,7 +3107,7 @@ function syde:Init(library)
 							)
 
 							local newDescSize = UDim2.new(1, -150, 0, textSize.Y)
-							local newButtonSize = UDim2.new(toggle.Size.X.Scale, toggle.Size.X.Offset, 0, toggle.title.Size.Y.Offset + textSize.Y + 10) -- Adding extra padding
+							local newButtonSize = UDim2.new(toggle.Size.X.Scale, toggle.Size.X.Offset, 0, toggle.title.Size.Y.Offset + textSize.Y + 10) 
 							tweenservice:Create(toggle.UICorner, TweenInfo.new(0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), { CornerRadius = UDim.new(0,20) }):Play()
 							local descTween = tweenservice:Create(descLabel, TweenInfo.new(0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), { Size = newDescSize })
 							descTween:Play()
@@ -3696,8 +3124,6 @@ function syde:Init(library)
 					end
 				end
 
-
-				-- [CONFIGURATIPON]
 				if data.Config then
 
 					local State = false
@@ -3724,7 +3150,6 @@ function syde:Init(library)
 						tweenservice:Create(toggleConfiguration.Container.Clear.clear.ImageLabel, enterTween, { ImageTransparency = 0 }):Play()
 						tweenservice:Create(toggleConfiguration.Container.Clear.Title, enterTween, { TextTransparency = 0 }):Play()
 						tweenservice:Create(toggleConfiguration, TweenInfo.new(0.7, Enum.EasingStyle.Quint), { Size = UDim2.new(0, 174,0, 88) }):Play()
-						--	tweenservice:Create(toggleConfiguration.shadow.ImageLabel, enterTween, { ImageTransparency = 0.57 }):Play()
 
 					end
 
@@ -3739,7 +3164,7 @@ function syde:Init(library)
 						tweenservice:Create(toggleConfiguration.Container.Clear.clear.ImageLabel, enterTween, { ImageTransparency = 1 }):Play()
 						tweenservice:Create(toggleConfiguration.Container.Clear.Title, enterTween, { TextTransparency = 1 }):Play()
 						tweenservice:Create(toggleConfiguration, TweenInfo.new(0.7, Enum.EasingStyle.Quint), { Size = UDim2.new(0, 75,0, 53) }):Play()
-						--	tweenservice:Create(toggleConfiguration.shadow.ImageLabel, enterTween, { ImageTransparency = 1 }):Play()
+
 						task.wait(0.5)
 
 						toggleConfiguration.Visible = false
@@ -3807,7 +3232,6 @@ function syde:Init(library)
 						tweenservice:Create(toggleConfiguration.Container.KeyBind.Bind.v, TweenInfo.new(0.25, Enum.EasingStyle.Exponential), { TextTransparency = 0 }):Play()
 						ResizeBindFrame()
 
-
 						local connection
 						connection = userinput.InputBegan:Connect(function(input, processed)
 							if not processed and input.UserInputType == Enum.UserInputType.Keyboard then
@@ -3827,7 +3251,7 @@ function syde:Init(library)
 									data.CallBack(data.V)
 								end)
 								if not success then
-									warn("[CALLBACK ERROR][" .. toggle.Name .. "]: " .. tostring(errorMsg))
+									)
 								end
 							end
 						end
@@ -3866,7 +3290,7 @@ function syde:Init(library)
 
 				end
 
-				syde:AddConnection(syde.Comms.Event, function(p, color)
+				cryable:AddConnection(cryable.Comms.Event, function(p, color)
 					if p == 'HitBox' then
 						if data.V then
 							task.wait(0.5)
@@ -3888,13 +3312,13 @@ function syde:Init(library)
 					end)
 
 					if not success then
-						warn("[CALLBACK ERROR][" .. toggle.Name .. "]: " .. tostring(errorMsg))
+						)
 					end
 
 				end
 
 				if data.SFlag then
-					syde.SettingsFlags[data.SFlag] = data
+					cryable.SettingsFlags[data.SFlag] = data
 				end
 			end
 
@@ -3942,8 +3366,7 @@ function syde:Init(library)
 					end
 				end
 
-				-- Main input handler
-				syde:AddConnection(userinput.InputBegan, function(input)
+				cryable:AddConnection(userinput.InputBegan, function(input)
 					if input.UserInputType ~= Enum.UserInputType.Keyboard then return end
 
 					if data.WaitingForKey then
@@ -3969,7 +3392,7 @@ function syde:Init(library)
 						local success, result = pcall(data.CallBack)
 						if not data.Holding then
 							if not success then
-								warn(`[Keybind: {KeyBind.Name}] Callback Error: {result}`)
+
 							end
 						else
 							if data.Hold then
@@ -4018,7 +3441,6 @@ function syde:Init(library)
 				HueSat.Value = data.Color
 				HueSat.Parent = colorpicker
 
-
 				local Open = false
 				local DeBounce = false
 				local State = false
@@ -4026,7 +3448,6 @@ function syde:Init(library)
 				do
 					local HueValues = colorpicker.HueValues
 
-					-- kill UIListLayout if it exists
 					local list = HueValues:FindFirstChildOfClass("UIListLayout")
 					if list then list:Destroy() end
 
@@ -4087,7 +3508,6 @@ function syde:Init(library)
 					task.defer(updateHueValuesLayout)
 				end
 
-
 				colorpicker.color.Values.Hue.BackgroundTransparency = 1
 				colorpicker.color.Values.Hue.Pin.BackgroundTransparency = 1
 				colorpicker.color.Values.Hue.Pin.UIStroke.Transparency = 1
@@ -4144,7 +3564,7 @@ function syde:Init(library)
 					local startX = recentContainer.AbsoluteSize.X - totalWidth 
 
 					for _, frame in ipairs(children) do
-						--	frame.Position = UDim2.new(0, startX, 0.5, -frame.Size.Y.Offset / 2)
+
 						tweenservice:Create(frame, TweenInfo.new(0.5, Enum.EasingStyle.Quart), {Position = UDim2.new(0, startX , 0.8, -frame.Size.Y.Offset / 2) }):Play()
 						startX += frameSize + spacing
 					end
@@ -4213,7 +3633,6 @@ function syde:Init(library)
 					colorpicker.color.BackgroundColor3 = data.Color
 					colorpicker.color.glow.ImageColor3 = data.Color
 
-					--	colorpicker.color.BackgroundColor3 = Color3.fromHSV(HSV[1], 1, 1)
 					local newColor = Color3.fromHSV(HSV[1], HSV[2], HSV[3])
 					local newColor2 = Color3.fromHSV(HSV[1], 1, 1)
 
@@ -4236,12 +3655,10 @@ function syde:Init(library)
 						GradientFrame.Pin2.BackgroundColor3 = data.Color2
 					end
 
-
 					HueSat.Value = data.Color
 
 					tweenservice:Create(HUESlider.Pin, TweenInfo.new(0.1, Enum.EasingStyle.Exponential), {BackgroundColor3 = newColor2}):Play()
 					tweenservice:Create(SVPicker.Pin, TweenInfo.new(0.1, Enum.EasingStyle.Exponential), {BackgroundColor3 = newColor}):Play()
-
 
 					tweenservice:Create(SVPicker.Pin, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
 						Position = UDim2.new(HSV[2], 0, 1 - HSV[3], 0)
@@ -4288,7 +3705,6 @@ function syde:Init(library)
 						oldCallback(seq, data.Color, data.Color2)
 					end
 				end
-
 
 				if data.Type == "Gradient" then
 					HueFrame.Visible = true
@@ -4419,7 +3835,7 @@ function syde:Init(library)
 					tweenservice:Create(colorpicker, TweenInfo.new( 0.8, Enum.EasingStyle.Exponential ), { BackgroundColor3 = Color3.fromRGB(35, 35, 35) }):Play()
 					tweenservice:Create(colorpicker.color, TweenInfo.new( 1, Enum.EasingStyle.Exponential ), { BackgroundColor3 = Color3.fromHSV(HSV[1], 1, 1) }):Play()
 					tweenservice:Create(colorpicker.QuickClose, TweenInfo.new( 0.6, Enum.EasingStyle.Exponential ), { BackgroundTransparency = 0 }):Play()
-					--	tweenservice:Create(colorpicker.color.glow, TweenInfo.new( 0.8, Enum.EasingStyle.Exponential ), { ImageTransparency = 1}):Play()
+
 					task.wait(0.12)
 					tweenservice:Create(colorpicker.color, TweenInfo.new( 0.9, Enum.EasingStyle.Quart ), { Size = UDim2.new(1, -40,0, 160) }):Play()
 					tweenservice:Create(colorpicker.color, TweenInfo.new( 0.9, Enum.EasingStyle.Quart ), { Position = UDim2.new(0.5, 0,0, 40) }):Play()
@@ -4429,7 +3845,6 @@ function syde:Init(library)
 					tweenservice:Create(colorpicker.color.UICorner, TweenInfo.new( 0.8, Enum.EasingStyle.Quart ), { CornerRadius = UDim.new(0, 10) }):Play()
 
 					tweenservice:Create(colorpicker.color.Values.Rainbow, TweenInfo.new( 1, Enum.EasingStyle.Exponential ), { ImageTransparency = 0 }):Play()
-
 
 					task.wait(0.6)
 
@@ -4478,7 +3893,6 @@ function syde:Init(library)
 					DeBounce = false
 				end
 
-
 				colorpicker.interact.MouseButton1Click:Connect(function()
 					if DeBounce then return end
 					if not Open then
@@ -4502,16 +3916,14 @@ function syde:Init(library)
 					DeBounce = true
 					tweenservice:Create(colorpicker.UICorner, TweenInfo.new(0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), { CornerRadius = UDim.new(1,0) }):Play()
 					tweenservice:Create(colorpicker, TweenInfo.new( 0.55, Enum.EasingStyle.Quint ), { Size = UDim2.new(1, -35,0, 40) }):Play()
-					--	tweenservice:Create(colorpicker.QuickClose, TweenInfo.new( 0.6, Enum.EasingStyle.Exponential ), { BackgroundTransparency = 1 }):Play()
+
 					tweenservice:Create(colorpicker.color, TweenInfo.new( 0.7, Enum.EasingStyle.Quart ), { Position = UDim2.new(1, -30,0, 10)}):Play()
 					tweenservice:Create(colorpicker.color, TweenInfo.new( 0.55, Enum.EasingStyle.Quint ), { Size = UDim2.new(0, 20,0, 20) }):Play()
 					tweenservice:Create(colorpicker.color, TweenInfo.new( 0.5, Enum.EasingStyle.Exponential ), { BackgroundColor3 = data.Color }):Play()
 					tweenservice:Create(colorpicker.QuickClose, TweenInfo.new( 0.5, Enum.EasingStyle.Exponential ), { BackgroundTransparency = 1 }):Play()
-					--	tweenservice:Create(colorpicker.color.glow, TweenInfo.new( 0.5, Enum.EasingStyle.Exponential ), { ImageTransparency = 0.7}):Play()
+
 					colorpicker.interact.Interactable = true
 					colorpicker.QuickClose.Interactable = false
-
-					--	task.wait(0.6)
 
 					tweenservice:Create(colorpicker.color.SVPicker.Brightness, TweenInfo.new( 2, Enum.EasingStyle.Exponential ), { BackgroundTransparency = 1 }):Play()
 					tweenservice:Create(colorpicker.color.SVPicker.Saturation, TweenInfo.new( 2, Enum.EasingStyle.Exponential ), { BackgroundTransparency = 1 }):Play()
@@ -4537,7 +3949,7 @@ function syde:Init(library)
 					if data.Type == "Gradient" and displayGrad then
 						displayGrad.Enabled = true
 						displayGrad.Color = ColorSequence.new(Keys)
-						-- Set to White so the gradient isn't "multiplied" or tinted by a background color
+
 						tweenservice:Create(colorpicker.color, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), { BackgroundColor3 = Color3.new(1, 1, 1) }):Play()
 					else
 						if displayGrad then displayGrad.Enabled = false end
@@ -4579,7 +3991,6 @@ function syde:Init(library)
 					end
 				end)
 
-
 				for _,v in ipairs(colorpicker.HueValues:GetChildren()) do
 					if v:IsA("Frame") then
 						for _,v2 in ipairs(v:GetChildren()) do
@@ -4602,7 +4013,7 @@ function syde:Init(library)
 					recentFrame.BackgroundColor3 = newColor
 
 					recentFrame.interact.MouseButton1Click:Connect(function()
-				--[[	tweenservice:Create(recentFrame, TweenInfo.new(0.3, Enum.EasingStyle.Exponential), {Size = UDim2.new(0, 5,0, 5) }):Play()
+
 					task.wait(0.09)
 					tweenservice:Create(recentFrame, TweenInfo.new(0.3, Enum.EasingStyle.Exponential), {Size = UDim2.new(0, 12,0, 12) }):Play() ]]
 
@@ -4640,7 +4051,7 @@ function syde:Init(library)
 
 				local SV, HUE = nil, nil
 
-				syde:AddConnection(SVPicker.InputBegan, function(input)
+				cryable:AddConnection(SVPicker.InputBegan, function(input)
 					if input.UserInputType == Enum.UserInputType.MouseButton1 then
 						SV = runservice.RenderStepped:Connect(function()
 							local mouse = game.Players.LocalPlayer:GetMouse()
@@ -4655,7 +4066,7 @@ function syde:Init(library)
 					end
 				end)
 
-				syde:AddConnection(SVPicker.InputEnded, function(i)
+				cryable:AddConnection(SVPicker.InputEnded, function(i)
 					if i.UserInputType == Enum.UserInputType.MouseButton1 and SV then
 						SV:Disconnect()
 						SV = nil
@@ -4663,7 +4074,7 @@ function syde:Init(library)
 					end
 				end)
 
-				syde:AddConnection(HUESlider.InputBegan, function(input)
+				cryable:AddConnection(HUESlider.InputBegan, function(input)
 					if input.UserInputType == Enum.UserInputType.MouseButton1 then
 						HUE = runservice.RenderStepped:Connect(function()
 							local mouse = game.Players.LocalPlayer:GetMouse()
@@ -4676,7 +4087,7 @@ function syde:Init(library)
 					end
 				end)
 
-				syde:AddConnection(HUESlider.InputEnded, function(i)
+				cryable:AddConnection(HUESlider.InputEnded, function(i)
 					if i.UserInputType == Enum.UserInputType.MouseButton1 and HUE then
 						HUE:Disconnect()
 						HUE = nil
@@ -4703,10 +4114,9 @@ function syde:Init(library)
 						HSV[3] = Value
 						updatestuff()
 					else
-						warn("Failed to convert hex to color:", result)
+
 					end
 				end)
-
 
 				colorpicker.HueValues.RGB.V.RGBBox.FocusLost:Connect(function(Enter)
 					if not Enter then return end
@@ -4732,10 +4142,10 @@ function syde:Init(library)
 							colorpicker.HueValues.RGB.V.RGBBox.Text = ''
 							updatestuff()
 						else
-							warn("RGB values must be between 0 and 255.")
+
 						end
 					else
-						warn("Invalid RGB format. Please use the format 'R,G,B' (e.g., 16,16,16).")
+						.")
 					end
 				end)
 
@@ -4767,7 +4177,7 @@ function syde:Init(library)
 							return
 						end
 						local mouse = game.Players.LocalPlayer:GetMouse()
-						--	colorpicker.HueValues.Link.Frame.Position = UDim2.new(0, mouse.X - colorpicker.AbsolutePosition.X - 50, 0, mouse.Y - colorpicker.AbsolutePosition.Y - 260)
+
 						TweenService:Create(colorpicker.HueValues.Link.Frame, TweenInfo.new(0.3, Enum.EasingStyle.Quart), {Position = UDim2.new(0, mouse.X - colorpicker.AbsolutePosition.X - 50, 0, mouse.Y - colorpicker.AbsolutePosition.Y - 260) }):Play()
 
 						for _, otherPicker in pairs(Page:GetChildren()) do
@@ -4800,7 +4210,7 @@ function syde:Init(library)
 									):Play()
 
 									TweenService:Create(otherPicker.UIStroke, TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {Transparency = 1}):Play()
-									--	TweenService:Create(colorpicker.HueValues.HEX.Link, TweenInfo.new(0.5, Enum.EasingStyle.Exponential) , {ImageColor3 = Color3.fromRGB(66, 66, 66)}):Play()
+
 									TweenService:Create(colorpicker.HueValues.Link.Frame, TweenInfo.new(0.5, Enum.EasingStyle.Exponential) , {Size = UDim2.new(1, 0,1, 0)}):Play()
 									break
 								end
@@ -4808,7 +4218,7 @@ function syde:Init(library)
 						end
 
 						if not foundTarget then
-							--	TweenService:Create(colorpicker.HueValues.HEX.Link, TweenInfo.new(0.5, Enum.EasingStyle.Exponential) , {ImageColor3 = Color3.fromRGB(66, 66, 66)}):Play()
+
 							TweenService:Create(colorpicker.HueValues.Link.Frame, TweenInfo.new(0.5, Enum.EasingStyle.Exponential) , {Size = UDim2.new(1, 0,1, 0)}):Play()
 							TweenService:Create(
 								colorpicker.HueValues.Link.Frame,
@@ -4877,11 +4287,11 @@ function syde:Init(library)
 				end
 
 				if data.SFlag then
-					syde.SettingsFlags[data.SFlag] = data
+					cryable.SettingsFlags[data.SFlag] = data
 				end
 
-				if syde.ConfigEnabled and data.Flag and syde.Flags[data.Flag] then
-					local existing = syde.Flags[data.Flag]
+				if cryable.ConfigEnabled and data.Flag and cryable.Flags[data.Flag] then
+					local existing = cryable.Flags[data.Flag]
 					if existing.Color then
 						data:Set(existing.Color, true)
 					end
@@ -4892,7 +4302,6 @@ function syde:Init(library)
 				return data
 
 			end
-
 
 			function telement:Dropdown(Dropdown)
 				local data = {
@@ -5035,7 +4444,6 @@ function syde:Init(library)
 					selectedContainer.Visible = data.Multi
 					dropdown.dropholder.drop.selected.Visible = false
 
-
 					if data.Multi then
 
 						if #SelectedOrder == 0 then
@@ -5044,22 +4452,18 @@ function syde:Init(library)
 							return
 						end
 
-
-						-- Create chips for each selected option
 						for _, option in ipairs(SelectedOrder) do
-							-- Prevent duplicate pills
+
 							if not selectedContainer:FindFirstChild(option) then
 								local optionGroup = selectedContainer.result:Clone()
 								optionGroup.Visible = true
 								optionGroup.Name = option
 								optionGroup.TextLabel.Text = option
 
-								-- Set up remove button
 								optionGroup.X.MouseButton1Click:Connect(function()
 									RemoveFromSelected(option)
 									UpdateSelectedText()
 
-									-- Visually update the dropdown list
 									for _, opt in ipairs(dropdown.dropholder.drop.Container:GetChildren()) do
 										if opt:IsA("Frame") and opt.Name == option then
 											tweenservice:Create(opt, TweenInfo.new(1, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0}):Play()
@@ -5077,7 +4481,6 @@ function syde:Init(library)
 
 								optionGroup.Parent = selectedContainer
 
-								-- Optional: auto-size width
 								task.defer(function()
 									local padding = 40
 									local textWidth = optionGroup.TextLabel.TextBounds.X
@@ -5091,7 +4494,7 @@ function syde:Init(library)
 						end
 
 					else
-						-- Single option text fallback
+
 						dropdown.dropholder.drop.selected.Visible = true
 						if #SelectedOrder > 0 then
 							dropdown.dropholder.drop.selected.Text = SelectedOrder[1]
@@ -5101,7 +4504,6 @@ function syde:Init(library)
 					end
 				end
 
-				--[SEARCH]
 				dropdown.dropholder.drop.search.TextBox:GetPropertyChangedSignal("Text"):Connect(function()
 					local searchText = dropdown.dropholder.drop.search.TextBox.Text:lower()
 
@@ -5127,7 +4529,7 @@ function syde:Init(library)
 									tweenservice:Create(option.ImageLabel, TweenInfo.new(1, Enum.EasingStyle.Exponential), {ImageTransparency = 0.9}):Play()
 								end
 							else
-								-- Hide with animation, but wait before setting Visible = false
+
 								tweenservice:Create(option, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 1}):Play()
 								tweenservice:Create(option, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundColor3 = Color3.fromRGB(33, 33, 33)}):Play()
 								tweenservice:Create(option.Title, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()
@@ -5140,8 +4542,6 @@ function syde:Init(library)
 
 					UpdateCustomLayout()
 				end)
-
-
 
 				local function SetDropdownOptions()
 					local starterSet = false
@@ -5193,11 +4593,9 @@ function syde:Init(library)
 								tweenservice:Create(option, TweenInfo.new(0.3), {BackgroundColor3 = Color3.fromRGB(39, 39, 39)}):Play()
 								tweenservice:Create(option.ImageLabel, TweenInfo.new(0.3), {ImageTransparency = 0}):Play()
 
-
 								if data.CallBack then
 									data.CallBack(OptionText)
 								end
-
 
 								CloseDrop()
 							end
@@ -5231,8 +4629,6 @@ function syde:Init(library)
 				slider.Name = data.Title
 				slider.slideholder.slider.Visible = false
 
-
-				--[SLIDERS INITIALIZE]
 				for _, Options in ipairs(data.Sliders) do
 					local Slider = window.settings.pages.page.Slider.slideholder.slider:Clone()
 
@@ -5264,17 +4660,16 @@ function syde:Init(library)
 						SliderPosition = (Options.StarterValue - Options.Range[1]) / range
 					end
 
-
 					Slider.slide.slideframe:TweenSize(UDim2.new(SliderPosition, 0, 1, 0), Enum.EasingDirection.Out, Enum.EasingStyle.Quint, 0.5, true)
 
-					syde:registerLoadTween(
+					cryable:registerLoadTween(
 						Slider.slide.slideframe,
 						{Size = UDim2.new(SliderPosition, 0, 1, 0)},
 						{Size = UDim2.new(0, 100,1, 0)},
 						TweenInfo.new(0.85, Enum.EasingStyle.Quint)
 					)
 
-					syde:replayLoadTweens(Slider.slide.slideframe)
+					cryable:replayLoadTweens(Slider.slide.slideframe)
 
 					local decimalPlaces = tostring(Options.Increment):match("%.([^0]*)") and #tostring(Options.Increment):match("%.([^0]*)") or 0
 					Slider.v.Text = string.format("<font size='14'>%." .. decimalPlaces .. "f</font><font color='#434343'>/%." .. decimalPlaces .. "f</font>", Options.StarterValue, Options.Range[2])
@@ -5282,13 +4677,13 @@ function syde:Init(library)
 					local function BuildTicks(slide, options)
 						local ticksFrame = slide:FindFirstChild("Ticks")
 						if not ticksFrame then
-							warn("❌ Missing Slider.slide.Ticks")
+
 							return
 						end
 
 						local template = ticksFrame:FindFirstChild("tick")
 						if not template then
-							warn("❌ Missing Tick template inside Ticks")
+
 							return
 						end
 
@@ -5297,23 +4692,20 @@ function syde:Init(library)
 						local range = max - min
 
 						if range <= 0 or increment <= 0 then
-							warn("❌ Invalid range/increment", range, increment)
+
 							return
 						end
 
 						local tickCount = math.floor(range / increment) + 1
 						if tickCount < 2 then return end
 
-						-- wait for UI to size properly
 						task.wait()
 
 						local width = ticksFrame.AbsoluteSize.X
 						local height = ticksFrame.AbsoluteSize.Y
 
-
 						local spacing = width / (tickCount - 1)
 
-						-- Reuse existing ticks instead of destroying all
 						local existingTicks = {}
 						for _, child in ipairs(ticksFrame:GetChildren()) do
 							if child:IsA("Frame") and child ~= template then
@@ -5321,13 +4713,12 @@ function syde:Init(library)
 							end
 						end
 
-						-- Create new ticks if needed
 						for i = 0, tickCount - 1 do
 							local tick = existingTicks[i + 1] or template:Clone()
 							tick.Visible = true
 							tick.AnchorPoint = Vector2.new(0.5, 0.5)
 							tick.BorderSizePixel = 0
-							--	tick.BackgroundTransparency = 1
+
 							tick.Parent = ticksFrame
 
 							local finalPos = UDim2.fromOffset(i * spacing, height / 1.5)
@@ -5341,21 +4732,18 @@ function syde:Init(library)
 							):Play()
 						end
 
-						-- Destroy extra ticks
 						for i = tickCount + 1, #existingTicks do
 							existingTicks[i]:Destroy()
 						end
 
-						--	print("✅ Created", tickCount, "ticks")
 					end
 
-					-- Connect AbsoluteSize change **only once**
 					if Options.Increment > 4 then
 						if not Slider.slide.Ticks:FindFirstChild("_ResizeConnection") then
 							local conn = Slider.slide.Ticks:GetPropertyChangedSignal("AbsoluteSize"):Connect(function()
 								BuildTicks(Slider.slide, Options)
 							end)
-							-- Tag the connection so we don't connect again
+
 							local marker = Instance.new("BoolValue")
 							marker.Name = "_ResizeConnection"
 							marker.Parent = Slider.slide.Ticks
@@ -5366,9 +4754,6 @@ function syde:Init(library)
 							end)
 						end
 					end
-
-
-
 
 					local function UpdateSlider(x)
 						if dragging then
@@ -5381,15 +4766,11 @@ function syde:Init(library)
 							local newValue = Options.Range[1] + sliderPosition * range
 							newValue = math.floor((newValue - Options.Range[1]) / Options.Increment + 0.5) * Options.Increment + Options.Range[1]
 
-							-- Update the slider visual position
 							local snapPosition = (newValue - Options.Range[1]) / range
 							Slider.slide.slideframe:TweenSize(UDim2.new(snapPosition, 0, 1, 0), Enum.EasingDirection.Out, Enum.EasingStyle.Quint, 0.55, true)
 
-
-							-- Update the displayed value
 							local decimalPlaces = tostring(Options.Increment):match("%.([^0]*)") and #tostring(Options.Increment):match("%.([^0]*)") or 0
 							Slider.v.Text = string.format("<font size='14'>%." .. decimalPlaces .. "f</font><font color='#434343'>/%." .. decimalPlaces .. "f</font>", newValue, Options.Range[2])
-
 
 							tweenservice:Create(Slider.Title, TweenInfo.new(0.55, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()
 
@@ -5397,7 +4778,7 @@ function syde:Init(library)
 								Options.CallBack(newValue)
 							end)
 							if not success then
-								warn("[CALLBACK ERROR][" .. Slider.Name .. "]: " .. tostring(errorMsg))
+								)
 							end
 
 							Options.StarterValue = newValue
@@ -5412,28 +4793,28 @@ function syde:Init(library)
 						dragging = false
 					end)
 
-					syde:AddConnection(userinput.InputEnded, function(input, processed)
+					cryable:AddConnection(userinput.InputEnded, function(input, processed)
 						if input.UserInputType == Enum.UserInputType.MouseButton1  or input.UserInputType == Enum.UserInputType.Touch then
 							dragging = false
 							tweenservice:Create(Slider.Title, TweenInfo.new( 0.5, Enum.EasingStyle.Exponential ), { TextTransparency = 0.6 }):Play()
 						end
 					end)
 
-					syde:AddConnection(userinput.InputChanged, function(input)
+					cryable:AddConnection(userinput.InputChanged, function(input)
 						if dragging and input.UserInputType == Enum.UserInputType.MouseMovement  or input.UserInputType == Enum.UserInputType.Touch  then
 							UpdateSlider(input.Position.X)
 						end
 					end)
 
-					Slider.slide.slideframe.BackgroundColor3 = syde.theme.HitBox
-					Slider.slide.slideframe.shadowHolder.ambientShadow.ImageColor3 = syde.theme.HitBox
-					Slider.slide.slideframe.shadowHolder.penumbraShadow.ImageColor3 = syde.theme.HitBox
-					Slider.slide.slideframe.shadowHolder.umbraShadow.ImageColor3 = syde.theme.HitBox
+					Slider.slide.slideframe.BackgroundColor3 = cryable.theme.HitBox
+					Slider.slide.slideframe.shadowHolder.ambientShadow.ImageColor3 = cryable.theme.HitBox
+					Slider.slide.slideframe.shadowHolder.penumbraShadow.ImageColor3 = cryable.theme.HitBox
+					Slider.slide.slideframe.shadowHolder.umbraShadow.ImageColor3 = cryable.theme.HitBox
 					slider.slideholder.Size = UDim2.new(1,-30,0,slider.slideholder.UIListLayout.AbsoluteContentSize.Y)
 					local ss = slider.slideholder.UIListLayout.AbsoluteContentSize.Y
 					slider.Size = UDim2.new(1,-35,0, ss  + 20)
 
-					syde:AddConnection(syde.Comms.Event, function(p, color)
+					cryable:AddConnection(cryable.Comms.Event, function(p, color)
 						if p == 'HitBox' then
 							Slider.slide.slideframe.BackgroundColor3 = color
 							Slider.slide.slideframe.shadowHolder.ambientShadow.ImageColor3 = color
@@ -5445,7 +4826,6 @@ function syde:Init(library)
 					function Options:Set(NewVal, skipSave)
 						local range = Options.Range[2] - Options.Range[1]
 
-						-- snap value to increment (same logic as UpdateSlider)
 						NewVal = math.floor((NewVal - Options.Range[1]) / Options.Increment + 0.5) * Options.Increment + Options.Range[1]
 
 						local sliderPosition = (NewVal - Options.Range[1]) / range
@@ -5458,38 +4838,33 @@ function syde:Init(library)
 							true
 						)
 
-						-- Register load tween
-						syde:registerLoadTween(
+						cryable:registerLoadTween(
 							Slider.slide.slideframe,
 							{Size = UDim2.new(sliderPosition, 0, 1, 0)},
 							{Size = UDim2.new(0, 100, 1, 0)},
 							TweenInfo.new(0.85, Enum.EasingStyle.Quint)
 						)
 
-						-- detect decimal places from increment
 						local decimalPlaces = tostring(Options.Increment):match("%.([^0]*)")
 							and #tostring(Options.Increment):match("%.([^0]*)")
 							or 0
 
-						-- update display (decimal safe)
 						Slider.v.Text = string.format(
 							"<font size='14'>%." .. decimalPlaces .. "f</font><font color='#434343'>/%." .. decimalPlaces .. "f</font>",
 							NewVal,
 							Options.Range[2]
 						)
 
-						-- Tween title appearance
 						tweenservice:Create(Slider.Title, TweenInfo.new(0.55, Enum.EasingStyle.Exponential), {
 							TextTransparency = 0
 						}):Play()
 
-						-- Callback
 						local success, result = pcall(function()
 							Options.CallBack(NewVal)
 						end)
 
 						if not success then
-							warn(`[ Slider Error: { Slider.Name } ] Callback Error: { result }`)
+
 						end
 
 						Options.StarterValue = NewVal
@@ -5497,13 +4872,12 @@ function syde:Init(library)
 
 					if Options.SFlag then
 						if Options.SFlag then
-							syde.SettingsFlags[Options.SFlag] = Options
+							cryable.SettingsFlags[Options.SFlag] = Options
 						end
 					end
 
 				end
 
-				--[DESC]
 				local descLabel = slider.slideholder:FindFirstChild("Desc")
 
 				if descLabel then
@@ -5521,7 +4895,7 @@ function syde:Init(library)
 							)
 
 							local newDescSize = UDim2.new(1, -150, 0, textSize.Y)
-							local newButtonSize = UDim2.new(slider.Size.X.Scale, slider.Size.X.Offset, 0,slider.slideholder.AbsoluteSize.Y + slider.title.Size.Y.Offset + textSize.Y + 15) -- Adding extra padding
+							local newButtonSize = UDim2.new(slider.Size.X.Scale, slider.Size.X.Offset, 0,slider.slideholder.AbsoluteSize.Y + slider.title.Size.Y.Offset + textSize.Y + 15) 
 
 							local descTween = tweenservice:Create(descLabel, TweenInfo.new(0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), { Size = newDescSize })
 							descTween:Play()
@@ -5552,18 +4926,17 @@ function syde:Init(library)
 				Para.Content.Text = ParaData.Content
 
 				Para.Content.Size = UDim2.new(1, -20, 0, Para.Content.TextBounds.Y)
-				--	Para.Size = UDim2.new(1, -35, 0, Para.Content.Size.Y.Offset + 200)
 
 				local function updateSize()
 					local textSize = textservice:GetTextSize(
 						Para.Content.Text,
 						Para.Content.TextSize,
 						Para.Content.Font,
-						Vector2.new(Para.Content.AbsoluteSize.X, math.huge) -- Allows vertical expansion
+						Vector2.new(Para.Content.AbsoluteSize.X, math.huge) 
 					)
 
 					local newDescSize = UDim2.new(1, -20, 0, textSize.Y)
-					local newButtonSize = UDim2.new(Para.Size.X.Scale, Para.Size.X.Offset, 0, textSize.Y + 120) -- Adding extra padding
+					local newButtonSize = UDim2.new(Para.Size.X.Scale, Para.Size.X.Offset, 0, textSize.Y + 120) 
 
 					local descTween = tweenservice:Create(Para.Content, TweenInfo.new(0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), { Size = newDescSize })
 					descTween:Play()
@@ -5594,7 +4967,7 @@ function syde:Init(library)
 					PlaceHolder = TextInput.PlaceHolder or "Enter text...",
 					NumbersOnly = TextInput.NumberOnly or false,
 					ClearOnLost = TextInput.ClearOnLost == nil and true or TextInput.ClearOnLost,
-					--	MaxSize = TextInput.MaxSize or 100,
+
 					CallBack = TextInput.CallBack,
 				}
 
@@ -5607,10 +4980,8 @@ function syde:Init(library)
 
 				local textBox = textinput.TextFrame.TextBox
 				local defaultHeight = 32
-				--	local maxHeight = data.MaxSize
+
 				local ignoreNextClear = false
-
-
 
 				textinput.TextFrame.Enter.MouseEnter:Connect(function()
 					tweenservice:Create(textinput.TextFrame.Enter, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {TextColor3 = Color3.fromRGB(255, 255, 255)}):Play()
@@ -5645,17 +5016,11 @@ function syde:Init(library)
 					local newHeight = textinput.TextFrame.Size.Y.Offset
 					local extraHeight = 32
 
-
-
-
 					tweenservice:Create(
 						textinput,
 						TweenInfo.new(0.7, Enum.EasingStyle.Quint),
 						{ Size = UDim2.new(1, -35, 0, newHeight + extraHeight + 35) }
 					):Play()
-
-					--	tweenservice:Create(textinput.ImageLabel, TweenInfo.new(0.3, Enum.EasingStyle.Quart), { Position = UDim2.new(1, -20,1, -15) }):Play()
-
 
 				end)
 
@@ -5669,7 +5034,6 @@ function syde:Init(library)
 						{ Size = UDim2.new(1, -60, 0, totalHeight + 0) }
 					):Play()
 
-
 				end)
 
 				local function ProcessInput(text)
@@ -5677,7 +5041,7 @@ function syde:Init(library)
 						data.CallBack(text)
 					end)
 					if not success then
-						warn("Error in TextInput callback [" .. textinput.Name .. "]: " .. tostring(errorMsg))
+						)
 					end
 				end
 
@@ -5688,7 +5052,7 @@ function syde:Init(library)
 						data.CallBack(textBox.Text)
 					end)
 					if not success then
-						warn("Error in TextInput callback [" .. textinput.Name .. "]: " .. tostring(errorMsg))
+						)
 					end
 
 					if data.ClearOnLost then
@@ -5706,7 +5070,7 @@ function syde:Init(library)
 						data.CallBack(textBox.Text)
 					end)
 					if not success then
-						warn("Error in TextInput callback [" .. textinput.Name .. "]: " .. tostring(errorMsg))
+						)
 					end
 
 					if data.ClearOnLost then
@@ -5719,14 +5083,11 @@ function syde:Init(library)
 					end
 				end)
 
-
 			end
 
 			return telement
 
 		end
-
-		--@@SettingInit
 
 		local a = settings:inittab({Title = 'Theme'})
 		local b = settings:inittab({Title = 'Privacy'})
@@ -5737,7 +5098,7 @@ function syde:Init(library)
 			Key = uitoggle,
 			OnKeyChanged = function(newKey)
 				uitoggle = newKey
-				print(newKey)
+
 			end,
 			CallBack = function()
 				ToggleUI()
@@ -5748,9 +5109,9 @@ function syde:Init(library)
 			Title = 'Accent',
 			RD = false,
 			Linkable = true,
-			Color = syde.theme.Accent;
+			Color = cryable.theme.Accent;
 			CallBack = function(v)
-				syde:UpdateTheme({
+				cryable:UpdateTheme({
 					['Accent'] = v
 				})
 			end,
@@ -5761,19 +5122,18 @@ function syde:Init(library)
 			Title = 'Hitbox',
 			RD = false,
 			Linkable = true,
-			Color = syde.theme.HitBox;
+			Color = cryable.theme.HitBox;
 			CallBack = function(c)
-				syde:UpdateTheme({
+				cryable:UpdateTheme({
 					['HitBox'] = c
 				})
 			end,
 			SFlag = 'HB'
 		})
 
-		local seq = syde.theme.DropShadow
+		local seq = cryable.theme.DropShadow
 		local k = seq.Keypoints
 
-	--[[	a:ColorPicker({
 			Title = 'Dropshadow';
 			Linkable = true;
 			Type = 'Gradient';
@@ -5791,11 +5151,11 @@ function syde:Init(library)
 				elseif typeof(value) == "Color3" then
 					seq = ColorSequence.new(value)
 				else
-					warn("Invalid DropShadow value:", typeof(value))
+					)
 					return
 				end
 
-				syde:UpdateTheme({
+				cryable:UpdateTheme({
 					DropShadow = seq
 				})
 			end;
@@ -5815,7 +5175,7 @@ function syde:Init(library)
 				while rotateGradient and grad and grad.Enabled do
 					rotation = (rotation + 1) % 360
 					grad.Rotation = rotation
-					task.wait() -- adjust speed if you want
+					task.wait() 
 				end
 				rotating = false
 			end)
@@ -5852,7 +5212,6 @@ function syde:Init(library)
 					window.pages.clipframe.v1.Visible = false
 					window.pages.clipframe.v1.Visible = false
 
-					--		window.shadow.ImageLabel.Visible = false
 					window.shadow.glow.Visible = true
 					window.shadow.glow1.Visible = true
 
@@ -5864,7 +5223,6 @@ function syde:Init(library)
 						end
 					end
 
-					--	window.shadow.ImageLabel.Visible = true
 					window.shadow.glow.Visible = false
 					window.shadow.glow1.Visible = false
 
@@ -5894,7 +5252,7 @@ function syde:Init(library)
 					window.pages.clipframe.v1.Visible = false
 					window.pages.clipframe.v0.Visible = false
 
-					syde:BindFrame(window, {
+					cryable:BindFrame(window, {
 						Transparency = 0.98;
 						BrickColor = BrickColor.new('Institutional white');
 					})
@@ -5919,14 +5277,13 @@ function syde:Init(library)
 					window.pages.clipframe.v1.Visible = true
 					window.pages.clipframe.v0.Visible = true
 
-					syde:UnbindFrame(window)
+					cryable:UnbindFrame(window)
 
 					bluron = false
 				end
 			end,
 			SFlag = 'BLUR',
 		})
-
 
 		a:Slider({
 			Title = 'Modifiers',
@@ -5949,7 +5306,7 @@ function syde:Init(library)
 					StarterValue = dragSpeed,
 					CallBack = function(v)
 						dragSpeed = v
-						print(dragSpeed)
+
 					end,
 					SFlag = 'DSmoothness',
 					SettingConfig = true
@@ -5999,13 +5356,12 @@ function syde:Init(library)
 			CallBack = function (v)
 				if v then
 					window.wallpaper.Image = 'rbxassetid://'..v
-					syde:Toast({
+					cryable:Toast({
 						Content = 'Wallpaper applied.'
 					})
 				end
 			end
 		})
-
 
 		a:Toggle({
 			Title = 'LockToScreen',
@@ -6017,180 +5373,42 @@ function syde:Init(library)
 			SFlag = 'LS'
 		})
 
-
-		--// SERVICES
 		local HttpService = game:GetService("HttpService")
 
-		--// CONFIG
 		local isDev = false
-		local baseUrl = isDev and "http://localhost:3000" or "https://syde-auth.vercel.app"
-		local loginUrl = baseUrl .. "/api/login"
-		local VERIFY_ENDPOINT = baseUrl .. "/api/verify?id="
-
-		--// STATE
-		local currentDiscordId = nil
-		local lastCheck = 0
-		local debounceTime = 1.5 -- seconds
-
-		--// FUNCTION: open URL safely
-		local function openURL(url)
-			local success = false
-			pcall(function()
-				if syn and syn.openurl then
-					syn.openurl(url)
-					success = true
-				elseif getgenv().is_sirhurt_closure then
-					game:GetService("GuiService"):OpenBrowserWindow(url)
-					success = true
-				elseif KRNL_LOADED then
-					setclipboard(url)
-					success = true
-				end
-			end)
-
-			if not success and setclipboard then
-				setclipboard(url)
-				syde:Notify({
-					Title = "Link Copied",
-					Content = "OAuth link copied to clipboard. Paste in your browser.",
-					Duration = 5
-				})
-			end
-		end
-
-		--// BUTTON: Open OAuth
-		b:Button({
-			Title = "Connect Discord",
-			Description = "Authenticate your Discord account.",
-			CallBack = function()
-				openURL(loginUrl)
-			end,
-		})
-
-		local function verifyDiscord(id)
-			-- Try Roblox GetAsync first
-			if HttpService.HttpEnabled then
-				local ok, res = pcall(function()
-					return HttpService:GetAsync(VERIFY_ENDPOINT .. id, true)
-				end)
-				if ok and res then
-					local decodedOk, decoded = pcall(function()
-						return HttpService:JSONDecode(res)
-					end)
-					if decodedOk and type(decoded) == "table" and decoded.verified then
-						return true, decoded.discordUsername or nil
-					end
-				end
-				return false, nil
-			end
-
-			-- Fallback: executor HTTP
-			local success, result = pcall(function()
-				if syn and syn.request then
-					local r = syn.request({ Url = VERIFY_ENDPOINT .. id, Method = "GET" })
-					local decoded = HttpService:JSONDecode(r.Body)
-					if decoded.verified then
-						return decoded.discordUsername or nil
-					end
-				elseif request then
-					local r = request({ Url = VERIFY_ENDPOINT .. id, Method = "GET" })
-					local decoded = HttpService:JSONDecode(r.Body)
-					if decoded.verified then
-						return decoded.discordUsername or nil
-					end
-				end
-				return nil
-			end)
-
-			if success and result then
-				return true, result
-			end
-
-			return false, nil
-		end
-
-		--// INPUT: Discord ID verification
-		b:TextInput({
-			Title = "Discord ID",
-			PlaceHolder = "Paste your Discord ID after verifying",
-			ClearOnLost = false,
-			CallBack = function(v)
-				currentDiscordId = v
-
-				if not currentDiscordId or currentDiscordId == "" then
-					window.user.headshot.Status.BackgroundColor3 = Color3.fromRGB(255, 101, 104)
-					return
-				end
-
-				-- Debounce
-				if tick() - lastCheck < debounceTime then
-					return
-				end
-				lastCheck = tick()
-
-				-- Show checking
-				window.user.headshot.Status.BackgroundColor3 = Color3.fromRGB(255, 238, 49)
-
-				task.spawn(function()
-					local verified, discordUsername = verifyDiscord(currentDiscordId)
-					if verified then
-						window.user.headshot.Status.BackgroundColor3 = Color3.fromRGB(59, 255, 29)
-						if discordUsername then
-							window.user.headshot.id.username.Text = discordUsername
-						end
-						syde:Notify({
-							Title = "Success",
-							Content = "Discord verified successfully",
-							Duration = 4
-						})
-					else
-						window.user.headshot.Status.BackgroundColor3 = Color3.fromRGB(255, 101, 104)
-						syde:Notify({
-							Title = "Verification Failed",
-							Content = "Discord ID is not verified",
-							Duration = 4
-						})
-					end
-				end)
-			end,
-		})
-
-
-		function syde:SaveSettingsConfig()
+		function cryable:SaveSettingsConfig()
 			local Data = {}
 
-
-			for flag, v in pairs(syde.SettingsFlags or {}) do
+			for flag, v in pairs(cryable.SettingsFlags or {}) do
 
 				if v.Type == "ColorPicker" and v.Color then
-					Data[flag] = syde:ColorPack(v.Color)
+					Data[flag] = cryable:ColorPack(v.Color)
 				elseif v.V ~= nil then
 					Data[flag] = v.V
 				elseif v.StarterValue ~= nil then
 					Data[flag] = v.StarterValue
 				else
-					warn("[DEBUG] Skipping flag", flag, "no valid value found")
+
 				end
 			end
 
-
-			local path = string.format("%s/SettingsConfig.lua", syde.ConfigFolder)
+			local path = string.format("%s/SettingsConfig.lua", cryable.ConfigFolder)
 			local encoded = https:JSONEncode(Data)
 
 			writefile(path, encoded)
 
-			syde:Toast({
+			cryable:Toast({
 				Content = 'Saved setting config';
 				Duration = 3
 			})
 		end
 
-		function syde:LoadSettingsConfig()
-			local path = string.format("%s/SettingsConfig.lua", syde.ConfigFolder)
+		function cryable:LoadSettingsConfig()
+			local path = string.format("%s/SettingsConfig.lua", cryable.ConfigFolder)
 
 			if not isfile(path) then
 
-				syde:Toast({
+				cryable:Toast({
 					Content = 'No settings found';
 					Duration = 3
 				})
@@ -6202,26 +5420,26 @@ function syde:Init(library)
 			end)
 
 			if not success or typeof(data) ~= "table" then
-				warn("[DEBUG] Failed to decode settings:", data)
+
 				return
 			end
 
 			for flag, val in pairs(data) do
-				local setting = syde.SettingsFlags and syde.SettingsFlags[flag]
+				local setting = cryable.SettingsFlags and cryable.SettingsFlags[flag]
 				if setting then
 					if setting.Set then
 						setting:Set(val)
 					elseif setting.Type == "ColorPicker" and setting.Color then
-						setting.Color = syde:ColorUnpack(val)
+						setting.Color = cryable:ColorUnpack(val)
 					elseif setting.V ~= nil then
 						setting.Value = val
 					end
 				else
-					warn("[DEBUG] No matching setting flag found for:", flag)
+
 				end
 			end
 
-			syde:Toast({
+			cryable:Toast({
 				Content = 'Loaded setting config';
 				Duration = 3
 			})
@@ -6231,14 +5449,14 @@ function syde:Init(library)
 			Title = 'Save',
 			Description = 'Save all setting configurations.',
 			CallBack = function ()
-				syde:SaveSettingsConfig()
+				cryable:SaveSettingsConfig()
 			end
 		})
 		a:Button({
 			Title = 'Load',
 			Description = 'Load all setting configurations.',
 			CallBack = function ()
-				syde:LoadSettingsConfig()
+				cryable:LoadSettingsConfig()
 			end
 		})
 
@@ -6262,7 +5480,6 @@ function syde:Init(library)
 			Content = 'Your Up To Date!'
 		})
 
-
 		local startTime = tick()
 
 		local uptimeParagraph = c:Paragraph({
@@ -6283,14 +5500,13 @@ function syde:Init(library)
 
 		local startTime = tick()
 
-		ss = syde:AddConnection(runservice.Heartbeat, function()
+		ss = cryable:AddConnection(runservice.Heartbeat, function()
 			local uptime = tick() - startTime
 			local formatted = formatTime(uptime)
 			uptimeParagraph:Set("Session Uptime: " .. formatted, 'Session UpTime')
 		end)
 
 	end
-
 
 	workspace.CurrentCamera:GetPropertyChangedSignal("ViewportSize"):Connect(function()
 		screenSize = workspace.CurrentCamera.ViewportSize
@@ -6303,33 +5519,30 @@ function syde:Init(library)
 	camera:GetPropertyChangedSignal("ViewportSize"):Connect(updateLayout)
 	userinput:GetPropertyChangedSignal("TouchEnabled"):Connect(updateLayout)
 
-	--@@Tabs
 	local tbdata = {
 		first = false,
 		selected = false
 	}
 
 	function tbdata:InitTab(tab)
-		-- bootstrap Home-mode once so first-created tabs don't auto-open
 
 		if Data.Home.Enabled then
 			if not tbdata.__homeBootstrapped then
 				tbdata.__homeBootstrapped = true
 				tbdata.first = "Home"
 				tbdata.homeActive = true
-				-- hide all normal pages on boot
+
 				for _, temp in ipairs(pages:GetChildren()) do
 					if temp:IsA("ScrollingFrame") then
 						temp.Visible = false
 					end
 				end
-				-- ensure homepage is visible if present
+
 				if window and window.pages and window.pages.home then
 					window.pages.home.Visible = true
 				end
 			end
 		end
-
 
 		local isFirstTab = not tbdata.first 
 
@@ -6341,7 +5554,6 @@ function syde:Init(library)
 
 		local LockedFrames = {}
 
-		--[Tab Setup]
 		local Tab = tabs.btn:Clone()
 		Tab.Visible = true
 		Tab.Parent = tabs
@@ -6351,7 +5563,6 @@ function syde:Init(library)
 		Tab.title.TextTransparency = 1
 		Tab.indicator.BackgroundTransparency = 1
 
-		--[Page Setup]
 		local Page = pages.page:Clone()
 		Page.Visible = false
 		Page.Parent = pages
@@ -6369,28 +5580,25 @@ function syde:Init(library)
 			end
 		end
 
-
 		Page.ChildAdded:Connect(function(child)
 			child:GetPropertyChangedSignal("AbsoluteSize"):Connect(function()
-				syde:updateLayout(Page, 7) 
+				cryable:updateLayout(Page, 7) 
 			end)
 			child:GetPropertyChangedSignal("Visible"):Connect(function()
-				syde:updateLayout(Page, 7)
+				cryable:updateLayout(Page, 7)
 			end)
-			syde:updateLayout(Page, 7)
+			cryable:updateLayout(Page, 7)
 		end)
 
 		Page.ChildRemoved:Connect(function()
-			syde:updateLayout(Page, 7)
+			cryable:updateLayout(Page, 7)
 		end)
 
 		Page:GetPropertyChangedSignal("AbsoluteSize"):Connect(function()
-			syde:updateLayout(Page, 7)
+			cryable:updateLayout(Page, 7)
 		end)
 
-		syde:updateLayout(Page, 7)
-
-
+		cryable:updateLayout(Page, 7)
 
 		local function ChangeName(Name)
 			tweenservice:Create(pages.clipframe.title, TweenInfo.new(0), { TextTransparency = pages.clipframe.title.TextTransparency }):Play()
@@ -6426,18 +5634,17 @@ function syde:Init(library)
 			tweenservice:Create(Tab.indicator, TweenInfo.new(1, Enum.EasingStyle.Exponential), { BackgroundTransparency = 1 }):Play()
 			tweenservice:Create(Tab.indicator.glow, TweenInfo.new(1, Enum.EasingStyle.Exponential), { ImageTransparency = 1 }):Play()
 			tweenservice:Create(Tab, TweenInfo.new(2, Enum.EasingStyle.Quart), { Size = UDim2.new(0, Tab.title.TextBounds.X + 30,0, 35) }):Play()
-			--	tweenservice:Create(Tab.indicator.ImageLabel, TweenInfo.new(1, Enum.EasingStyle.Exponential), { ImageTransparency = 1 }):Play()
+
 		else
 			tbdata.first = tdata.Title
 			tweenservice:Create(Tab.title, TweenInfo.new(2, Enum.EasingStyle.Exponential), { TextTransparency = 0 }):Play()
 			tweenservice:Create(Tab, TweenInfo.new(2, Enum.EasingStyle.Exponential), { BackgroundTransparency = 0 }):Play()
 			tweenservice:Create(Tab.indicator, TweenInfo.new(1, Enum.EasingStyle.Exponential), { BackgroundTransparency = 0 }):Play()
-			tweenservice:Create(Tab.indicator, TweenInfo.new(2, Enum.EasingStyle.Exponential), { BackgroundColor3 = syde.theme.Accent }):Play()
-			tweenservice:Create(Tab.indicator.glow, TweenInfo.new(2, Enum.EasingStyle.Exponential), { ImageColor3 = syde.theme.Accent }):Play()
+			tweenservice:Create(Tab.indicator, TweenInfo.new(2, Enum.EasingStyle.Exponential), { BackgroundColor3 = cryable.theme.Accent }):Play()
+			tweenservice:Create(Tab.indicator.glow, TweenInfo.new(2, Enum.EasingStyle.Exponential), { ImageColor3 = cryable.theme.Accent }):Play()
 			tweenservice:Create(Tab, TweenInfo.new(2, Enum.EasingStyle.Quart), { Size = UDim2.new(0, Tab.title.TextBounds.X + 80,0, 35) }):Play()
-			--	tweenservice:Create(Tab.indicator.ImageLabel, TweenInfo.new(1, Enum.EasingStyle.Exponential), { ImageTransparency = 0.6 }):Play()
-		end
 
+		end
 
 		local positionTweenInfo = TweenInfo.new(0.7, Enum.EasingStyle.Quart)
 		local colorTweenInfo = TweenInfo.new(0.3, Enum.EasingStyle.Exponential)
@@ -6450,11 +5657,11 @@ function syde:Init(library)
 			end
 
 			if isActive then
-				--	tweenservice:Create(HomeButton.text, TweenInfo.new(1, Enum.EasingStyle.Exponential), { TextTransparency = 0 }):Play()
+
 				tweenservice:Create(HomeButton.homeicon, TweenInfo.new(1, Enum.EasingStyle.Exponential), { BackgroundTransparency = 0.45 }):Play()
 				tweenservice:Create(HomeButton.homeicon.ImageLabel, TweenInfo.new(1, Enum.EasingStyle.Exponential), { ImageTransparency = 0 }):Play()
 			else
-				--	tweenservice:Create(HomeButton.text, TweenInfo.new(1, Enum.EasingStyle.Exponential), { TextTransparency = 0.67 }):Play()
+
 				tweenservice:Create(HomeButton.homeicon, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), { BackgroundTransparency = 0.85 }):Play()
 				tweenservice:Create(HomeButton.homeicon.ImageLabel, TweenInfo.new(1, Enum.EasingStyle.Exponential), { ImageTransparency = 0.67 }):Play()
 			end
@@ -6466,9 +5673,8 @@ function syde:Init(library)
 			local targetTextTransparency = isSelected and 0 or 0.6
 			local targetBackgroundTransparency = isSelected and 0 or 0.45
 			local targetTransparency = isSelected and 0 or 1
-			local targetColor = isSelected and syde.theme.Accent or Color3.fromRGB(29, 29, 29)
+			local targetColor = isSelected and cryable.theme.Accent or Color3.fromRGB(29, 29, 29)
 			local targetSize = isSelected and UDim2.new(0, tabButton.title.TextBounds.X + 80,0, 35) or UDim2.new(0, tabButton.title.TextBounds.X + 50,0, 35)
-
 
 			if isInit then
 				task.spawn(function()
@@ -6484,7 +5690,6 @@ function syde:Init(library)
 
 			end
 
-
 			tweenservice:Create(tabButton, positionTweenInfo, { Size = targetSize }):Play()
 			tweenservice:Create(tabButton, colorTweenInfo, { BackgroundTransparency = targetBackgroundTransparency, }):Play()
 			tweenservice:Create(tabButton.title, colorTweenInfo, { TextTransparency = targetTextTransparency }):Play()
@@ -6493,7 +5698,6 @@ function syde:Init(library)
 
 			tweenservice:Create(tabButton.indicator, colorTweenInfo, { BackgroundColor3 = targetColor }):Play()
 			tweenservice:Create(tabButton.indicator, colorTweenInfo, { BackgroundTransparency = isSelected and 0 or 1 }):Play()
-
 
 		end
 		ApplyTabStyle(Tab, isFirstTab)
@@ -6528,18 +5732,16 @@ function syde:Init(library)
 
 			ApplyHomeButtonStyle(true)
 			window.pages.clipframe.Visible = false
-			--	window.pages.v0.Visible = false
-			--	window.pages.v1.Visible = false
+
 		end
 
 		local function HideHomeForTab()
 			tbdata.homeActive = false
 
 			if HomePage and HomePage.Visible then
-				-- hide immediately to prevent overlap flicker
+
 				HomePage.Visible = false  
 
-				-- optional: still tween background transparency for smoothness
 				pcall(function() 
 					HomePage.BackgroundTransparency = 1 
 				end)
@@ -6547,21 +5749,18 @@ function syde:Init(library)
 
 			ApplyHomeButtonStyle(false)
 			window.pages.clipframe.Visible = true
-			--	window.pages.v0.Visible = true
-			--	window.pages.v1.Visible = true
+
 		end
 
 		if tbdata.first == 'Home' then
 			ShowHome()
 		end
 
-		-- Hook Home button click once (if present)
 		if HomeButton and HomeButton.homeicon:FindFirstChild("interact") and not tbdata.__homeHooked then
 			tbdata.__homeHooked = true
 			HomeButton.homeicon.interact.MouseButton1Click:Connect(function()
 				if tbdata.homeActive then return end 
 
-				-- Force-hide all locked pages
 				local lockedFolder = pages:FindFirstChild("lockedpages")
 				if lockedFolder then
 					for _, lockedPage in ipairs(lockedFolder:GetChildren()) do
@@ -6579,30 +5778,26 @@ function syde:Init(library)
 		Tab.interact.MouseButton1Click:Connect(function()
 			if tbdata.first == tdata.Title then return end 
 
-			-- Hide Home if active
 			if Data.Home.Enabled then
 				if tbdata.homeActive then
 					HideHomeForTab()
 				end
 			end
 
-
 			local previous = tbdata.first
 			tbdata.first = tdata.Title
 
-			-- Check if both old + new are InitTab tabs
 			local prevPage = pages:FindFirstChild(previous)
 			local newPage  = pages:FindFirstChild(tdata.Title)
 
 			if prevPage and newPage then
-				-- both are regular tabs → animate
+
 				ChangeName(tdata.Title)
 			else
-				-- otherwise just snap
+
 				pages.clipframe.title.Text = tdata.Title
 			end
 
-			-- Hide all pages
 			for _, otherPage in ipairs(pages:GetChildren()) do
 				if otherPage:IsA("ScrollingFrame") then
 					otherPage.Visible = false
@@ -6612,7 +5807,6 @@ function syde:Init(library)
 			Page.Visible = true
 			tbdata.first = tdata.Title
 
-		--[[	if TabData.Locked == true then
 				if lockedframe and lockedframe.Name == TabData.Title then
 					lockedframe.Visible = true
 					for _, v in pairs(WINDOW.Pages.lockedpages:GetChildren()) do
@@ -6630,7 +5824,7 @@ function syde:Init(library)
 				end
 			end]]
 
-			syde:replayLoadTweens()
+			cryable:replayLoadTweens()
 
 			for _, otherTab in ipairs(tabs:GetChildren()) do
 				if otherTab:IsA("Frame") then
@@ -6641,11 +5835,10 @@ function syde:Init(library)
 
 		end)
 
-		syde:AddConnection(syde.Comms.Event, function(p, color)
+		cryable:AddConnection(cryable.Comms.Event, function(p, color)
 			if p == 'Accent' then
 				if tbdata.first ~= tdata.Title then return end
 
-				-- live accent update
 				tweenservice:Create(Tab.indicator, TweenInfo.new(0.25, Enum.EasingStyle.Exponential), {
 					BackgroundColor3 = color
 				}):Play()
@@ -6660,7 +5853,6 @@ function syde:Init(library)
 			local selectedTab
 			local targetPage
 
-			-- find tab
 			for _, tab in ipairs(tabs:GetChildren()) do
 				if tab:IsA("Frame") and tab.Name == tabName then
 					selectedTab = tab
@@ -6668,33 +5860,27 @@ function syde:Init(library)
 				end
 			end
 
-			-- find page
 			targetPage = pages:FindFirstChild(tabName)
 			if not (selectedTab and targetPage) then
-				warn("[Syde] SwitchToTab failed:", tabName)
+
 				return
 			end
 
-			-- already selected
 			if tbdata.first == tabName then
 				return
 			end
 
-			-- update title (same logic as click)
 			ChangeName(tabName)
 
-			-- hide all pages
 			for _, page in ipairs(pages:GetChildren()) do
 				if page:IsA("ScrollingFrame") then
 					page.Visible = false
 				end
 			end
 
-			-- show page
 			targetPage.Visible = true
 			tbdata.first = tabName
 
-			-- update tab styles
 			for _, tab in ipairs(tabs:GetChildren()) do
 				if tab:IsA("Frame") then
 					ApplyTabStyle(tab, tab == selectedTab)
@@ -6702,13 +5888,10 @@ function syde:Init(library)
 				end
 			end
 
-			-- replay load tweens like normal click
-			syde:replayLoadTweens()
+			cryable:replayLoadTweens()
 
 			return targetPage
 		end
-
-
 
 		local Pages = ui.main.pages
 		local Results = window.search.Container
@@ -6735,7 +5918,7 @@ function syde:Init(library)
 		end
 
 		local function createResult(page, func)
-			local key = func:GetFullName() -- unique string key
+			local key = func:GetFullName() 
 			if activeResults[key] then return end
 			activeResults[key] = true
 
@@ -6747,32 +5930,27 @@ function syde:Init(library)
 			result.info.badge["function"].Text = getFunctionType(func)
 			result.info.badge.Size = UDim2.new(0, result.info.badge["function"].TextBounds.X + 20,0, 20)
 			result.interact.MouseButton1Click:Connect(function()
-				-- Ensure we always have the opened page, even if already on it
 
 				closesearch()
 
 				local openedPage = ui.main.pages:FindFirstChild(page.Name)
 				if not openedPage or not openedPage:IsA("ScrollingFrame") then return end
 
-				-- Optional: switch tab visuals (if SwitchToTab does this)
 				SwitchToTab(page.Name)
 
-				task.wait(0.05) -- small delay to allow UI to update
+				task.wait(0.05) 
 
-				-- Calculate scroll position
 				local y = func.AbsolutePosition.Y - openedPage.AbsolutePosition.Y + openedPage.CanvasPosition.Y
 
-				-- Scroll to the function
 				tweenservice:Create(
 					openedPage,
 					TweenInfo.new(0.6, Enum.EasingStyle.Exponential, Enum.EasingDirection.Out),
 					{ CanvasPosition = Vector2.new(0, math.max(0, y - 20)) }
 				):Play()
 
-				-- Highlight flash
 				local original = func.BackgroundColor3
 				tweenservice:Create(func, TweenInfo.new(0.2), {
-					BackgroundColor3 = syde:GetLighter(original, 0.03)
+					BackgroundColor3 = cryable:GetLighter(original, 0.03)
 				}):Play()
 
 				task.delay(0.35, function()
@@ -6787,17 +5965,15 @@ function syde:Init(library)
 					ImageColor3 = Color3.fromRGB(255, 255, 255)
 				}):Play()
 
-				--	tweenservice:Create(result.UIStroke, TweenInfo.new(0.2), {Thickness = 1}):Play()
 			end)
 
 			result.MouseLeave:Connect(function()
 				tweenservice:Create(result.ImageLabel, TweenInfo.new(0.2), {
 					ImageColor3 = Color3.fromRGB(130, 130, 130)
 				}):Play()
-				--	tweenservice:Create(result.UIStroke, TweenInfo.new(0.2), {Thickness = 0}):Play()
+
 			end)
 
-			-- tweenservice:Create(result, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0}):Play()
 			tweenservice:Create(result.info.badge, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0}):Play()
 			tweenservice:Create(result.info.title, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()
 			tweenservice:Create(result.info.badge["function"], TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()
@@ -6813,7 +5989,6 @@ function syde:Init(library)
 				clearResults()
 				query = query:lower()
 				if query == "" then return end
-
 
 				for _, page in ipairs(Pages:GetChildren()) do
 					if page:IsA("ScrollingFrame") then
@@ -6835,7 +6010,7 @@ function syde:Init(library)
 		local SearchBox = window.search.Frame.TextBox
 		SearchBox:GetPropertyChangedSignal("Text"):Connect(function()
 			searchFunctions(SearchBox.Text)
-			--	window.search.Size = UDim2.new(0, 350,0, 230)
+
 			tweenservice:Create(window.search, TweenInfo.new(0.7, Enum.EasingStyle.Quart), {Size =  UDim2.new(0, 350,0, 230)}):Play()
 			tweenservice:Create(window.search.UICorner, TweenInfo.new(0.7, Enum.EasingStyle.Quart), {CornerRadius =  UDim.new(0,25)}):Play()
 			if SearchBox.Text == '' then
@@ -6844,10 +6019,7 @@ function syde:Init(library)
 			end
 		end)
 
-
-
-
-		syde:AddConnection(syde.Comms.Event, function(p, value)
+		cryable:AddConnection(cryable.Comms.Event, function(p, value)
 			if p == "DropShadow" then
 				local imageLabel = window.shadow.ImageLabel
 				local gradient = imageLabel:FindFirstChildOfClass("UIGradient")
@@ -6861,9 +6033,6 @@ function syde:Init(library)
 			end
 		end)
 
-
-		-- ensure new tabs start disabled visually (Home is handled by bootstrap)
-	--[[	if Data.Home.Enabled then
 			ApplyTabStyle(Tab, false)
 		else
 			ApplyTabStyle(Tab, isFirstTab)
@@ -6872,8 +6041,6 @@ function syde:Init(library)
 
 		local initelement = {}
 
-
-		--@@Button
 		function initelement:Button(Button)
 			local data = {
 				Title = Button.Title or "Temp Button";
@@ -6895,12 +6062,10 @@ function syde:Init(library)
 
 			c = data.CallBack
 
-
 			local fOTween = TweenInfo.new(0.7, Enum.EasingStyle.Exponential)
 			local fITween = TweenInfo.new(0.7, Enum.EasingStyle.Exponential)
 
 			if data.Type == 'Default' then
-				-- UI Stroke effect on button press
 
 				button.interact.MouseButton1Down:Connect(function()
 					tweenservice:Create(button.UIStroke, fOTween, { Transparency = 1 }):Play()
@@ -6912,22 +6077,19 @@ function syde:Init(library)
 					tweenservice:Create(button.UIStroke, fITween, { Transparency = 0 }):Play()
 					tweenservice:Create(button.ImageLabel, TweenInfo.new(0.8, Enum.EasingStyle.Exponential), { ImageTransparency = 0.95 }):Play()
 
-
 				end)
 
 				button.interact.MouseButton1Click:Connect(function()
 					if data.CallBack then
 						local success, errorMsg = pcall(c)
 						if not success then
-							warn(`[ Button Error: { button.Name } ] Callback Error: { errorMsg }`)
 
 						end
 					else
-						warn(`[ CallBack Missing: { button.Name } ] No Function Assigned`)
+
 					end
 				end)
 
-				-- Extra Check 
 				button.interact.MouseLeave:Connect(function()
 					tweenservice:Create(button.UIStroke, fITween, { Transparency = 0 }):Play()
 					tweenservice:Create(button.ImageLabel, TweenInfo.new(0.8, Enum.EasingStyle.Exponential), { ImageTransparency = 0.95 }):Play()
@@ -6959,11 +6121,6 @@ function syde:Init(library)
 						tweenservice:Create(button.UIStroke, TweenInfo.new(1, Enum.EasingStyle.Exponential), { Transparency = 0 }):Play()
 					end
 
-					-- did not complete 
-
-					--	button.UIStroke.UIGradient.Offset = Vector2.new(-1, 0)
-					--	tweenservice:Create(button.UIStroke, TweenInfo.new(HoldTime, Enum.EasingStyle.Linear), { Offset = Vector2.new(-1, 0) }):Play()
-
 					TimeLeft = HoldTime
 					button.title.timer.Text = tostring(HoldTime)
 					task.wait(0.1)
@@ -6980,7 +6137,6 @@ function syde:Init(library)
 					tweenservice:Create(button.UIStroke.UIGradient, TweenInfo.new(HoldTime, Enum.EasingStyle.Linear), { Offset = Vector2.new(0.7, 0) }):Play()
 					tweenservice:Create(button.UIStroke, TweenInfo.new(1, Enum.EasingStyle.Exponential), { Transparency = 0}):Play()
 
-					-- Countdown loop
 					while Holding and TimeLeft > 0 do
 						TimeLeft = math.max(0, TimeLeft - runservice.Heartbeat:Wait())
 						button.title.timer.Text = string.format("%.1f", TimeLeft) 
@@ -6993,10 +6149,10 @@ function syde:Init(library)
 						if data.CallBack then
 							local success, errorMsg = pcall(data.CallBack)
 							if not success then
-								warn("[CALLBACK ERROR]:", errorMsg)
+
 							end
 						else
-							warn("[CALLBACK MISSING]: No Function Assigned To", data.Title)
+
 						end
 
 						tweenservice:Create(button, TweenInfo.new(0.34, Enum.EasingStyle.Exponential), { BackgroundColor3 = Color3.fromRGB(24, 24, 24) }):Play()
@@ -7017,7 +6173,6 @@ function syde:Init(library)
 				end)
 			end
 
-			--[DESC]
 			local descLabel = button:FindFirstChild("desc")
 
 			if descLabel then
@@ -7054,7 +6209,6 @@ function syde:Init(library)
 
 		end
 
-		--@@Toggle
 		function initelement:Toggle(Toggle)
 			local data = {
 				Title = Toggle.Title or "Temp Toggle";
@@ -7071,7 +6225,6 @@ function syde:Init(library)
 			toggle.title.Text = data.Title
 			toggle.Name = data.Title
 			toggle:SetAttribute("Searchable", true)
-
 
 			local toggleConfiguration = ui.Render.ToggleConfiguration:Clone()
 			toggleConfiguration.Parent = ui.Render
@@ -7096,7 +6249,7 @@ function syde:Init(library)
 			local fadeTween = TweenInfo.new(0.57, Enum.EasingStyle.Exponential, Enum.EasingDirection.Out)
 
 			local function UpdateToggleUI(state)
-				local targetColor = state and syde.theme.HitBox or Color3.fromRGB(28, 28, 28)
+				local targetColor = state and cryable.theme.HitBox or Color3.fromRGB(28, 28, 28)
 				local strokeTransparency = state and 1 or 0
 				local checkTransparency = state and 0 or 1
 				local gradientTransparency = state and 0 or 1
@@ -7104,7 +6257,7 @@ function syde:Init(library)
 				local textTransparency = state and 0 or 0.5
 
 				tweenservice:Create(toggle.tog, toggleTween, { BackgroundColor3 = targetColor }):Play()
-				--	tweenservice:Create(toggle.tog.UIStroke, toggleTween, { Transparency = strokeTransparency }):Play()
+
 				tweenservice:Create(toggle.tog.check, toggleTween, { ImageTransparency = checkTransparency }):Play()
 				tweenservice:Create(toggle.tog.gradfr, fadeTween, { BackgroundTransparency = gradientTransparency }):Play()
 				tweenservice:Create(toggle.tog.glow, toggleTween, { ImageTransparency = glowTransparency }):Play()
@@ -7125,12 +6278,11 @@ function syde:Init(library)
 				end)
 
 				if not success then
-					warn("[CALLBACK ERROR][" .. toggle.Name .. "]: " .. tostring(errorMsg))
+					)
 				end
 				SaveConfig()
 			end)
 
-			--[DESC]
 			local descLabel = toggle:FindFirstChild("desc")
 
 			if descLabel then
@@ -7148,7 +6300,7 @@ function syde:Init(library)
 						)
 
 						local newDescSize = UDim2.new(1, -150, 0, textSize.Y)
-						local newButtonSize = UDim2.new(toggle.Size.X.Scale, toggle.Size.X.Offset, 0, toggle.title.Size.Y.Offset + textSize.Y + 10) -- Adding extra padding
+						local newButtonSize = UDim2.new(toggle.Size.X.Scale, toggle.Size.X.Offset, 0, toggle.title.Size.Y.Offset + textSize.Y + 10) 
 
 						local descTween = tweenservice:Create(descLabel, TweenInfo.new(0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), { Size = newDescSize })
 						descTween:Play()
@@ -7165,8 +6317,6 @@ function syde:Init(library)
 				end
 			end
 
-
-			-- [CONFIGURATIPON]
 			if data.Config then
 
 				local State = false
@@ -7193,7 +6343,6 @@ function syde:Init(library)
 					tweenservice:Create(toggleConfiguration.Container.Clear.clear.ImageLabel, enterTween, { ImageTransparency = 0 }):Play()
 					tweenservice:Create(toggleConfiguration.Container.Clear.Title, enterTween, { TextTransparency = 0 }):Play()
 					tweenservice:Create(toggleConfiguration, TweenInfo.new(0.7, Enum.EasingStyle.Quint), { Size = UDim2.new(0, 174,0, 88) }):Play()
-					--	tweenservice:Create(toggleConfiguration.shadow.ImageLabel, enterTween, { ImageTransparency = 0.57 }):Play()
 
 				end
 
@@ -7208,7 +6357,7 @@ function syde:Init(library)
 					tweenservice:Create(toggleConfiguration.Container.Clear.clear.ImageLabel, enterTween, { ImageTransparency = 1 }):Play()
 					tweenservice:Create(toggleConfiguration.Container.Clear.Title, enterTween, { TextTransparency = 1 }):Play()
 					tweenservice:Create(toggleConfiguration, TweenInfo.new(0.7, Enum.EasingStyle.Quint), { Size = UDim2.new(0, 75,0, 53) }):Play()
-					--	tweenservice:Create(toggleConfiguration.shadow.ImageLabel, enterTween, { ImageTransparency = 1 }):Play()
+
 					task.wait(0.5)
 
 					toggleConfiguration.Visible = false
@@ -7276,7 +6425,6 @@ function syde:Init(library)
 					tweenservice:Create(toggleConfiguration.Container.KeyBind.Bind.v, TweenInfo.new(0.25, Enum.EasingStyle.Exponential), { TextTransparency = 0 }):Play()
 					ResizeBindFrame()
 
-
 					local connection
 					connection = userinput.InputBegan:Connect(function(input, processed)
 						if not processed and input.UserInputType == Enum.UserInputType.Keyboard then
@@ -7296,11 +6444,10 @@ function syde:Init(library)
 								data.CallBack(data.V)
 							end)
 							if not success then
-								warn("[CALLBACK ERROR][" .. toggle.Name .. "]: " .. tostring(errorMsg))
+								)
 							end
 							SaveConfig()
 						end
-
 
 					end
 				end)
@@ -7338,7 +6485,7 @@ function syde:Init(library)
 
 			end
 
-			syde:AddConnection(syde.Comms.Event, function(p, color)
+			cryable:AddConnection(cryable.Comms.Event, function(p, color)
 				if p == 'HitBox' then
 					if data.V then
 						toggle.tog.BackgroundColor3 = color
@@ -7349,7 +6496,7 @@ function syde:Init(library)
 
 			function data:Set(NewValue, skipSave)
 
-				if data.V == NewValue then return end -- prevent duplicate calls
+				if data.V == NewValue then return end 
 
 				data.V = NewValue
 				UpdateToggleUI(NewValue)
@@ -7359,32 +6506,28 @@ function syde:Init(library)
 						data.CallBack(data.V)
 					end)
 					if not success then
-						warn("[CALLBACK ERROR][" .. toggle.Name .. "]: " .. tostring(errorMsg))
+						)
 					end
 				end
 
-				-- ALWAYS save unless explicitly skipped (like during LoadConfig)
 				if not skipSave then
 					SaveConfig()
 				end
 			end
 
-			-- If config already loaded before element creation
-			if syde.ConfigEnabled and data.Flag and syde.Flags[data.Flag] and syde.Flags[data.Flag].V ~= nil then
-				data:Set(syde.Flags[data.Flag].V, true)
+			if cryable.ConfigEnabled and data.Flag and cryable.Flags[data.Flag] and cryable.Flags[data.Flag].V ~= nil then
+				data:Set(cryable.Flags[data.Flag].V, true)
 			end
 
-			if syde.ConfigEnabled then
+			if cryable.ConfigEnabled then
 				if data.Flag then
-					syde.Flags[data.Flag] = data
+					cryable.Flags[data.Flag] = data
 				end
 			end
 
 			return data
 		end
 
-
-		--@@Slider
 		function initelement:Slider(Slider)
 			local data = {
 				Title = Slider.Title;
@@ -7400,8 +6543,6 @@ function syde:Init(library)
 			slider.slideholder.slider.Visible = false
 			slider:SetAttribute("Searchable", true)
 
-
-			--[SLIDERS INITIALIZE]
 			for _, Options in ipairs(data.Sliders) do
 				local Slider = pages.page.Slider.slideholder.slider:Clone()
 
@@ -7432,30 +6573,29 @@ function syde:Init(library)
 					SliderPosition = (Options.StarterValue - Options.Range[1]) / range
 				end
 
-
 				Slider.slide.slideframe:TweenSize(UDim2.new(SliderPosition, 0, 1, 0), Enum.EasingDirection.Out, Enum.EasingStyle.Quint, 0.5, true)
 
-				syde:registerLoadTween(
+				cryable:registerLoadTween(
 					Slider.slide.slideframe,
 					{Size = UDim2.new(SliderPosition, 0, 1, 0)},
 					{Size = UDim2.new(0, 100,1, 0)},
 					TweenInfo.new(0.85, Enum.EasingStyle.Quint)
 				)
 
-				syde:replayLoadTweens(Slider.slide.slideframe)
+				cryable:replayLoadTweens(Slider.slide.slideframe)
 
 				Slider.v.Text = string.format("<font size='14'>%d</font><font color='#434343'>/%d</font>", Options.StarterValue, Options.Range[2])
 
 				local function BuildTicks(slide, options)
 					local ticksFrame = slide:FindFirstChild("Ticks")
 					if not ticksFrame then
-						warn("❌ Missing Slider.slide.Ticks")
+
 						return
 					end
 
 					local template = ticksFrame:FindFirstChild("tick")
 					if not template then
-						warn("❌ Missing Tick template inside Ticks")
+
 						return
 					end
 
@@ -7464,23 +6604,20 @@ function syde:Init(library)
 					local range = max - min
 
 					if range <= 0 or increment <= 0 then
-						warn("❌ Invalid range/increment", range, increment)
+
 						return
 					end
 
 					local tickCount = math.floor(range / increment) + 1
 					if tickCount < 2 then return end
 
-					-- wait for UI to size properly
 					task.wait()
 
 					local width = ticksFrame.AbsoluteSize.X
 					local height = ticksFrame.AbsoluteSize.Y
 
-
 					local spacing = width / (tickCount - 1)
 
-					-- Reuse existing ticks instead of destroying all
 					local existingTicks = {}
 					for _, child in ipairs(ticksFrame:GetChildren()) do
 						if child:IsA("Frame") and child ~= template then
@@ -7488,13 +6625,12 @@ function syde:Init(library)
 						end
 					end
 
-					-- Create new ticks if needed
 					for i = 0, tickCount - 1 do
 						local tick = existingTicks[i + 1] or template:Clone()
 						tick.Visible = true
 						tick.AnchorPoint = Vector2.new(0.5, 0.5)
 						tick.BorderSizePixel = 0
-						--	tick.BackgroundTransparency = 1
+
 						tick.Parent = ticksFrame
 
 						local finalPos = UDim2.fromOffset(i * spacing, height / 1.5)
@@ -7508,21 +6644,18 @@ function syde:Init(library)
 						):Play()
 					end
 
-					-- Destroy extra ticks
 					for i = tickCount + 1, #existingTicks do
 						existingTicks[i]:Destroy()
 					end
 
-					--	print("✅ Created", tickCount, "ticks")
 				end
 
-				-- Connect AbsoluteSize change **only once**
 				if Options.Increment > 4 then
 					if not Slider.slide.Ticks:FindFirstChild("_ResizeConnection") then
 						local conn = Slider.slide.Ticks:GetPropertyChangedSignal("AbsoluteSize"):Connect(function()
 							BuildTicks(Slider.slide, Options)
 						end)
-						-- Tag the connection so we don't connect again
+
 						local marker = Instance.new("BoolValue")
 						marker.Name = "_ResizeConnection"
 						marker.Parent = Slider.slide.Ticks
@@ -7533,9 +6666,6 @@ function syde:Init(library)
 						end)
 					end
 				end
-
-
-
 
 				local function UpdateSlider(x)
 					if dragging then
@@ -7548,19 +6678,16 @@ function syde:Init(library)
 						local newValue = Options.Range[1] + sliderPosition * range
 						newValue = math.floor((newValue - Options.Range[1]) / Options.Increment + 0.5) * Options.Increment + Options.Range[1]
 
-						-- Update the slider visual position
 						local snapPosition = (newValue - Options.Range[1]) / range
 						Slider.slide.slideframe:TweenSize(UDim2.new(snapPosition, 0, 1, 0), Enum.EasingDirection.Out, Enum.EasingStyle.Quint, 0.55, true)
 
-						syde:registerLoadTween(
+						cryable:registerLoadTween(
 							Slider.slide.slideframe,
 							{Size = UDim2.new(snapPosition, 0, 1, 0)},
 							{Size = UDim2.new(0, 100,1, 0)},
 							TweenInfo.new(0.85, Enum.EasingStyle.Quint)
 						)
 
-
-						-- Update the displayed value
 						Slider.v.Text = string.format("<font size='14'>%d</font><font color='#434343'>/%d</font>", newValue, Options.Range[2])
 
 						tweenservice:Create(Slider.Title, TweenInfo.new(0.55, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()
@@ -7569,9 +6696,8 @@ function syde:Init(library)
 							Options.CallBack(newValue)
 						end)
 						if not success then
-							warn("[CALLBACK ERROR][" .. Slider.Name .. "]: " .. tostring(errorMsg))
+							)
 						end
-
 
 						Options:Set(newValue)
 						SaveConfig()
@@ -7588,28 +6714,28 @@ function syde:Init(library)
 					dragging = false
 				end)
 
-				syde:AddConnection(userinput.InputEnded, function(input, processed)
+				cryable:AddConnection(userinput.InputEnded, function(input, processed)
 					if input.UserInputType == Enum.UserInputType.MouseButton1  or input.UserInputType == Enum.UserInputType.Touch then
 						dragging = false
 						tweenservice:Create(Slider.Title, TweenInfo.new( 0.5, Enum.EasingStyle.Exponential ), { TextTransparency = 0.6 }):Play()
 					end
 				end)
 
-				syde:AddConnection(userinput.InputChanged, function(input)
+				cryable:AddConnection(userinput.InputChanged, function(input)
 					if dragging and input.UserInputType == Enum.UserInputType.MouseMovement  or input.UserInputType == Enum.UserInputType.Touch  then
 						UpdateSlider(input.Position.X)
 					end
 				end)
 
-				Slider.slide.slideframe.BackgroundColor3 = syde.theme.HitBox
-				Slider.slide.slideframe.shadowHolder.ambientShadow.ImageColor3 = syde.theme.HitBox
-				Slider.slide.slideframe.shadowHolder.penumbraShadow.ImageColor3 = syde.theme.HitBox
-				Slider.slide.slideframe.shadowHolder.umbraShadow.ImageColor3 = syde.theme.HitBox
+				Slider.slide.slideframe.BackgroundColor3 = cryable.theme.HitBox
+				Slider.slide.slideframe.shadowHolder.ambientShadow.ImageColor3 = cryable.theme.HitBox
+				Slider.slide.slideframe.shadowHolder.penumbraShadow.ImageColor3 = cryable.theme.HitBox
+				Slider.slide.slideframe.shadowHolder.umbraShadow.ImageColor3 = cryable.theme.HitBox
 				slider.slideholder.Size = UDim2.new(1,-30,0,slider.slideholder.UIListLayout.AbsoluteContentSize.Y)
 				local ss = slider.slideholder.UIListLayout.AbsoluteContentSize.Y
 				slider.Size = UDim2.new(1,-35,0, ss  + 20)
 
-				syde:AddConnection(syde.Comms.Event, function(p, color)
+				cryable:AddConnection(cryable.Comms.Event, function(p, color)
 					if p == 'HitBox' then
 						Slider.slide.slideframe.BackgroundColor3 = color
 						Slider.slide.slideframe.shadowHolder.ambientShadow.ImageColor3 = color
@@ -7630,43 +6756,38 @@ function syde:Init(library)
 						true
 					)
 
-					-- Register load tween
-					syde:registerLoadTween(
+					cryable:registerLoadTween(
 						Slider.slide.slideframe,
 						{Size = UDim2.new(sliderPosition, 0, 1, 0)},
 						{Size = UDim2.new(0, 100, 1, 0)},
 						TweenInfo.new(0.85, Enum.EasingStyle.Quint)
 					) 
 
-					-- Update value display
 					Slider.v.Text = string.format("<font size='14'>%d</font><font color='#434343'>/%d</font>", tostring(NewVal), Options.Range[2])
 
-					-- Tween title appearance
 					tweenservice:Create(Slider.Title, TweenInfo.new(0.55, Enum.EasingStyle.Exponential), {
 						TextTransparency = 0
 					}):Play()
 
-					-- Callback
 					local success, result = pcall(function()
 						Options.CallBack(NewVal)
 					end)
 					if not success then
-						warn(`[ Slider Error: { slider.Name } ] Callback Error: { result }`)
+
 					end
 
 					Options.StarterValue = NewVal
 					SaveConfig()
 				end
 
-				if syde.ConfigEnabled then
+				if cryable.ConfigEnabled then
 					if Options.Flag then
-						syde.Flags[Options.Flag] = Options
+						cryable.Flags[Options.Flag] = Options
 					end
 				end
 
 			end
 
-			--[DESC]
 			local descLabel = slider.slideholder:FindFirstChild("Desc")
 
 			if descLabel then
@@ -7684,7 +6805,7 @@ function syde:Init(library)
 						)
 
 						local newDescSize = UDim2.new(1, -150, 0, textSize.Y)
-						local newButtonSize = UDim2.new(slider.Size.X.Scale, slider.Size.X.Offset, 0,slider.slideholder.AbsoluteSize.Y + slider.title.Size.Y.Offset + textSize.Y + 15) -- Adding extra padding
+						local newButtonSize = UDim2.new(slider.Size.X.Scale, slider.Size.X.Offset, 0,slider.slideholder.AbsoluteSize.Y + slider.title.Size.Y.Offset + textSize.Y + 15) 
 
 						local descTween = tweenservice:Create(descLabel, TweenInfo.new(0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), { Size = newDescSize })
 						descTween:Play()
@@ -7703,7 +6824,6 @@ function syde:Init(library)
 
 		end
 
-		--@@KeyBind
 		function initelement:Keybind(Keybind)
 			local data = {
 				Title = Keybind.Title;
@@ -7746,8 +6866,7 @@ function syde:Init(library)
 				end
 			end
 
-			-- Main input handler
-			syde:AddConnection(userinput.InputBegan, function(input)
+			cryable:AddConnection(userinput.InputBegan, function(input)
 				if input.UserInputType ~= Enum.UserInputType.Keyboard then return end
 
 				if data.WaitingForKey then
@@ -7773,7 +6892,7 @@ function syde:Init(library)
 					local success, result = pcall(data.CallBack)
 					if not data.Holding then
 						if not success then
-							warn(`[Keybind: {KeyBind.Name}] Callback Error: {result}`)
+
 						end
 					else
 						if data.Hold then
@@ -7793,14 +6912,13 @@ function syde:Init(library)
 
 		end
 
-		--@@TextInput
 		function initelement:TextInput(TextInput)
 			local data = {
 				Title = TextInput.Title or "Text Input",
 				PlaceHolder = TextInput.PlaceHolder or "Enter text...",
 				NumbersOnly = TextInput.NumberOnly or false,
 				ClearOnLost = TextInput.ClearOnLost == nil and true or TextInput.ClearOnLost,
-				--	MaxSize = TextInput.MaxSize or 100,
+
 				CallBack = TextInput.CallBack,
 			}
 
@@ -7814,10 +6932,8 @@ function syde:Init(library)
 
 			local textBox = textinput.TextFrame.TextBox
 			local defaultHeight = 32
-			--	local maxHeight = data.MaxSize
+
 			local ignoreNextClear = false
-
-
 
 			textinput.TextFrame.Enter.MouseEnter:Connect(function()
 				tweenservice:Create(textinput.TextFrame.Enter, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {TextColor3 = Color3.fromRGB(255, 255, 255)}):Play()
@@ -7852,17 +6968,11 @@ function syde:Init(library)
 				local newHeight = textinput.TextFrame.Size.Y.Offset
 				local extraHeight = 32
 
-
-
-
 				tweenservice:Create(
 					textinput,
 					TweenInfo.new(0.7, Enum.EasingStyle.Quint),
 					{ Size = UDim2.new(1, -35, 0, newHeight + extraHeight + 35) }
 				):Play()
-
-				--	tweenservice:Create(textinput.ImageLabel, TweenInfo.new(0.3, Enum.EasingStyle.Quart), { Position = UDim2.new(1, -20,1, -15) }):Play()
-
 
 			end)
 
@@ -7876,7 +6986,6 @@ function syde:Init(library)
 					{ Size = UDim2.new(1, -60, 0, totalHeight + 0) }
 				):Play()
 
-
 			end)
 
 			local function ProcessInput(text)
@@ -7884,7 +6993,7 @@ function syde:Init(library)
 					data.CallBack(text)
 				end)
 				if not success then
-					warn("Error in TextInput callback [" .. textinput.Name .. "]: " .. tostring(errorMsg))
+					)
 				end
 			end
 
@@ -7895,7 +7004,7 @@ function syde:Init(library)
 					data.CallBack(textBox.Text)
 				end)
 				if not success then
-					warn("Error in TextInput callback [" .. textinput.Name .. "]: " .. tostring(errorMsg))
+					)
 				end
 
 				if data.ClearOnLost then
@@ -7913,7 +7022,7 @@ function syde:Init(library)
 					data.CallBack(textBox.Text)
 				end)
 				if not success then
-					warn("Error in TextInput callback [" .. textinput.Name .. "]: " .. tostring(errorMsg))
+					)
 				end
 
 				if data.ClearOnLost then
@@ -7926,7 +7035,6 @@ function syde:Init(library)
 				end
 			end)
 
-
 		end
 
 		function initelement:EnchancedView(View)
@@ -7934,7 +7042,7 @@ function syde:Init(library)
 				Title = View.Title or "3D View",
 				Object = View.Object,
 				UserRotate = View.UserRotate or false,
-				AutoRotate = View.AutoRotate ~= false -- default true
+				AutoRotate = View.AutoRotate ~= false 
 			}
 
 			local EnchancedView = pages.page["3DView"]:Clone()
@@ -7948,19 +7056,15 @@ function syde:Init(library)
 			Camera.Parent = Viewport
 			Viewport.CurrentCamera = Camera
 
-			-- Clone the object
 			local ObjectClone = Viewdata.Object:Clone()
 			ObjectClone.Parent = Viewport
 
-			-- Center object
-			-- Center object properly so pivot is in the middle from the start
 			if ObjectClone:IsA("Model") then
 				ObjectClone:PivotTo(CFrame.new(0, 0, 0))
 			else
 				ObjectClone.CFrame = CFrame.new(0, 0, 0)
 			end
 
-			-- Anchor parts
 			if ObjectClone:IsA("BasePart") then
 				ObjectClone.Anchored = true
 			elseif ObjectClone:IsA("Model") then
@@ -7977,7 +7081,6 @@ function syde:Init(library)
 				}):Play()
 			end
 
-			-- Determine center & size
 			local primaryPart
 			local size
 			local center
@@ -7987,30 +7090,23 @@ function syde:Init(library)
 				ObjectClone.CFrame = CFrame.new(0, 0, 0)
 
 			elseif ObjectClone:IsA("Model") then
-				-- Get bounding box center and size
+
 				local cf, boundsSize = ObjectClone:GetBoundingBox()
 				size = boundsSize
 
-				-- Move model so its center is at (0,0,0)
 				ObjectClone:PivotTo(CFrame.new(0, 0, 0))
 
-				-- Ensure Roblox finishes recalculating bounds after clone
 				task.defer(function()
 					ObjectClone:PivotTo(CFrame.new(0, 0, 0))
 				end)
 			end
 
-
-			-- Camera distance based on size
 			local maxDimension = math.max(size.X, size.Y, size.Z)
 			local distance = maxDimension * 2
 			Camera.CFrame = CFrame.new(Vector3.new(0, 0, distance), Vector3.new(0, 0, 0))
 
-			-- Icon Rotation state
 			local icon = EnchancedView.ViewFrame.ImageLabel
 
-
-			-- Rotation state
 			local targetRotationX, targetRotationY = 0, 0
 			local currentRotationX, currentRotationY = 0, 0
 
@@ -8033,7 +7129,6 @@ function syde:Init(library)
 				end
 			end)
 
-			-- Auto rotate (horizontal only so it looks natural)
 			if Viewdata.AutoRotate then
 				task.spawn(function()
 					while EnchancedView.Parent do
@@ -8046,13 +7141,12 @@ function syde:Init(library)
 				end)
 			end
 
-
 			if Viewdata.UserRotate == true then
 				Viewport.InputBegan:Connect(function(input)
 					if input.UserInputType == Enum.UserInputType.MouseButton1 then
 						dragging = true
 						lastPos = input.Position
-						dragStartPos = input.Position -- store where drag started
+						dragStartPos = input.Position 
 
 						tweenservice:Create(icon, TweenInfo.new(0.3, Enum.EasingStyle.Exponential), {
 							ImageColor3 = Color3.fromRGB(255, 255, 255)
@@ -8073,33 +7167,26 @@ function syde:Init(library)
 					if dragging and input.UserInputType == Enum.UserInputType.MouseMovement  then
 						local delta = input.Position - lastPos
 
-						-- Apply rotation
 						targetRotationY = targetRotationY + delta.X * 0.005
 						targetRotationX = math.clamp(targetRotationX - delta.Y * 0.005, -math.pi/2, math.pi/2)
-
 
 						lastPos = input.Position
 					end
 				end)
 			end
 
-
-			-- === Zoom + Elastic Scroll (virtual vs visual) ===
 			local ZoomFrame   = EnchancedView.ViewFrame.Zoom
 			local ClipFrame   = ZoomFrame.clipframe
 			local ScrollFrame = ClipFrame.scroll
-			local ZoomAmountLabel = ZoomFrame.Frame.ZoomAmount -- << change to your label path
+			local ZoomAmountLabel = ZoomFrame.Frame.ZoomAmount 
 
-			-- Zoom range (studs)
 			local minZoomDistance = maxDimension * 0.5
 			local maxZoomDistance = maxDimension * 10
 
-			-- Elastic settings
-			local elasticity   = 0.4      -- visual resistance (0..1)
-			local maxOverdrag  = 50       -- px visual overdrag cap
+			local elasticity   = 0.4      
+			local maxOverdrag  = 50       
 			local tweenInfo    = TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
 
-			-- Limits (top is 0, bottom is negative if scroll is taller than clip)
 			local function getScrollLimits()
 				local minY = 0
 				local diff = ScrollFrame.AbsoluteSize.Y - ClipFrame.AbsoluteSize.Y
@@ -8107,13 +7194,12 @@ function syde:Init(library)
 				return minY, maxY
 			end
 
-			-- Map Y -> zoom (defensive if no range)
 			local function yToZoom(y)
 				local minY, maxY = getScrollLimits()
 				if minY == maxY then
 					return minZoomDistance
 				end
-				local t = (y - minY) / (maxY - minY) -- 0..1
+				local t = (y - minY) / (maxY - minY) 
 				return minZoomDistance + (maxZoomDistance - minZoomDistance) * t
 			end
 
@@ -8129,33 +7215,28 @@ function syde:Init(library)
 				end
 			end
 
-
-
 			local function visualYFromVirtualY(vy)
 				local minY, maxY = getScrollLimits()
 				if vy > minY then
 					local over = vy - minY
 					return math.min(minY + over * elasticity, minY + maxOverdrag)
 				elseif vy < maxY then
-					local over = vy - maxY -- negative
+					local over = vy - maxY 
 					return math.max(maxY + over * elasticity, maxY - maxOverdrag)
 				else
 					return vy
 				end
 			end
 
-			-- State
 			local dragging   = false
 			local lastPos
 			local virtualY   = 0 
 
-			-- Initialize virtual to current
 			virtualY = ScrollFrame.Position.Y.Offset
 
 			local initialZoom = 20
 			updateZoom(initialZoom)
 
-			-- Sync scroll position with initial zoom
 			local minY, maxY = getScrollLimits()
 			local t = (initialZoom - minZoomDistance) / (maxZoomDistance - minZoomDistance)
 			local startY = minY + (maxY - minY) * t
@@ -8177,7 +7258,6 @@ function syde:Init(library)
 				if input.UserInputType == Enum.UserInputType.MouseButton1 then
 					dragging = false
 
-					-- Clamp virtual to limits and snap visually
 					local minY, maxY = getScrollLimits()
 					virtualY = math.clamp(virtualY, maxY, minY)
 
@@ -8187,7 +7267,6 @@ function syde:Init(library)
 						{ Position = UDim2.new(ScrollFrame.Position.X.Scale, ScrollFrame.Position.X.Offset, 0, virtualY) }
 					):Play()
 
-					-- Keep zoom in sync with the snapped position
 					local distance = yToZoom(virtualY)
 					updateZoom(distance)
 				end
@@ -8198,14 +7277,11 @@ function syde:Init(library)
 					local deltaY = input.Position.Y - lastPos.Y
 					lastPos = input.Position
 
-					-- 1) Update virtual Y with full delta (no elasticity here)
 					virtualY = virtualY + deltaY
 
-					-- 2) Visual Y with elasticity (so it rubber-bands)
 					local visualY = visualYFromVirtualY(virtualY)
 					ScrollFrame.Position = UDim2.new(ScrollFrame.Position.X.Scale, ScrollFrame.Position.X.Offset, 0, visualY)
 
-					-- 3) Zoom uses CLAMPED virtual Y (so overdrag doesn't affect zoom)
 					local minY, maxY = getScrollLimits()
 					local clampedY = math.clamp(virtualY, maxY, minY)
 					local distance = yToZoom(clampedY)
@@ -8215,8 +7291,6 @@ function syde:Init(library)
 
 		end
 
-
-		--@@Labels/Paragraph
 		function initelement:Paragraph(Paragraph)
 			local ParaData = {
 				Title = Paragraph.Title;
@@ -8231,18 +7305,17 @@ function syde:Init(library)
 			Para:SetAttribute("Searchable", true)
 
 			Para.Content.Size = UDim2.new(1, -20, 0, Para.Content.TextBounds.Y)
-			--	Para.Size = UDim2.new(1, -35, 0, Para.Content.Size.Y.Offset + 200)
 
 			local function updateSize()
 				local textSize = textservice:GetTextSize(
 					Para.Content.Text,
 					Para.Content.TextSize,
 					Para.Content.Font,
-					Vector2.new(Para.Content.AbsoluteSize.X, math.huge) -- Allows vertical expansion
+					Vector2.new(Para.Content.AbsoluteSize.X, math.huge) 
 				)
 
 				local newDescSize = UDim2.new(1, -20, 0, textSize.Y)
-				local newButtonSize = UDim2.new(Para.Size.X.Scale, Para.Size.X.Offset, 0, textSize.Y + 120) -- Adding extra padding
+				local newButtonSize = UDim2.new(Para.Size.X.Scale, Para.Size.X.Offset, 0, textSize.Y + 120) 
 
 				local descTween = tweenservice:Create(Para.Content, TweenInfo.new(0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), { Size = newDescSize })
 				descTween:Play()
@@ -8270,7 +7343,6 @@ function syde:Init(library)
 				Label.text.TextXAlignment = Enum.TextXAlignment.Right
 			end
 
-
 		end
 
 		function initelement:Section(Title, Icon)
@@ -8292,7 +7364,6 @@ function syde:Init(library)
 			end
 		end
 
-		--@@Dropdown
 		function initelement:Dropdown(Dropdown)
 			local data = {
 				Title = Dropdown.Title or "Temp Dropdown";
@@ -8433,7 +7504,6 @@ function syde:Init(library)
 				selectedContainer.Visible = data.Multi
 				dropdown.dropholder.drop.selected.Visible = false
 
-
 				if data.Multi then
 
 					if #SelectedOrder == 0 then
@@ -8442,22 +7512,18 @@ function syde:Init(library)
 						return
 					end
 
-
-					-- Create chips for each selected option
 					for _, option in ipairs(SelectedOrder) do
-						-- Prevent duplicate pills
+
 						if not selectedContainer:FindFirstChild(option) then
 							local optionGroup = selectedContainer.result:Clone()
 							optionGroup.Visible = true
 							optionGroup.Name = option
 							optionGroup.TextLabel.Text = option
 
-							-- Set up remove button
 							optionGroup.X.MouseButton1Click:Connect(function()
 								RemoveFromSelected(option)
 								UpdateSelectedText()
 
-								-- Visually update the dropdown list
 								for _, opt in ipairs(dropdown.dropholder.drop.Container:GetChildren()) do
 									if opt:IsA("Frame") and opt.Name == option then
 										tweenservice:Create(opt, TweenInfo.new(1, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0}):Play()
@@ -8475,7 +7541,6 @@ function syde:Init(library)
 
 							optionGroup.Parent = selectedContainer
 
-							-- Optional: auto-size width
 							task.defer(function()
 								local padding = 40
 								local textWidth = optionGroup.TextLabel.TextBounds.X
@@ -8489,7 +7554,7 @@ function syde:Init(library)
 					end
 
 				else
-					-- Single option text fallback
+
 					dropdown.dropholder.drop.selected.Visible = true
 					if #SelectedOrder > 0 then
 						dropdown.dropholder.drop.selected.Text = SelectedOrder[1]
@@ -8499,7 +7564,6 @@ function syde:Init(library)
 				end
 			end
 
-			--[SEARCH]
 			dropdown.dropholder.drop.search.TextBox:GetPropertyChangedSignal("Text"):Connect(function()
 				local searchText = dropdown.dropholder.drop.search.TextBox.Text:lower()
 
@@ -8525,7 +7589,7 @@ function syde:Init(library)
 								tweenservice:Create(option.ImageLabel, TweenInfo.new(1, Enum.EasingStyle.Exponential), {ImageTransparency = 0.9}):Play()
 							end
 						else
-							-- Hide with animation, but wait before setting Visible = false
+
 							tweenservice:Create(option, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 1}):Play()
 							tweenservice:Create(option, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundColor3 = Color3.fromRGB(33, 33, 33)}):Play()
 							tweenservice:Create(option.Title, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()
@@ -8538,8 +7602,6 @@ function syde:Init(library)
 
 				UpdateCustomLayout()
 			end)
-
-
 
 			local function SetDropdownOptions()
 				local starterSet = false
@@ -8591,11 +7653,9 @@ function syde:Init(library)
 							tweenservice:Create(option, TweenInfo.new(0.3), {BackgroundColor3 = Color3.fromRGB(39, 39, 39)}):Play()
 							tweenservice:Create(option.ImageLabel, TweenInfo.new(0.3), {ImageTransparency = 0}):Play()
 
-
 							if data.CallBack then
 								data.CallBack(OptionText)
 							end
-
 
 							CloseDrop()
 						end
@@ -8615,7 +7675,6 @@ function syde:Init(library)
 			SetDropdownOptions()
 		end
 
-		--@@Colorpicker
 		function initelement:ColorPicker(ColorPicker)
 			local data = {
 				Title = ColorPicker.Title;
@@ -8630,15 +7689,12 @@ function syde:Init(library)
 
 			ColorPicker.Linkable = ColorPicker.Linkable or true
 
-
 			local colorpicker = pages.page.ColorPicker:Clone()
 			colorpicker.Visible = true
 			colorpicker.Parent = Page
 			colorpicker.title.Text = data.Title
 			colorpicker.Name = data.Title
 			colorpicker:SetAttribute("Searchable", true)
-
-
 
 			local isLinkable = Instance.new("BoolValue")
 			isLinkable.Name = 'isLinkable'
@@ -8650,7 +7706,6 @@ function syde:Init(library)
 			HueSat.Value = data.Color
 			HueSat.Parent = colorpicker
 
-
 			local Open = false
 			local DeBounce = false
 			local State = false
@@ -8658,7 +7713,6 @@ function syde:Init(library)
 			do
 				local HueValues = colorpicker.HueValues
 
-				-- kill UIListLayout if it exists
 				local list = HueValues:FindFirstChildOfClass("UIListLayout")
 				if list then list:Destroy() end
 
@@ -8728,7 +7782,6 @@ function syde:Init(library)
 				task.defer(updateHueValuesLayout)
 			end
 
-
 			colorpicker.color.Values.Hue.BackgroundTransparency = 1
 			colorpicker.color.Values.Hue.Pin.BackgroundTransparency = 1
 			colorpicker.color.Values.Hue.Pin.UIStroke.Transparency = 1
@@ -8784,7 +7837,7 @@ function syde:Init(library)
 				local startX = recentContainer.AbsoluteSize.X - totalWidth 
 
 				for _, frame in ipairs(children) do
-					--	frame.Position = UDim2.new(0, startX, 0.5, -frame.Size.Y.Offset / 2)
+
 					tweenservice:Create(frame, TweenInfo.new(0.5, Enum.EasingStyle.Quart), {Position = UDim2.new(0, startX , 0.8, -frame.Size.Y.Offset / 2) }):Play()
 					startX += frameSize + spacing
 				end
@@ -8853,7 +7906,6 @@ function syde:Init(library)
 				colorpicker.color.glow.ImageColor3 = data.Color
 				colorpicker.color.BackgroundColor3 = data.Color
 
-				--	colorpicker.color.BackgroundColor3 = Color3.fromHSV(HSV[1], 1, 1)
 				local newColor = Color3.fromHSV(HSV[1], HSV[2], HSV[3])
 				local newColor2 = Color3.fromHSV(HSV[1], 1, 1)
 
@@ -8876,13 +7928,10 @@ function syde:Init(library)
 					GradientFrame.Pin2.BackgroundColor3 = data.Color2
 				end
 
-
 				HueSat.Value = data.Color
-
 
 				tweenservice:Create(HUESlider.Pin, TweenInfo.new(0.1, Enum.EasingStyle.Exponential), {BackgroundColor3 = newColor2}):Play()
 				tweenservice:Create(SVPicker.Pin, TweenInfo.new(0.1, Enum.EasingStyle.Exponential), {BackgroundColor3 = newColor}):Play()
-
 
 				tweenservice:Create(SVPicker.Pin, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
 					Position = UDim2.new(HSV[2], 0, 1 - HSV[3], 0)
@@ -8931,7 +7980,6 @@ function syde:Init(library)
 					oldCallback(seq, data.Color, data.Color2)
 				end
 			end
-
 
 			if data.Type == "Gradient" then
 				HueFrame.Visible = true
@@ -9058,7 +8106,6 @@ function syde:Init(library)
 
 				colorpicker:SetAttribute("UpdateHueLayout", not colorpicker:GetAttribute("UpdateHueLayout"))
 
-
 				tweenservice:Create(colorpicker.color, TweenInfo.new( 0.95, Enum.EasingStyle.Quart ), { Size = UDim2.new(0, 1,0, 1) }):Play()
 				tweenservice:Create(colorpicker, TweenInfo.new( 0.8, Enum.EasingStyle.Exponential ), { BackgroundColor3 = Color3.fromRGB(35, 35, 35) }):Play()
 				tweenservice:Create(colorpicker.color, TweenInfo.new( 1, Enum.EasingStyle.Exponential ), { BackgroundColor3 = data.Color }):Play()
@@ -9069,11 +8116,10 @@ function syde:Init(library)
 				tweenservice:Create(colorpicker.color, TweenInfo.new( 0.9, Enum.EasingStyle.Quart ), { Position = UDim2.new(0.5, 0,0, 40) }):Play()
 
 				tweenservice:Create(colorpicker, TweenInfo.new( 0.8, Enum.EasingStyle.Exponential ), { BackgroundColor3 = Color3.fromRGB(17, 17, 17) }):Play()
-				--	tweenservice:Create(colorpicker, TweenInfo.new( 0.8, Enum.EasingStyle.Quart ), { Size = UDim2.new(1, -35,0, 350) }):Play()
+
 				tweenservice:Create(colorpicker.color.UICorner, TweenInfo.new( 0.8, Enum.EasingStyle.Quart ), { CornerRadius = UDim.new(0, 10) }):Play()
 
 				tweenservice:Create(colorpicker.color.Values.Rainbow, TweenInfo.new( 1, Enum.EasingStyle.Exponential ), { ImageTransparency = 0 }):Play()
-
 
 				task.wait(0.6)
 
@@ -9094,7 +8140,6 @@ function syde:Init(library)
 					tweenservice:Create(colorpicker.color.Values.Grad.Pin2, TweenInfo.new( 0.8, Enum.EasingStyle.Exponential ), { BackgroundTransparency = 0 }):Play()
 					tweenservice:Create(colorpicker.color.Values.Grad.Pin2.UIStroke, TweenInfo.new( 0.8, Enum.EasingStyle.Exponential ), { Transparency = 0 }):Play()
 				end
-
 
 				tweenservice:Create(colorpicker.HueValues.HEX, TweenInfo.new( 0.8, Enum.EasingStyle.Exponential ), { BackgroundTransparency = 0.9 }):Play()
 				tweenservice:Create(colorpicker.HueValues.HEX.UIStroke, TweenInfo.new( 0.8, Enum.EasingStyle.Exponential ), { Transparency = 0.4 }):Play()
@@ -9123,7 +8168,6 @@ function syde:Init(library)
 				DeBounce = false
 			end
 
-
 			colorpicker.interact.MouseButton1Click:Connect(function()
 				if DeBounce then return end
 				if not Open then
@@ -9147,7 +8191,7 @@ function syde:Init(library)
 			if data.Type == "Gradient" and displayGrad then
 				displayGrad.Enabled = true
 				displayGrad.Color = ColorSequence.new(Keys)
-				-- Set to White so the gradient isn't "multiplied" or tinted by a background color
+
 				tweenservice:Create(colorpicker.color, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), { BackgroundColor3 = Color3.new(1, 1, 1) }):Play()
 			else
 				if displayGrad then displayGrad.Enabled = false end
@@ -9158,7 +8202,7 @@ function syde:Init(library)
 				Open = false
 				DeBounce = true
 				tweenservice:Create(colorpicker, TweenInfo.new( 0.55, Enum.EasingStyle.Quint ), { Size = UDim2.new(1, -35,0, 40) }):Play()
-				--	tweenservice:Create(colorpicker.QuickClose, TweenInfo.new( 0.6, Enum.EasingStyle.Exponential ), { BackgroundTransparency = 1 }):Play()
+
 				tweenservice:Create(colorpicker.color, TweenInfo.new( 0.7, Enum.EasingStyle.Quart ), { Position = UDim2.new(1, -30,0, 10)}):Play()
 				tweenservice:Create(colorpicker.color, TweenInfo.new( 0.55, Enum.EasingStyle.Quint ), { Size = UDim2.new(0, 20,0, 20) }):Play()
 				tweenservice:Create(colorpicker.color, TweenInfo.new( 0.5, Enum.EasingStyle.Exponential ), { BackgroundColor3 = data.Color }):Play()
@@ -9166,8 +8210,6 @@ function syde:Init(library)
 				tweenservice:Create(colorpicker.color.glow, TweenInfo.new( 0.5, Enum.EasingStyle.Exponential ), { ImageTransparency = 0.7}):Play()
 				colorpicker.interact.Interactable = true
 				colorpicker.QuickClose.Interactable = false
-
-				--	task.wait(0.6)
 
 				tweenservice:Create(colorpicker.color.SVPicker.Brightness, TweenInfo.new( 2, Enum.EasingStyle.Exponential ), { BackgroundTransparency = 1 }):Play()
 				tweenservice:Create(colorpicker.color.SVPicker.Saturation, TweenInfo.new( 2, Enum.EasingStyle.Exponential ), { BackgroundTransparency = 1 }):Play()
@@ -9185,7 +8227,7 @@ function syde:Init(library)
 				if data.Type == "Gradient" and displayGrad then
 					displayGrad.Enabled = true
 					displayGrad.Color = ColorSequence.new(Keys)
-					-- Set to White so the gradient isn't "multiplied" or tinted by a background color
+
 					tweenservice:Create(colorpicker.color, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), { BackgroundColor3 = Color3.new(1, 1, 1) }):Play()
 				else
 					if displayGrad then displayGrad.Enabled = false end
@@ -9235,7 +8277,6 @@ function syde:Init(library)
 				end
 			end)
 
-
 			for _,v in ipairs(colorpicker.HueValues:GetChildren()) do
 				if v:IsA("Frame") then
 					for _,v2 in ipairs(v:GetChildren()) do
@@ -9258,7 +8299,7 @@ function syde:Init(library)
 				recentFrame.BackgroundColor3 = newColor
 
 				recentFrame.interact.MouseButton1Click:Connect(function()
-				--[[	tweenservice:Create(recentFrame, TweenInfo.new(0.3, Enum.EasingStyle.Exponential), {Size = UDim2.new(0, 5,0, 5) }):Play()
+
 					task.wait(0.09)
 					tweenservice:Create(recentFrame, TweenInfo.new(0.3, Enum.EasingStyle.Exponential), {Size = UDim2.new(0, 12,0, 12) }):Play() ]]
 
@@ -9296,7 +8337,7 @@ function syde:Init(library)
 
 			local SV, HUE = nil, nil
 
-			syde:AddConnection(SVPicker.InputBegan, function(input)
+			cryable:AddConnection(SVPicker.InputBegan, function(input)
 				if input.UserInputType == Enum.UserInputType.MouseButton1 then
 					SV = runservice.RenderStepped:Connect(function()
 						local mouse = game.Players.LocalPlayer:GetMouse()
@@ -9311,7 +8352,7 @@ function syde:Init(library)
 				end
 			end)
 
-			syde:AddConnection(SVPicker.InputEnded, function(i)
+			cryable:AddConnection(SVPicker.InputEnded, function(i)
 				if i.UserInputType == Enum.UserInputType.MouseButton1 and SV then
 					SV:Disconnect()
 					SV = nil
@@ -9320,7 +8361,7 @@ function syde:Init(library)
 				end
 			end)
 
-			syde:AddConnection(HUESlider.InputBegan, function(input)
+			cryable:AddConnection(HUESlider.InputBegan, function(input)
 				if input.UserInputType == Enum.UserInputType.MouseButton1 then
 					HUE = runservice.RenderStepped:Connect(function()
 						local mouse = game.Players.LocalPlayer:GetMouse()
@@ -9333,7 +8374,7 @@ function syde:Init(library)
 				end
 			end)
 
-			syde:AddConnection(HUESlider.InputEnded, function(i)
+			cryable:AddConnection(HUESlider.InputEnded, function(i)
 				if i.UserInputType == Enum.UserInputType.MouseButton1 and HUE then
 					HUE:Disconnect()
 					HUE = nil
@@ -9361,10 +8402,9 @@ function syde:Init(library)
 					HSV[3] = Value
 					updatestuff()
 				else
-					warn("Failed to convert hex to color:", result)
+
 				end
 			end)
-
 
 			colorpicker.HueValues.RGB.V.RGBBox.FocusLost:Connect(function(Enter)
 				if not Enter then return end
@@ -9390,10 +8430,10 @@ function syde:Init(library)
 						colorpicker.HueValues.RGB.V.RGBBox.Text = ''
 						updatestuff()
 					else
-						warn("RGB values must be between 0 and 255.")
+
 					end
 				else
-					warn("Invalid RGB format. Please use the format 'R,G,B' (e.g., 16,16,16).")
+					.")
 				end
 			end)
 
@@ -9425,7 +8465,7 @@ function syde:Init(library)
 						return
 					end
 					local mouse = game.Players.LocalPlayer:GetMouse()
-					-- colorpicker.HueValues.Link.Frame.Position = UDim2.new(0, mouse.X - colorpicker.AbsolutePosition.X - 50, 0, mouse.Y - colorpicker.AbsolutePosition.Y - 260)
+
 					TweenService:Create(colorpicker.HueValues.Link.Frame, TweenInfo.new(0.3, Enum.EasingStyle.Quart), {Position = UDim2.new(0, mouse.X - colorpicker.AbsolutePosition.X - 50, 0, mouse.Y - colorpicker.AbsolutePosition.Y - 260) }):Play()
 
 					for _, otherPicker in pairs(Page:GetChildren()) do
@@ -9451,7 +8491,7 @@ function syde:Init(library)
 								otherPicker.HueSat.Value = draggedColorPicker.HueSat.Value
 								updatestuff() 
 								foundTarget = true
-								syde:Toast({
+								cryable:Toast({
 									Content = 'Color Linked',
 									Duration = 2,
 								})
@@ -9462,7 +8502,7 @@ function syde:Init(library)
 								):Play()
 
 								TweenService:Create(otherPicker.UIStroke, TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {Transparency = 1}):Play()
-								--	TweenService:Create(colorpicker.HueValues.HEX.Link, TweenInfo.new(0.5, Enum.EasingStyle.Exponential) , {ImageColor3 = Color3.fromRGB(66, 66, 66)}):Play()
+
 								TweenService:Create(colorpicker.HueValues.Link.Frame, TweenInfo.new(0.5, Enum.EasingStyle.Exponential) , {Size = UDim2.new(1, 0,1, 0)}):Play()
 								break
 							end
@@ -9470,7 +8510,7 @@ function syde:Init(library)
 					end
 
 					if not foundTarget then
-						--	TweenService:Create(colorpicker.HueValues.HEX.Link, TweenInfo.new(0.5, Enum.EasingStyle.Exponential) , {ImageColor3 = Color3.fromRGB(66, 66, 66)}):Play()
+
 						TweenService:Create(colorpicker.HueValues.Link.Frame, TweenInfo.new(0.5, Enum.EasingStyle.Exponential) , {Size = UDim2.new(1, 0,1, 0)}):Play()
 						TweenService:Create(
 							colorpicker.HueValues.Link.Frame,
@@ -9539,54 +8579,50 @@ function syde:Init(library)
 				end
 			end
 
-			if syde.ConfigEnabled then
+			if cryable.ConfigEnabled then
 				if data.Flag then
-					syde.Flags[data.Flag] = data
+					cryable.Flags[data.Flag] = data
 				end
 			end
-
-
 
 			return data
 
 		end
 
-		function syde:LoadSaveConfig()
+		function cryable:LoadSaveConfig()
 			local notified = false
 			local loaded = false
 
-			if syde.ConfigEnabled then
-				syde:Toast({
+			if cryable.ConfigEnabled then
+				cryable:Toast({
 					Content = 'Loading Save File Please Do Not Close';
 					Duration = 3
 				})
 				task.wait(1)
 				local success, result = pcall(function()
-					local filePath = string.format("%s/%s.json", syde.ConfigFolder, syde.ConfigFile)
+					local filePath = string.format("%s/%s.json", cryable.ConfigFolder, cryable.ConfigFile)
 					if isfile and isfile(filePath) then
 						loaded = LoadConfig(readfile(filePath))
 					end
 				end)
 
 				if success then
-					syde:Toast({
+					cryable:Toast({
 						Content = 'Loaded Save File';
 						Duration = 3
 					})
-					print("Configuration loaded successfully from a previous session.")
+
 				elseif not success then
-					warn("[SYDE] Configurations Error " .. tostring(result))
+					)
 				end
 			end
 		end
 
 		return initelement
 
-
 	end
 	return tbdata
 
-
 end
 
-return syde
+return cryable
