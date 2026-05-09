@@ -73,19 +73,182 @@ function syde:UpdateTheme(Config)
 end
 local RunService = game:GetService'RunService'
 local camera = workspace.CurrentCamera
-function syde:GetDark(Color, val, mode)
-	if typeof(Color) ~= "Color3" or type(val) ~= "number" then
-		return Color
+do
+	local function IsNotNaN(x)
+		return x == x
 	end
-	local H, S, V = Color:ToHSV()
-	val = math.clamp(val, 0.1, 10) 
-	if mode == "subtract" then
-		V = math.clamp(V - (val / 10), 0, 1)  
-	else
-		V = math.clamp(V / val, 0, 1)  
+	local continue = IsNotNaN(camera:ScreenPointToRay(0,0).Origin.x)
+	while not continue do
+		RunService.RenderStepped:wait()
+		continue = IsNotNaN(camera:ScreenPointToRay(0,0).Origin.x)
 	end
-	return Color3.fromHSV(H, S, V)
 end
+local binds = {}
+local root = Instance.new('Folder', camera)
+root.Name = 'neon'
+local GenUid; do 
+	local id = 0
+	function GenUid()
+		id = id + 1
+		return 'neon::'..tostring(id)
+	end
+end
+local DrawQuad; do
+	local acos, max, pi, sqrt = math.acos, math.max, math.pi, math.sqrt
+	local sz = 0.2
+	function DrawTriangle(v1, v2, v3, p0, p1) 
+		local s1 = (v1 - v2).magnitude
+		local s2 = (v2 - v3).magnitude
+		local s3 = (v3 - v1).magnitude
+		local smax = max(s1, s2, s3)
+		local A, B, C
+		if s1 == smax then
+			A, B, C = v1, v2, v3
+		elseif s2 == smax then
+			A, B, C = v2, v3, v1
+		elseif s3 == smax then
+			A, B, C = v3, v1, v2
+		end
+		local para = ( (B-A).x*(C-A).x + (B-A).y*(C-A).y + (B-A).z*(C-A).z ) / (A-B).magnitude
+		local perp = sqrt((C-A).magnitude^2 - para*para)
+		local dif_para = (A - B).magnitude - para
+		local st = CFrame.new(B, A)
+		local za = CFrame.Angles(pi/2,0,0)
+		local cf0 = st
+		local Top_Look = (cf0 * za).lookVector
+		local Mid_Point = A + CFrame.new(A, B).lookVector * para
+		local Needed_Look = CFrame.new(Mid_Point, C).lookVector
+		local dot = Top_Look.x*Needed_Look.x + Top_Look.y*Needed_Look.y + Top_Look.z*Needed_Look.z
+		local ac = CFrame.Angles(0, 0, acos(dot))
+		cf0 = cf0 * ac
+		if ((cf0 * za).lookVector - Needed_Look).magnitude > 0.01 then
+			cf0 = cf0 * CFrame.Angles(0, 0, -2*acos(dot))
+		end
+		cf0 = cf0 * CFrame.new(0, perp/2, -(dif_para + para/2))
+		local cf1 = st * ac * CFrame.Angles(0, pi, 0)
+		if ((cf1 * za).lookVector - Needed_Look).magnitude > 0.01 then
+			cf1 = cf1 * CFrame.Angles(0, 0, 2*acos(dot))
+		end
+		cf1 = cf1 * CFrame.new(0, perp/2, dif_para/2)
+		if not p0 then
+			p0 = Instance.new('Part')
+			p0.FormFactor = 'Custom'
+			p0.TopSurface = 0
+			p0.BottomSurface = 0
+			p0.Anchored = true
+			p0.CanCollide = false
+			p0.Material = 'Glass'
+			p0.Size = Vector3.new(sz, sz, sz)
+			local mesh = Instance.new('SpecialMesh', p0)
+			mesh.MeshType = 2
+			mesh.Name = 'WedgeMesh'
+		end
+		p0.WedgeMesh.Scale = Vector3.new(0, perp/sz, para/sz)
+		p0.CFrame = cf0
+		if not p1 then
+			p1 = p0:clone()
+		end
+		p1.WedgeMesh.Scale = Vector3.new(0, perp/sz, dif_para/sz)
+		p1.CFrame = cf1
+		return p0, p1
+	end
+	function DrawQuad(v1, v2, v3, v4, parts)
+		parts[1], parts[2] = DrawTriangle(v1, v2, v3, parts[1], parts[2])
+		parts[3], parts[4] = DrawTriangle(v3, v2, v4, parts[3], parts[4])
+	end
+end
+function syde:BindFrame(frame, properties)
+	if binds[frame] then
+		return binds[frame].parts
+	end
+	local uid = GenUid()
+	local parts = {}
+	local f = Instance.new('Folder', root)
+	f.Name = frame.Name
+	local parents = {} 
+	do
+		local function add(child)
+			if child:IsA'GuiObject' then
+				parents[#parents + 1] = child
+				add(child.Parent)
+			end
+		end
+		add(frame)
+	end
+	local function UpdateOrientation(fetchProps)
+		local zIndex = 1 - 0.05*frame.ZIndex
+		local tl, br = frame.AbsolutePosition, frame.AbsolutePosition + frame.AbsoluteSize
+		local tr, bl = Vector2.new(br.x, tl.y), Vector2.new(tl.x, br.y)
+		do
+			local rot = 0;
+			for _, v in ipairs(parents) do
+				rot = rot + v.Rotation
+			end
+			if rot ~= 0 and rot%180 ~= 0 then
+				local mid = tl:lerp(br, 0.5)
+				local s, c = math.sin(math.rad(rot)), math.cos(math.rad(rot))
+				local vec = tl
+				tl = Vector2.new(c*(tl.x - mid.x) - s*(tl.y - mid.y), s*(tl.x - mid.x) + c*(tl.y - mid.y)) + mid
+				tr = Vector2.new(c*(tr.x - mid.x) - s*(tr.y - mid.y), s*(tr.x - mid.x) + c*(tr.y - mid.y)) + mid
+				bl = Vector2.new(c*(bl.x - mid.x) - s*(bl.y - mid.y), s*(bl.x - mid.x) + c*(bl.y - mid.y)) + mid
+				br = Vector2.new(c*(br.x - mid.x) - s*(br.y - mid.y), s*(br.x - mid.x) + c*(br.y - mid.y)) + mid
+			end
+		end
+		DrawQuad(
+			camera:ScreenPointToRay(tl.x, tl.y, zIndex).Origin, 
+			camera:ScreenPointToRay(tr.x, tr.y, zIndex).Origin, 
+			camera:ScreenPointToRay(bl.x, bl.y, zIndex).Origin, 
+			camera:ScreenPointToRay(br.x, br.y, zIndex).Origin, 
+			parts
+		)
+		if fetchProps then
+			for _, pt in pairs(parts) do
+				pt.Parent = f
+			end
+			for propName, propValue in pairs(properties) do
+				for _, pt in pairs(parts) do
+					pt[propName] = propValue
+				end
+			end
+		end
+	end
+	UpdateOrientation(true)
+	RunService:BindToRenderStep(uid, 2000, UpdateOrientation)
+	binds[frame] = {
+		uid = uid;
+		parts = parts;
+	}
+	return binds[frame].parts
+end
+function syde:Modify(frame, properties)
+	local parts = syde:GetBoundParts(frame)
+	if parts then
+		for propName, propValue in pairs(properties) do
+			for _, pt in pairs(parts) do
+				pt[propName] = propValue
+			end
+		end
+	else
+	end
+end
+function syde:UnbindFrame(frame)
+	local cb = binds[frame]
+	if cb then
+		RunService:UnbindFromRenderStep(cb.uid)
+		for _, v in pairs(cb.parts) do
+			v:Destroy()
+		end
+		binds[frame] = nil
+	else
+	end
+end
+function syde:HasBinding(frame)
+	return binds[frame] ~= nil
+end
+function syde:GetBoundParts(frame)
+	return binds[frame] and binds[frame].parts
+end
+function syde:GetDark(Color, val, mode)
 	if typeof(Color) ~= "Color3" or type(val) ~= "number" then
 		return Color
 	end
@@ -741,6 +904,7 @@ local pluginsOpen = false
 local uiclosed = false
 local userinfodisabled = false
 local intro = false
+local bluron = false
 local glow = true
 local uitoggle = Enum.KeyCode.K
 function applyLayout(isMobile)
@@ -1074,7 +1238,15 @@ function openui()
 	window.user.Visible = true
 	window.Visible = true
 	uiclosed = false
-	tweenservice:Create(window, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0 }):Play()
+	if bluron then
+		syde:BindFrame(window, {
+			Transparency = 0.98;
+			BrickColor = BrickColor.new('Institutional white');
+		})
+		tweenservice:Create(window, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0.45 }):Play()
+	else
+		tweenservice:Create(window, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0 }):Play()
+	end
 	tweenservice:Create(window, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {Size = UDim2.new(0, 700,0, 560) }):Play()
 	tweenservice:Create(window.top.separator, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0 }):Play()
 	tweenservice:Create(window.top.title, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {TextTransparency = 0 }):Play()
@@ -1122,6 +1294,7 @@ function closeui()
 	if window.wallpaper.ison.Value  then
 		tweenservice:Create(window.wallpaper, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {ImageTransparency = 1 }):Play()
 	end
+	syde:UnbindFrame(window)
 	tweenservice:Create(window.top.functions, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {BackgroundTransparency = 1 }):Play()
 	for i,v in pairs(window.top.functions:GetChildren()) do
 		if v:IsA("Frame") then
@@ -1149,7 +1322,6 @@ function closeui()
 	settingsOpen = false
 	window.Visible = false
 	uiclosed = true
-	ui.minihome.Visible = false
 	syde:Toast({
 		Content = 'UI Hidden, Use '.. uitoggle.Name ..' To Open Back.',
 		Duration = 2,
@@ -1161,7 +1333,6 @@ function ToggleUI()
 	bounce = true
 	if uiclosed then
 		openui()
-		ui.minihome.Visible = true
 		workspace.CurrentCamera:GetPropertyChangedSignal("ViewportSize"):Connect(function()
 			screenSize = workspace.CurrentCamera.ViewportSize
 			isMobile = userinput.TouchEnabled
@@ -1195,23 +1366,6 @@ syde:HidePH(tabs, 'btn')
 syde:HidePH(pages, 'page')
 function syde:Init(library)
 	ui.Enabled = true
-	for _, v in ipairs(ui:GetChildren()) do
-		if v:IsA("GuiObject") and v.Name ~= "main" and v.Name ~= "Notification" and v.Name ~= "minihome" then
-			v:Destroy()
-		end
-	end
-	if ui:FindFirstChild("main") then
-		for _, v in ipairs(ui.main:GetChildren()) do
-			if v:IsA("GuiObject") and (v.Name:lower():find("intro") or v.Name:lower():find("loader") or v.Name:lower():find("luffy")) then
-				v:Destroy()
-			end
-		end
-	end
-	for _, v in ipairs(window.top.functions:GetChildren()) do
-		if v:IsA("Frame") and v.Name ~= "settings" and v.Name ~= "mini" and v.Name ~= "close" then
-			v:Destroy()
-		end
-	end
 	local UI_TAG = "sydeUILoader"
 	local MARKER_NAME = "SYDEUIDetector"
 	local INTERNAL_UUID = ("SYDE-" .. tostring(game.JobId):gsub("-", "") .. tostring(tick())):gsub("%.", "")
@@ -1244,10 +1398,16 @@ function syde:Init(library)
 			end
 		end
 	end)
+	task.wait(0.1)
 	local Data = {
 		Title = library.Title or "Syde";
 		SubText = library.SubText or "Google";
+		Home = library.Home or {} 
 	}
+	Data.Home.Enabled = (Data.Home.Enabled == true) 
+	Data.Home.hTitle = Data.Home.hTitle or Data.Title
+	Data.Home.hSubText = Data.Home.hSubText or Data.SubText
+	Data.Home.profileImage = Data.Home.profileImage or Data.profileImage
 	local Minihome = ui.minihome
 	local MinihomeData = {
 		QuickActions = library.QuickActions or false;
@@ -1279,41 +1439,9 @@ function syde:Init(library)
 	end
 	top.title.Text = Data.Title
 	top.title.sub.Text = Data.SubText
-	top.title.sub.Position = UDim2.new(0, 0, 1, -12)
+	top.title.sub.Position = UDim2.new(0, 0, 1, -5)
 	syde:AddDrag(top, window, true)
 	syde:MakeResizable(window.resize, window, Vector2.new(454, 228))
-	window:GetPropertyChangedSignal("AbsoluteSize"):Connect(function()
-		local size = window.AbsoluteSize
-		local minDim = math.min(size.X, size.Y)
-		local newRadius = math.min(20, minDim / 4)
-		window.UICorner.CornerRadius = UDim.new(0, newRadius)
-		if window:FindFirstChild("shadow") then
-			window.shadow.Position = UDim2.new(0.5, 0, 0.5, 0)
-			window.shadow.AnchorPoint = Vector2.new(0.5, 0.5)
-			window.shadow.Size = UDim2.new(1, 60, 1, 60)
-		end
-		if window:FindFirstChild("clipframe") then
-			for _, g in ipairs(window.clipframe:GetChildren()) do
-				if g:IsA("ImageLabel") then
-					g.Size = UDim2.new(1, 0, 1, 0)
-					g.Position = UDim2.new(0.5, 0, 0.5, 0)
-					g.AnchorPoint = Vector2.new(0.5, 0.5)
-				end
-			end
-		end
-		if window:FindFirstChild("shadow") then
-			if window.shadow:FindFirstChild("glow") then
-				window.shadow.glow.Size = UDim2.new(1, 0, 1, 0)
-				window.shadow.glow.Position = UDim2.new(0.5, 0, 0.5, 0)
-				window.shadow.glow.AnchorPoint = Vector2.new(0.5, 0.5)
-			end
-			if window.shadow:FindFirstChild("glow1") then
-				window.shadow.glow1.Size = UDim2.new(1, 0, 1, 0)
-				window.shadow.glow1.Position = UDim2.new(0.5, 0, 0.5, 0)
-				window.shadow.glow1.AnchorPoint = Vector2.new(0.5, 0.5)
-			end
-		end
-	end)
 	top.title.TextTransparency = 1
 	tweenservice:Create(top.title, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()
 	top.title.sub.TextTransparency = 1
@@ -1398,20 +1526,279 @@ function syde:Init(library)
 	window.user.MouseLeave:Connect(function()
 		tweenservice:Create(window.user.UIStroke, TweenInfo.new(1, Enum.EasingStyle.Quart), {Thickness = 0}):Play()
 	end)
+	if Data.Home.Enabled then
+		window.pages.home.general.presence.Profile.ImageLabel.Text.Header.Text = Data.Home.hTitle
+		window.pages.home.general.presence.Profile.ImageLabel.Text.Sub.Text = Data.Home.hSubText
+		window.pages.home.general.presence.Profile.ImageLabel.Image = 'rbxassetid://'..Data.Home.profileImage
+		window.pages.home.general.presence.wallpaper.Image = 'rbxassetid://'..Data.Home.profileImage
+		local placeId = game.PlaceId
+		window.pages.home.general.presence.PlaceID.Text =
+			"Place ID: "..placeId
+		local layout = Bento.new(window.pages.home.general.Quick,{
+			Gap = 6,
+			RightPadding = 20,
+			TweenTime = 0.35
+		})
+		local row1 = layout:NewRow()
+		local row2 = layout:NewRow()
+		local row3 = layout:NewRow()
+		layout:AddItem(window.pages.home.general.Quick.QuickPlay,nil,row1)
+		layout:AddItem(window.pages.home.general.Quick.Player,nil,row1)
+		layout:AddItem(window.pages.home.general.Quick.Latency,nil,row3)
+		layout:AddItem(
+			window.pages.home.general.Quick.QuickSettings,
+			{Bottom = true},
+			row2
+		)
+		layout:Bind()
+		layout:Update()
+		local Stats = game:GetService("Stats")
+		local TweenService = game:GetService("TweenService")
+		local graph = window.pages.home.general.Quick.Latency.Frame:WaitForChild("graph")
+		local pointTemplate = graph:WaitForChild("point")
+		local lineTemplate = graph:WaitForChild("line")
+		pointTemplate.Visible = false
+		lineTemplate.Visible = false
+		local UPDATE_INTERVAL = 0.3
+		local MAX_POINTS = 15
+		local MAX_PING = 300
+		local SMOOTH_SPEED = 0.25
+		local history = {}
+		local smoothHistory = {}
+		local points = {}
+		local lines = {}
+		local gridBuilt = false
+		repeat task.wait() until graph.AbsoluteSize.X > 0
+		local Players = game:GetService("Players")
+		local RunService = game:GetService("RunService")
+		local function getPing()
+			local ping =
+				Players.LocalPlayer:GetNetworkPing() * 1000
+			if ping == 0 and RunService:IsStudio() then
+				return 50 + math.noise(os.clock()*0.5)*40
+			end
+			return math.floor(ping)
+		end
+		local function clear()
+			for _,obj in ipairs(graph:GetChildren()) do
+				if obj ~= pointTemplate
+					and obj ~= lineTemplate then
+					obj:Destroy()
+				end
 			end
 		end
-	function opensettings()
-		if window.AbsoluteSize.X < 450 or window.AbsoluteSize.Y < 500 then
-			syde:Notify({
-				Title = "Syde needs to be bigger.",
-				Content = "Settings UI cannot be shown if the Main UI is smaller than it. Resizing it will fix this",
-				Duration = 5
-			})
-			return
+		local function createGrid()
+			local w = graph.AbsoluteSize.X
+			local h = graph.AbsoluteSize.Y
+			local steps = 4
+			for i=0,steps do
+				local percent = i/steps
+				local y = h - (percent*h)
+				local gridLine = Instance.new("Frame")
+				gridLine.Size = UDim2.fromOffset(w,1)
+				gridLine.Position = UDim2.fromOffset(34,y)
+				gridLine.BackgroundTransparency = 0.85
+				gridLine.BorderSizePixel = 0
+				gridLine.Parent = graph
+				local label = Instance.new("TextLabel")
+				label.Size = UDim2.fromOffset(40,14)
+				label.Position = UDim2.fromOffset(2,y-7)
+				label.BackgroundTransparency = 1
+				label.TextSize = 6
+				label.TextXAlignment = Enum.TextXAlignment.Left
+				label.TextColor3 = Color3.fromRGB(255, 255, 255)
+				label.Text =
+					math.floor(percent*MAX_PING)
+					.." ms"
+				label.TextTransparency = 0
+				label.Parent = graph
+			end
 		end
+		local function draw()
+			clear()
+			createGrid()
+			local w = graph.AbsoluteSize.X
+			local h = graph.AbsoluteSize.Y
+			local step = w/(MAX_POINTS-1)
+			local lastX,lastY
+			for i,value in ipairs(smoothHistory) do
+				local percent =
+					math.clamp(value/MAX_PING,0,1)
+				local x = (i-1)*step
+				local y = h - (percent*h)
+				local point = pointTemplate:Clone()
+				point.Visible = false
+				point.Position = UDim2.fromOffset(x,y)
+				point.AnchorPoint = Vector2.new(0.5,0.5)
+				point.Parent = graph
+				if lastX then
+					local dx = x-lastX
+					local dy = y-lastY
+					local length =
+						math.sqrt(dx*dx + dy*dy)
+					local angle =
+						math.deg(math.atan2(dy,dx))
+					local midX = (lastX + x)/2
+					local midY = (lastY + y)/2
+					local line = lineTemplate:Clone()
+					line.Visible = true
+					line.AnchorPoint = Vector2.new(0.5,0.5)
+					line.Position =
+						UDim2.fromOffset(midX,midY)
+					line.Size =
+						UDim2.fromOffset(length,1)
+					line.Rotation = angle
+					line.Parent = graph
+				end
+				lastX = x
+				lastY = y
+			end
+		end
+		task.spawn(function()
+			while true do
+				local ping = getPing()
+				table.insert(history,ping)
+				if #history > MAX_POINTS then
+					table.remove(history,1)
+				end
+				for i,v in ipairs(history) do
+					local current =
+						smoothHistory[i] or v
+					smoothHistory[i] =
+						current + (v-current)*SMOOTH_SPEED
+				end
+				draw()
+				task.wait(UPDATE_INTERVAL)
+			end
+		end)
+		local bh = window.pages.home.general.Quick.QuickSettings.QuickButtons.holder
+		for i,v in ipairs(window.pages.home.general.Quick.QuickSettings.QuickButtons.holder:GetChildren()) do
+			if v:IsA('Frame') then
+				v.MouseEnter:Connect(function()
+					tweenservice:Create(v.UIStroke, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {Transparency = 0}):Play()
+				end)
+				v.MouseLeave:Connect(function()
+					tweenservice:Create(v.UIStroke, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {Transparency = 1}):Play()
+				end)
+			end
+		end
+		bh.Leave.interact.MouseButton1Click:Connect(function()
+			game:GetService("Players").LocalPlayer:Kick("Left the experience")
+		end)
+		bh.Rejoin.interact.MouseButton1Click:Connect(function()
+			local TeleportService = game:GetService("TeleportService")
+			local player = game:GetService("Players").LocalPlayer
+			TeleportService:Teleport(game.PlaceId, player)
+		end)
+		local HttpService = game:GetService("HttpService")
+		local TeleportService = game:GetService("TeleportService")
+		local Players = game:GetService("Players")
+		local player = Players.LocalPlayer
+		local placeId = game.PlaceId
+		local function ServerHop()
+			local cursor = ""
+			local servers = {}
+			repeat
+				local url =
+					"https://games.roblox.com/v1/games/"
+					..placeId..
+					"/servers/Public?sortOrder=Asc&limit=100&cursor="
+					..cursor
+				local response =
+					HttpService:JSONDecode(
+						game:HttpGet(url)
+					)
+				for _,server in pairs(response.data) do
+					if server.playing < server.maxPlayers
+						and server.id ~= game.JobId then
+						table.insert(servers,server.id)
+					end
+				end
+				cursor = response.nextPageCursor
+			until cursor == nil or #servers > 0
+			if #servers > 0 then
+				TeleportService:TeleportToPlaceInstance(
+					placeId,
+					servers[math.random(1,#servers)],
+					player
+				)
+			end
+		end
+		bh.Fast.interact.MouseButton1Click:Connect(function()
+			ServerHop()
+		end)
+		local Players = game:GetService("Players")
+		local label = window.pages.home.general.Quick.Player.Frame.TextLabel 
+		local function update()
+			local current =
+				#Players:GetPlayers()
+			local max =
+				Players.MaxPlayers
+			label.Text =
+				current.." / "..max
+		end
+		update()
+		Players.PlayerAdded:Connect(update)
+		Players.PlayerRemoving:Connect(update)
+		local QuickPlay = window.pages.home.general.Quick.QuickPlay
+		local HttpService = game:GetService("HttpService")
+		local MarketplaceService = game:GetService("MarketplaceService")
+		local TeleportService = game:GetService("TeleportService")
+		local FILE = syde.ConfigFolder .. "/last_game.json"
+		local function SaveLastGame(placeId)
+			if not syde.ConfigEnabled then return end
+			local data = {
+				PlaceId = placeId,
+				Time = os.time()
+			}
+			pcall(function()
+				writefile(FILE, HttpService:JSONEncode(data))
+			end)
+		end
+		local function LoadLastGame()
+			if not syde.ConfigEnabled then return nil end
+			if not isfile(FILE) then return nil end
+			local success, result = pcall(function()
+				return HttpService:JSONDecode(readfile(FILE))
+			end)
+			if success then
+				return result
+			end
+		end
+		local lastGame = LoadLastGame()
+		local placeId = game.PlaceId
+		if lastGame and lastGame.PlaceId then
+			placeId = lastGame.PlaceId
+		end
+		local success, info = pcall(function()
+			return MarketplaceService:GetProductInfoAsync(placeId, Enum.InfoType.Asset)
+		end)
+		if success and info then
+			QuickPlay.gtitle.Text = info.Name
+			local id=placeId 
+			local thumbnailUrl="https://www.roblox.com/asset-thumbnail/image?assetId="..id.."&width=768&height=432&format=png"
+			QuickPlay.thumb.Image=thumbnailUrl
+		else
+		end
+		task.delay(120, function()
+			if syde and syde.ConfigEnabled then
+				SaveLastGame(game.PlaceId)
+			end
+		end)
+		QuickPlay.Resume.interact.MouseButton1Click:Connect(function()
+			local lastGame = LoadLastGame()
+			if lastGame and lastGame.PlaceId then
+				TeleportService:Teleport(placeId)
+			end
+		end)
+	else
+		window.pages.home.Visible = false
+		window.tabs.Home.homeicon.interact.Interactable = false
+	end
+	function opensettings()
 		window.settings.Visible = true
 		window.dim.Visible = true
-		tweenservice:Create(window.settings, TweenInfo.new(0.5, Enum.EasingStyle.Quart), { Size = UDim2.new(0, 450,0, 500)}):Play()
+		tweenservice:Create(window.settings, TweenInfo.new(0.5, Enum.EasingStyle.Quart), { Size = UDim2.new(0, 420,0, 480)}):Play()
 		tweenservice:Create(window.dim, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), { BackgroundTransparency = 0.2 }):Play()
 		tweenservice:Create(window.settings.UICorner, TweenInfo.new(0.5, Enum.EasingStyle.Quart), { CornerRadius = UDim.new(0,20)}):Play()
 		tweenservice:Create(window.settings, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), { BackgroundTransparency = 0}):Play()
@@ -1441,14 +1828,6 @@ function syde:Init(library)
 		closesettings()
 	end
 	window.top.functions.settings.interact.MouseButton1Click:Connect(function()
-		if window.AbsoluteSize.X < 420 or window.AbsoluteSize.Y < 480 then
-			syde:Notify({
-				Title = "Syde needs to be bigger.",
-				Content = "Settings UI cannot be shown if the Main UI is smaller than it. Resizing it will fix this",
-				Duration = 5
-			})
-			return
-		end
 		if not settingsOpen then
 			settingsOpen = true
 			opensettings()
@@ -1487,13 +1866,6 @@ function syde:Init(library)
 			local Page = pagesContainer.page:Clone()
 			Page.Visible = false
 			Page.Parent = pagesContainer
-			local Padding = Page:FindFirstChildOfClass("UIPadding") or Instance.new("UIPadding", Page)
-			Padding.PaddingTop = UDim.new(0, 0)
-			local list = Page:FindFirstChildOfClass("UIListLayout")
-			if list then
-				list.Padding = UDim.new(0, 5)
-				list.SortOrder = Enum.SortOrder.LayoutOrder
-			end
 			Page.Name = tdata.Title
 			for _, v in ipairs(Page:GetChildren()) do
 				if v:IsA("Frame") then
@@ -1688,12 +2060,10 @@ function syde:Init(library)
 				local toggleConfiguration = ui.Render.ToggleConfiguration:Clone()
 				toggleConfiguration.Parent = ui.Render
 				toggleConfiguration.Visible = false
-				toggleConfiguration.BackgroundColor3 = Color3.fromRGB(17, 17, 17)
+				toggleConfiguration.BackgroundColor3 = Color3.fromRGB(16, 16, 16)
 				toggleConfiguration.Container.KeyBind.Name = "Keybind"
 				toggleConfiguration.Container.Keybind.Title.Text = "Keybind"
 				toggleConfiguration.Container.Keybind.Bind.v.Text = 'None'
-				toggleConfiguration.Container.Keybind.Bind.BackgroundColor3 = Color3.fromRGB(17, 17, 17)
-				toggleConfiguration.Container.Clear.clear.BackgroundColor3 = Color3.fromRGB(17, 17, 17)
 				tweenservice:Create(toggleConfiguration.Container.Keybind.Bind, TweenInfo.new(0.5, Enum.EasingStyle.Quint), { Size = UDim2.new(0, toggleConfiguration.Container.Keybind.Bind.v.TextBounds.X + 20,0, 25) }):Play()
 				toggleConfiguration.BackgroundTransparency = 1
 				toggleConfiguration.Container.Keybind.Title.TextTransparency = 1
@@ -1734,6 +2104,33 @@ function syde:Init(library)
 						SaveConfig()
 					end
 				end)
+				local descLabel = toggle:FindFirstChild("desc")
+				if descLabel then
+					if data.Desc and data.Desc ~= "" then
+						descLabel.Text = data.Desc
+						descLabel.Visible = true
+						descLabel.TextWrapped = true
+						local function updateSize()
+							local textSize = textservice:GetTextSize(
+								descLabel.Text,
+								descLabel.TextSize,
+								descLabel.Font,
+								Vector2.new(descLabel.AbsoluteSize.X, math.huge)
+							)
+							local newDescSize = UDim2.new(1, -150, 0, textSize.Y)
+							local newButtonSize = UDim2.new(toggle.Size.X.Scale, toggle.Size.X.Offset, 0, toggle.title.Size.Y.Offset + textSize.Y + 10) 
+							tweenservice:Create(toggle.UICorner, TweenInfo.new(0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), { CornerRadius = UDim.new(0,20) }):Play()
+							local descTween = tweenservice:Create(descLabel, TweenInfo.new(0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), { Size = newDescSize })
+							descTween:Play()
+							local ToggleTween = tweenservice:Create(toggle, TweenInfo.new(0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), { Size = newButtonSize })
+							ToggleTween:Play()
+						end
+						updateSize()
+						descLabel:GetPropertyChangedSignal("TextBounds"):Connect(updateSize)
+					else
+						descLabel.Visible = false
+					end
+				end
 				if data.Config then
 					local State = false
 					local enterTween = TweenInfo.new(0.5, Enum.EasingStyle.Exponential)
@@ -1747,10 +2144,10 @@ function syde:Init(library)
 						toggleConfiguration.Visible = true
 						State = true
 						tweenservice:Create(toggleConfiguration, enterTween, { BackgroundTransparency = 0 }):Play()
-						tweenservice:Create(toggleConfiguration.Container.Keybind.Title, enterTween, { TextTransparency = 0 }):Play()
-						tweenservice:Create(toggleConfiguration.Container.Keybind.Bind, enterTween, { BackgroundTransparency = 0 }):Play()
-						tweenservice:Create(toggleConfiguration.Container.Keybind.Bind.UIStroke, enterTween, { Transparency = 0 }):Play()
-						tweenservice:Create(toggleConfiguration.Container.Keybind.Bind.v, enterTween, { TextTransparency = 0 }):Play()
+						tweenservice:Create(toggleConfiguration.Container.KeyBind.Title, enterTween, { TextTransparency = 0 }):Play()
+						tweenservice:Create(toggleConfiguration.Container.KeyBind.Bind, enterTween, { BackgroundTransparency = 0 }):Play()
+						tweenservice:Create(toggleConfiguration.Container.KeyBind.Bind.UIStroke, enterTween, { Transparency = 0 }):Play()
+						tweenservice:Create(toggleConfiguration.Container.KeyBind.Bind.v, enterTween, { TextTransparency = 0 }):Play()
 						tweenservice:Create(toggleConfiguration.Container.Clear.clear.ImageLabel, enterTween, { ImageTransparency = 0 }):Play()
 						tweenservice:Create(toggleConfiguration.Container.Clear.Title, enterTween, { TextTransparency = 0 }):Play()
 						tweenservice:Create(toggleConfiguration, TweenInfo.new(0.7, Enum.EasingStyle.Quint), { Size = UDim2.new(0, 174,0, 88) }):Play()
@@ -1758,10 +2155,10 @@ function syde:Init(library)
 					local function ToggleConfigClose()
 						State = false
 						tweenservice:Create(toggleConfiguration, enterTween, { BackgroundTransparency = 1 }):Play()
-						tweenservice:Create(toggleConfiguration.Container.Keybind.Title, enterTween, { TextTransparency = 1 }):Play()
-						tweenservice:Create(toggleConfiguration.Container.Keybind.Bind, enterTween, { BackgroundTransparency = 1 }):Play()
-						tweenservice:Create(toggleConfiguration.Container.Keybind.Bind.UIStroke, enterTween, { Transparency = 1 }):Play()
-						tweenservice:Create(toggleConfiguration.Container.Keybind.Bind.v, enterTween, { TextTransparency = 1 }):Play()
+						tweenservice:Create(toggleConfiguration.Container.KeyBind.Title, enterTween, { TextTransparency = 1 }):Play()
+						tweenservice:Create(toggleConfiguration.Container.KeyBind.Bind, enterTween, { BackgroundTransparency = 1 }):Play()
+						tweenservice:Create(toggleConfiguration.Container.KeyBind.Bind.UIStroke, enterTween, { Transparency = 1 }):Play()
+						tweenservice:Create(toggleConfiguration.Container.KeyBind.Bind.v, enterTween, { TextTransparency = 1 }):Play()
 						tweenservice:Create(toggleConfiguration.Container.Clear.clear.ImageLabel, enterTween, { ImageTransparency = 1 }):Play()
 						tweenservice:Create(toggleConfiguration.Container.Clear.Title, enterTween, { TextTransparency = 1 }):Play()
 						tweenservice:Create(toggleConfiguration, TweenInfo.new(0.7, Enum.EasingStyle.Quint), { Size = UDim2.new(0, 75,0, 53) }):Play()
@@ -1769,6 +2166,7 @@ function syde:Init(library)
 						toggleConfiguration.Visible = false
 					end
 					local TogService
+					local heldKeys = {} 
 					local debounce1 = false
 					local function ToggleConfig()
 						if debounce1 then return end
@@ -1810,30 +2208,30 @@ function syde:Init(library)
 						ToggleConfig()
 					end)
 					local function ResizeBindFrame()
-						tweenservice:Create(toggleConfiguration.Container.Keybind.Bind, TweenInfo.new(0.5, Enum.EasingStyle.Quint), { Size = UDim2.new(0, toggleConfiguration.Container.Keybind.Bind.v.TextBounds.X + 20,0, 25) }):Play()
+						tweenservice:Create(toggleConfiguration.Container.KeyBind.Bind, TweenInfo.new(0.5, Enum.EasingStyle.Quint), { Size = UDim2.new(0, toggleConfiguration.Container.KeyBind.Bind.v.TextBounds.X + 20,0, 25) }):Play()
 					end
 					local function setKeybind(key)
 						if not key then
-							toggleConfiguration.Container.Keybind.Bind.v.Text = 'None'
+							toggleConfiguration.Container.KeyBind.Bind.v.Text = 'None'
 							ResizeBindFrame()
 							data.Keybind = nil
 						else
 							data.Keybind = key
 							data.KeybindReady = false
-							tweenservice:Create(toggleConfiguration.Container.Keybind.Bind.v, TweenInfo.new(0.25, Enum.EasingStyle.Exponential), { TextTransparency = 1 }):Play()
-							toggleConfiguration.Container.Keybind.Bind.v.Text = key.Name
-							tweenservice:Create(toggleConfiguration.Container.Keybind.Bind.v, TweenInfo.new(1, Enum.EasingStyle.Exponential), { TextTransparency = 0 }):Play()
+							tweenservice:Create(toggleConfiguration.Container.KeyBind.Bind.v, TweenInfo.new(0.25, Enum.EasingStyle.Exponential), { TextTransparency = 1 }):Play()
+							toggleConfiguration.Container.KeyBind.Bind.v.Text = key.Name
+							tweenservice:Create(toggleConfiguration.Container.KeyBind.Bind.v, TweenInfo.new(1, Enum.EasingStyle.Exponential), { TextTransparency = 0 }):Play()
 							ResizeBindFrame()
 							task.delay(0.5, function()
 								data.KeybindReady = true
 							end)
 						end
 					end
-					toggleConfiguration.Container.Keybind.Interact.MouseButton1Click:Connect(function()
-						tweenservice:Create(toggleConfiguration.Container.Keybind.Bind.v, TweenInfo.new(0.25, Enum.EasingStyle.Exponential), { TextTransparency = 1 }):Play()
+					toggleConfiguration.Container.KeyBind.Interact.MouseButton1Click:Connect(function()
+						tweenservice:Create(toggleConfiguration.Container.KeyBind.Bind.v, TweenInfo.new(0.25, Enum.EasingStyle.Exponential), { TextTransparency = 1 }):Play()
 						task.wait(0.2)
-						toggleConfiguration.Container.Keybind.Bind.v.Text = "..."
-						tweenservice:Create(toggleConfiguration.Container.Keybind.Bind.v, TweenInfo.new(0.25, Enum.EasingStyle.Exponential), { TextTransparency = 0 }):Play()
+						toggleConfiguration.Container.KeyBind.Bind.v.Text = "..."
+						tweenservice:Create(toggleConfiguration.Container.KeyBind.Bind.v, TweenInfo.new(0.25, Enum.EasingStyle.Exponential), { TextTransparency = 0 }):Play()
 						ResizeBindFrame()
 						local connection
 						connection = userinput.InputBegan:Connect(function(input, processed)
@@ -3217,13 +3615,26 @@ function syde:Init(library)
 				Para.Frame.title.Text = ParaData.Title
 				Para.Content.Text = ParaData.Content
 				Para.Content.Size = UDim2.new(1, -20, 0, Para.Content.TextBounds.Y)
-				Para.Size = UDim2.new(1, -10, 0, Para.Content.TextBounds.Y + 65)
+				local function updateSize()
+					local textSize = textservice:GetTextSize(
+						Para.Content.Text,
+						Para.Content.TextSize,
+						Para.Content.Font,
+						Vector2.new(Para.Content.AbsoluteSize.X, math.huge) 
+					)
+					local newDescSize = UDim2.new(1, -20, 0, textSize.Y)
+					local newButtonSize = UDim2.new(Para.Size.X.Scale, Para.Size.X.Offset, 0, textSize.Y + 65) 
+					local descTween = tweenservice:Create(Para.Content, TweenInfo.new(0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), { Size = newDescSize })
+					descTween:Play()
+					local buttonTween = tweenservice:Create(Para, TweenInfo.new(0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), { Size = newButtonSize })
+					buttonTween:Play()
+				end
+				updateSize()
+				Para.Content:GetPropertyChangedSignal("TextBounds"):Connect(updateSize)
 				local ParagraphSettings = {}
 				function ParagraphSettings:Set(text, title)
 					Para.Frame.title.Text = title
 					Para.Content.Text = text
-					Para.Content.Size = UDim2.new(1, -20, 0, Para.Content.TextBounds.Y)
-					Para.Size = UDim2.new(1, -10, 0, Para.Content.TextBounds.Y + 65)
 				end
 				ParagraphSettings.Instance = Para
 				return ParagraphSettings
@@ -3238,8 +3649,6 @@ function syde:Init(library)
 				}
 				local textinput =  window.settings.pages.page.Input:Clone()
 				textinput.Visible = true
-				layoutCounter = layoutCounter + 1
-				textinput.LayoutOrder = layoutCounter
 				textinput.Parent = Page
 				textinput.Name = data.Title
 				textinput.title.Text = data.Title
@@ -3394,6 +3803,25 @@ function syde:Init(library)
 			end
 		end)
 		a:Toggle({
+			Title = 'Blur',
+			Description = 'Toggle the blur on the UI.',
+			Value = false,
+			CallBack = function(v)
+				bluron = v
+				if bluron then
+					syde:BindFrame(window, {
+						Transparency = 0.98;
+						BrickColor = BrickColor.new('Institutional white');
+					})
+					tweenservice:Create(window, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0.45 }):Play()
+				else
+					syde:UnbindFrame(window)
+					tweenservice:Create(window, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0 }):Play()
+				end
+			end,
+			SFlag = 'BLUR'
+		})
+		a:Toggle({
 			Title = 'Glow',
 			Description = 'Shine on the ui.',
 			Value = true,
@@ -3419,9 +3847,13 @@ function syde:Init(library)
 					end
 					window.shadow.glow.Visible = false
 					window.shadow.glow1.Visible = false
-					window.pages.v0.Visible = true
-					window.pages.clipframe.v1.Visible = true
-					window.pages.clipframe.v1.Visible = true
+					if bluron then
+						window.pages.v0.Visible = false
+					else
+						window.pages.v0.Visible = true
+						window.pages.clipframe.v1.Visible = true
+						window.pages.clipframe.v1.Visible = true
+					end
 				end
 			end,
 			SFlag = 'GLW',
@@ -3556,11 +3988,13 @@ function syde:Init(library)
 				return https:JSONDecode(readfile(path))
 			end)
 			if success and data and data.ALC == true then
+				syde.Loading = true
 				syde:LoadSettingsConfig(true)
 				local mainConfigPath = string.format("%s/%s.json", syde.ConfigFolder, syde.ConfigFile)
 				if isfile(mainConfigPath) then
 					LoadConfig(readfile(mainConfigPath))
 				end
+				syde.Loading = false
 				syde:Toast({
 					Content = 'Loaded Save Config',
 					Duration = 3
@@ -3581,6 +4015,21 @@ function syde:Init(library)
 		selected = false
 	}
 	function tbdata:InitTab(tab)
+		if Data.Home.Enabled then
+			if not tbdata.__homeBootstrapped then
+				tbdata.__homeBootstrapped = true
+				tbdata.first = "Home"
+				tbdata.homeActive = true
+				for _, temp in ipairs(pages:GetChildren()) do
+					if temp:IsA("ScrollingFrame") then
+						temp.Visible = false
+					end
+				end
+				if window and window.pages and window.pages.home then
+					window.pages.home.Visible = true
+				end
+			end
+		end
 		local isFirstTab = not tbdata.first 
 		local tdata = {
 			Title = tab.Title;
@@ -3656,15 +4105,44 @@ function syde:Init(library)
 			tweenservice:Create(Tab, TweenInfo.new(2, Enum.EasingStyle.Exponential), { BackgroundTransparency = 0 }):Play()
 			tweenservice:Create(Tab.indicator, TweenInfo.new(1, Enum.EasingStyle.Exponential), { BackgroundTransparency = 0 }):Play()
 			tweenservice:Create(Tab.indicator, TweenInfo.new(2, Enum.EasingStyle.Exponential), { BackgroundColor3 = syde.theme.Accent }):Play()
+			tweenservice:Create(Tab.indicator.glow, TweenInfo.new(2, Enum.EasingStyle.Exponential), { ImageColor3 = syde.theme.Accent }):Play()
+			tweenservice:Create(Tab, TweenInfo.new(2, Enum.EasingStyle.Quart), { Size = UDim2.new(0, Tab.title.TextBounds.X + 80,0, 35) }):Play()
 		end
 		local positionTweenInfo = TweenInfo.new(0.7, Enum.EasingStyle.Quart)
 		local colorTweenInfo = TweenInfo.new(0.3, Enum.EasingStyle.Exponential)
+		local HomeButton = (window and window.tabs and window.tabs.Home) and window.tabs.Home or nil
+		local HomePage = (window and window.pages and window.pages.home) and window.pages.home or nil
+		local function ApplyHomeButtonStyle(isActive)
+			if not HomeButton or not HomeButton.homeicon:FindFirstChild("ImageLabel") then
+				return
+			end
+			if isActive then
+				tweenservice:Create(HomeButton.homeicon, TweenInfo.new(1, Enum.EasingStyle.Exponential), { BackgroundTransparency = 0.45 }):Play()
+				tweenservice:Create(HomeButton.homeicon.ImageLabel, TweenInfo.new(1, Enum.EasingStyle.Exponential), { ImageTransparency = 0 }):Play()
+			else
+				tweenservice:Create(HomeButton.homeicon, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), { BackgroundTransparency = 0.85 }):Play()
+				tweenservice:Create(HomeButton.homeicon.ImageLabel, TweenInfo.new(1, Enum.EasingStyle.Exponential), { ImageTransparency = 0.67 }):Play()
+			end
+		end
+		local isInit = true
 		local function ApplyTabStyle(tabButton, isSelected)
 			local targetTextTransparency = isSelected and 0 or 0.6
 			local targetBackgroundTransparency = isSelected and 0 or 0.45
 			local targetTransparency = isSelected and 0 or 1
 			local targetColor = isSelected and syde.theme.Accent or Color3.fromRGB(29, 29, 29)
 			local targetSize = isSelected and UDim2.new(0, tabButton.title.TextBounds.X + 80,0, 35) or UDim2.new(0, tabButton.title.TextBounds.X + 50,0, 35)
+			if isInit then
+				task.spawn(function()
+					for _, v in ipairs(tabs:GetChildren()) do
+						if v:IsA("Frame") then
+							tweenservice:Create(v, TweenInfo.new(0.75, Enum.EasingStyle.Quart), { Size = UDim2.new(0, v.title.TextBounds.X + 100,0, 30) }):Play()
+							task.wait(0.15)
+							tweenservice:Create(tabButton, TweenInfo.new(0.75, Enum.EasingStyle.Quart), { Size = targetSize }):Play()
+							isInit = false
+						end
+					end
+				end)
+			end
 			tweenservice:Create(tabButton, positionTweenInfo, { Size = targetSize }):Play()
 			tweenservice:Create(tabButton, colorTweenInfo, { BackgroundTransparency = targetBackgroundTransparency, }):Play()
 			tweenservice:Create(tabButton.title, colorTweenInfo, { TextTransparency = targetTextTransparency }):Play()
@@ -3674,8 +4152,68 @@ function syde:Init(library)
 			tweenservice:Create(tabButton.indicator, colorTweenInfo, { BackgroundTransparency = isSelected and 0 or 1 }):Play()
 		end
 		ApplyTabStyle(Tab, isFirstTab)
+		if Data.Home.Enabled then
+			ApplyTabStyle(Tab, false)
+		else
+			ApplyTabStyle(Tab, isFirstTab)
+		end
+		local function ShowHome()
+			tbdata.homeActive = true
+			tbdata.first = "Home"
+			for _, otherPage in ipairs(pages:GetChildren()) do
+				if otherPage:IsA("ScrollingFrame") then
+					otherPage.Visible = false
+				end
+			end
+			for _, otherTab in ipairs(tabs:GetChildren()) do
+				if otherTab:IsA("Frame") then
+					ApplyTabStyle(otherTab, false)
+					otherTab.interact.Active = true
+				end
+			end
+			if HomePage then
+				HomePage.Visible = true
+				pcall(function() tweenservice:Create(HomePage, TweenInfo.new(0.45, Enum.EasingStyle.Quint), { BackgroundTransparency = 1 }):Play() end)
+			end
+			ApplyHomeButtonStyle(true)
+			window.pages.clipframe.Visible = false
+		end
+		local function HideHomeForTab()
+			tbdata.homeActive = false
+			if HomePage and HomePage.Visible then
+				HomePage.Visible = false  
+				pcall(function() 
+					HomePage.BackgroundTransparency = 1 
+				end)
+			end
+			ApplyHomeButtonStyle(false)
+			window.pages.clipframe.Visible = true
+		end
+		if tbdata.first == 'Home' then
+			ShowHome()
+		end
+		if HomeButton and HomeButton.homeicon:FindFirstChild("interact") and not tbdata.__homeHooked then
+			tbdata.__homeHooked = true
+			HomeButton.homeicon.interact.MouseButton1Click:Connect(function()
+				if tbdata.homeActive then return end 
+				local lockedFolder = pages:FindFirstChild("lockedpages")
+				if lockedFolder then
+					for _, lockedPage in ipairs(lockedFolder:GetChildren()) do
+						if lockedPage:IsA("TextButton") then
+							lockedPage.Visible = false
+						end
+					end
+				end
+				ShowHome()
+			end)
+		end
 		Tab.interact.MouseButton1Click:Connect(function()
 			if tbdata.first == tdata.Title then return end 
+			if Data.Home.Enabled then
+				if tbdata.homeActive then
+					HideHomeForTab()
+				end
+			end
 			local previous = tbdata.first
 			tbdata.first = tdata.Title
 			local prevPage = pages:FindFirstChild(previous)
