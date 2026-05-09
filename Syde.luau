@@ -15,6 +15,7 @@ local isMobile =        userinput.TouchEnabled or (screenSize.X < 1024 and scree
 local dragOffset =        255
 local dragOffsetMobile =  150
 local camera =          workspace.CurrentCamera
+
 Library.Enabled = false
 local syde = {
 	theme = {
