@@ -1404,6 +1404,9 @@ function syde:Init(library)
 		Title = library.Title or "Syde";
 		SubText = library.SubText or "Google";
 	}
+	if window.tabs:FindFirstChild("Home") then window.tabs.Home:Destroy() end
+	if window.pages:FindFirstChild("home") then window.pages.home:Destroy() end
+	if ui:FindFirstChild("minihome") then ui.minihome:Destroy() end
 	top.title.Text = Data.Title
 	top.title.sub.Text = Data.SubText
 	top.title.sub.Position = UDim2.new(0, 0, 1, -2)
@@ -3746,6 +3749,9 @@ function syde:Init(library)
 			tweenservice:Create(tabButton.indicator, colorTweenInfo, { BackgroundTransparency = isSelected and 0 or 1 }):Play()
 		end
 		ApplyTabStyle(Tab, isFirstTab)
+		if isFirstTab then
+			Page.Visible = true
+		end
 
 		Tab.interact.MouseButton1Click:Connect(function()
 			if tbdata.first == tdata.Title then return end 
