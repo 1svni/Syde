@@ -1231,6 +1231,7 @@ function closesearch()
 	window.search.Visible = false
 end
 function openui()
+	glow = true
 	pages.Visible = true
 	window.tabs.Visible = true
 	window.user.Visible = true
@@ -1273,9 +1274,12 @@ function openui()
 	if glow == true then
 		for i, glow in pairs(window.clipframe:GetChildren()) do
 			if glow:IsA("ImageLabel") then
+				glow.Visible = true
 				tweenservice:Create(glow, TweenInfo.new(0.5, Enum.EasingStyle.Exponential),{ImageTransparency = 0.8}):Play()
 			end
 		end
+		window.shadow.glow.Visible = true
+		window.shadow.glow1.Visible = true
 		tweenservice:Create(window.shadow.glow, TweenInfo.new(0.5, Enum.EasingStyle.Exponential),{ImageTransparency = 0.9}):Play()
 		tweenservice:Create(window.shadow.glow1, TweenInfo.new(0.5, Enum.EasingStyle.Exponential),{ImageTransparency = 0.9}):Play()
 	end
@@ -1348,8 +1352,8 @@ function ToggleUI()
 end
 window.top.functions.close.interact.MouseButton1Click:Connect(function()
 	syde:Notify({
-		Title = "Goodbye :(",
-		Content = "Thank you for using Syde, we love you!",
+		Title = "Goodbye.",
+		Content = "Thank you for using Syde.",
 		Duration = 5
 	})
 	mh = false
