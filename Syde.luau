@@ -1362,6 +1362,9 @@ window.top.functions.close.interact.MouseButton1Click:Connect(function()
 		Content = "Thank you for using Syde.",
 		Duration = 5
 	})
+	window:Destroy()
+	task.wait(5.5)
+	Library:Destroy()
 end)
 syde:HidePH(tabs, 'btn')
 syde:HidePH(pages, 'page')
