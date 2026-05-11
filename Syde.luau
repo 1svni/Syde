@@ -800,7 +800,7 @@ function syde:HidePlaceHolder(instance, placeholder, recursive)
 end
 local rs
 local ss
-local mh = true
+local mh = false
 local HttpService = https
 local CONFIG_VERSION = 1
 local SaveDebounce
@@ -1402,11 +1402,15 @@ function syde:Init(library)
 		SubText = library.SubText or "Google";
 		Home = library.Home or {} 
 	}
-	Data.Home.Enabled = (Data.Home.Enabled == true) 
+	Data.Home.Enabled = false
 	Data.Home.hTitle = Data.Home.hTitle or Data.Title
 	Data.Home.hSubText = Data.Home.hSubText or Data.SubText
 	Data.Home.profileImage = Data.Home.profileImage or Data.profileImage
 	local Minihome = ui.minihome
+	Minihome.Visible = false
+	if window.tabs:FindFirstChild("Home") then
+		window.tabs.Home.Visible = false
+	end
 	local MinihomeData = {
 		QuickActions = library.QuickActions or false;
 	}
@@ -3785,43 +3789,7 @@ function syde:Init(library)
 				startGradientRotation()
 			end
 		end)
-		a:Toggle({
-			Title = 'Glow',
-			Description = 'Shine on the ui.',
-			Value = true,
-			CallBack = function (v)
-				if v then
-					glow = true
-					for i, glow in pairs(window.clipframe:GetChildren()) do
-						if glow:IsA("ImageLabel") then
-							tweenservice:Create(glow, TweenInfo.new(0.5, Enum.EasingStyle.Exponential),{ImageTransparency = 0.8}):Play()
-						end
-					end
-					window.pages.v0.Visible = false
-					window.pages.clipframe.v1.Visible = false
-					window.pages.clipframe.v1.Visible = false
-					window.shadow.glow.Visible = true
-					window.shadow.glow1.Visible = true
-				else
-					glow = false
-					for i, glow in pairs(window.clipframe:GetChildren()) do
-						if glow:IsA("ImageLabel") then
-							tweenservice:Create(glow, TweenInfo.new(0.5, Enum.EasingStyle.Exponential),{ImageTransparency = 1}):Play()
-						end
-					end
-					window.shadow.glow.Visible = false
-					window.shadow.glow1.Visible = false
-					if bluron then
-						window.pages.v0.Visible = false
-					else
-						window.pages.v0.Visible = true
-						window.pages.clipframe.v1.Visible = true
-						window.pages.clipframe.v1.Visible = true
-					end
-				end
-			end,
-			SFlag = 'GLW',
-		})
+		glow = true -- Forced ON
 		a:Slider({
 			Title = 'Modifiers',
 			Sliders = {
