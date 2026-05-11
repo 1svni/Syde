@@ -1348,12 +1348,11 @@ function ToggleUI()
 end
 window.top.functions.close.interact.MouseButton1Click:Connect(function()
 	syde:Notify({
-		Title = "Goodbye :(",
-		Content = "Thank you for using Syde, we love you!",
+		Title = "Goodbye.",
+		Content = "Thank you for using our script, join /hQycMUPEag",
 		Duration = 5
 	})
-	mh = false
-	ui.minihome.Visible = false
+
 	if rs then rs:Disconnect() end
 	if ss then ss:Disconnect() end
 	window:Destroy()
@@ -1397,44 +1396,10 @@ function syde:Init(library)
 		end
 	end)
 	task.wait(0.1)
-	local Data = {
-		Title = library.Title or "Syde";
-		SubText = library.SubText or "Google";
-		Home = library.Home or {} 
-	}
-	Data.Home.Enabled = (Data.Home.Enabled == true) 
-	Data.Home.hTitle = Data.Home.hTitle or Data.Title
-	Data.Home.hSubText = Data.Home.hSubText or Data.SubText
-	Data.Home.profileImage = Data.Home.profileImage or Data.profileImage
-	local Minihome = ui.minihome
-	local MinihomeData = {
-		QuickActions = library.QuickActions or false;
-	}
+
 	local lastTime = tick()
 	local frames = 0
-	if mh then
-		rs = RunService.RenderStepped:Connect(function()
-			frames += 1
-			local now = tick()
-			if now - lastTime >= 1 then
-				local fps = math.floor(frames / (now - lastTime))
-				lastTime = now
-				frames = 0
-				Minihome.info.fps.Text = fps .. " FPS"
-			end
-			local hour = tonumber(os.date("%I"))
-			Minihome.info.time.Text = hour .. os.date(":%M")
-		end)
-		if MinihomeData.QuickActions == false then
-			ui.minihome.quick.Visible = false
-			ui.minihome:TweenSize(UDim2.new(0, 150, 0, 40), Enum.EasingDirection.Out, Enum.EasingStyle.Quart, 0.8, true)
-		end
-	end
-	if not uiclosed then
-		ui.minihome.open.quickfunc.interact.MouseButton1Click:Connect(function()
-			ToggleUI()
-		end)
-	end
+
 	top.title.Text = Data.Title
 	top.title.sub.Text = Data.SubText
 	top.title.sub.Position = UDim2.new(0, 0, 1, -2)
@@ -1524,275 +1489,7 @@ function syde:Init(library)
 	window.user.MouseLeave:Connect(function()
 		tweenservice:Create(window.user.UIStroke, TweenInfo.new(1, Enum.EasingStyle.Quart), {Thickness = 0}):Play()
 	end)
-	if Data.Home.Enabled then
-		window.pages.home.general.presence.Profile.ImageLabel.Text.Header.Text = Data.Home.hTitle
-		window.pages.home.general.presence.Profile.ImageLabel.Text.Sub.Text = Data.Home.hSubText
-		window.pages.home.general.presence.Profile.ImageLabel.Image = 'rbxassetid://'..Data.Home.profileImage
-		window.pages.home.general.presence.wallpaper.Image = 'rbxassetid://'..Data.Home.profileImage
-		local placeId = game.PlaceId
-		window.pages.home.general.presence.PlaceID.Text =
-			"Place ID: "..placeId
-		local layout = Bento.new(window.pages.home.general.Quick,{
-			Gap = 6,
-			RightPadding = 20,
-			TweenTime = 0.35
-		})
-		local row1 = layout:NewRow()
-		local row2 = layout:NewRow()
-		local row3 = layout:NewRow()
-		layout:AddItem(window.pages.home.general.Quick.QuickPlay,nil,row1)
-		layout:AddItem(window.pages.home.general.Quick.Player,nil,row1)
-		layout:AddItem(window.pages.home.general.Quick.Latency,nil,row3)
-		layout:AddItem(
-			window.pages.home.general.Quick.QuickSettings,
-			{Bottom = true},
-			row2
-		)
-		layout:Bind()
-		layout:Update()
-		local Stats = game:GetService("Stats")
-		local TweenService = game:GetService("TweenService")
-		local graph = window.pages.home.general.Quick.Latency.Frame:WaitForChild("graph")
-		local pointTemplate = graph:WaitForChild("point")
-		local lineTemplate = graph:WaitForChild("line")
-		pointTemplate.Visible = false
-		lineTemplate.Visible = false
-		local UPDATE_INTERVAL = 0.3
-		local MAX_POINTS = 15
-		local MAX_PING = 300
-		local SMOOTH_SPEED = 0.25
-		local history = {}
-		local smoothHistory = {}
-		local points = {}
-		local lines = {}
-		local gridBuilt = false
-		repeat task.wait() until graph.AbsoluteSize.X > 0
-		local Players = game:GetService("Players")
-		local RunService = game:GetService("RunService")
-		local function getPing()
-			local ping =
-				Players.LocalPlayer:GetNetworkPing() * 1000
-			if ping == 0 and RunService:IsStudio() then
-				return 50 + math.noise(os.clock()*0.5)*40
-			end
-			return math.floor(ping)
-		end
-		local function clear()
-			for _,obj in ipairs(graph:GetChildren()) do
-				if obj ~= pointTemplate
-					and obj ~= lineTemplate then
-					obj:Destroy()
-				end
-			end
-		end
-		local function createGrid()
-			local w = graph.AbsoluteSize.X
-			local h = graph.AbsoluteSize.Y
-			local steps = 4
-			for i=0,steps do
-				local percent = i/steps
-				local y = h - (percent*h)
-				local gridLine = Instance.new("Frame")
-				gridLine.Size = UDim2.fromOffset(w,1)
-				gridLine.Position = UDim2.fromOffset(34,y)
-				gridLine.BackgroundTransparency = 0.85
-				gridLine.BorderSizePixel = 0
-				gridLine.Parent = graph
-				local label = Instance.new("TextLabel")
-				label.Size = UDim2.fromOffset(40,14)
-				label.Position = UDim2.fromOffset(2,y-7)
-				label.BackgroundTransparency = 1
-				label.TextSize = 6
-				label.TextXAlignment = Enum.TextXAlignment.Left
-				label.TextColor3 = Color3.fromRGB(255, 255, 255)
-				label.Text =
-					math.floor(percent*MAX_PING)
-					.." ms"
-				label.TextTransparency = 0
-				label.Parent = graph
-			end
-		end
-		local function draw()
-			clear()
-			createGrid()
-			local w = graph.AbsoluteSize.X
-			local h = graph.AbsoluteSize.Y
-			local step = w/(MAX_POINTS-1)
-			local lastX,lastY
-			for i,value in ipairs(smoothHistory) do
-				local percent =
-					math.clamp(value/MAX_PING,0,1)
-				local x = (i-1)*step
-				local y = h - (percent*h)
-				local point = pointTemplate:Clone()
-				point.Visible = false
-				point.Position = UDim2.fromOffset(x,y)
-				point.AnchorPoint = Vector2.new(0.5,0.5)
-				point.Parent = graph
-				if lastX then
-					local dx = x-lastX
-					local dy = y-lastY
-					local length =
-						math.sqrt(dx*dx + dy*dy)
-					local angle =
-						math.deg(math.atan2(dy,dx))
-					local midX = (lastX + x)/2
-					local midY = (lastY + y)/2
-					local line = lineTemplate:Clone()
-					line.Visible = true
-					line.AnchorPoint = Vector2.new(0.5,0.5)
-					line.Position =
-						UDim2.fromOffset(midX,midY)
-					line.Size =
-						UDim2.fromOffset(length,1)
-					line.Rotation = angle
-					line.Parent = graph
-				end
-				lastX = x
-				lastY = y
-			end
-		end
-		task.spawn(function()
-			while true do
-				local ping = getPing()
-				table.insert(history,ping)
-				if #history > MAX_POINTS then
-					table.remove(history,1)
-				end
-				for i,v in ipairs(history) do
-					local current =
-						smoothHistory[i] or v
-					smoothHistory[i] =
-						current + (v-current)*SMOOTH_SPEED
-				end
-				draw()
-				task.wait(UPDATE_INTERVAL)
-			end
-		end)
-		local bh = window.pages.home.general.Quick.QuickSettings.QuickButtons.holder
-		for i,v in ipairs(window.pages.home.general.Quick.QuickSettings.QuickButtons.holder:GetChildren()) do
-			if v:IsA('Frame') then
-				v.MouseEnter:Connect(function()
-					tweenservice:Create(v.UIStroke, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {Transparency = 0}):Play()
-				end)
-				v.MouseLeave:Connect(function()
-					tweenservice:Create(v.UIStroke, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {Transparency = 1}):Play()
-				end)
-			end
-		end
-		bh.Leave.interact.MouseButton1Click:Connect(function()
-			game:GetService("Players").LocalPlayer:Kick("Left the experience")
-		end)
-		bh.Rejoin.interact.MouseButton1Click:Connect(function()
-			local TeleportService = game:GetService("TeleportService")
-			local player = game:GetService("Players").LocalPlayer
-			TeleportService:Teleport(game.PlaceId, player)
-		end)
-		local HttpService = game:GetService("HttpService")
-		local TeleportService = game:GetService("TeleportService")
-		local Players = game:GetService("Players")
-		local player = Players.LocalPlayer
-		local placeId = game.PlaceId
-		local function ServerHop()
-			local cursor = ""
-			local servers = {}
-			repeat
-				local url =
-					"https://games.roblox.com/v1/games/"
-					..placeId..
-					"/servers/Public?sortOrder=Asc&limit=100&cursor="
-					..cursor
-				local response =
-					HttpService:JSONDecode(
-						game:HttpGet(url)
-					)
-				for _,server in pairs(response.data) do
-					if server.playing < server.maxPlayers
-						and server.id ~= game.JobId then
-						table.insert(servers,server.id)
-					end
-				end
-				cursor = response.nextPageCursor
-			until cursor == nil or #servers > 0
-			if #servers > 0 then
-				TeleportService:TeleportToPlaceInstance(
-					placeId,
-					servers[math.random(1,#servers)],
-					player
-				)
-			end
-		end
-		bh.Fast.interact.MouseButton1Click:Connect(function()
-			ServerHop()
-		end)
-		local Players = game:GetService("Players")
-		local label = window.pages.home.general.Quick.Player.Frame.TextLabel 
-		local function update()
-			local current =
-				#Players:GetPlayers()
-			local max =
-				Players.MaxPlayers
-			label.Text =
-				current.." / "..max
-		end
-		update()
-		Players.PlayerAdded:Connect(update)
-		Players.PlayerRemoving:Connect(update)
-		local QuickPlay = window.pages.home.general.Quick.QuickPlay
-		local HttpService = game:GetService("HttpService")
-		local MarketplaceService = game:GetService("MarketplaceService")
-		local TeleportService = game:GetService("TeleportService")
-		local FILE = syde.ConfigFolder .. "/last_game.json"
-		local function SaveLastGame(placeId)
-			if not syde.ConfigEnabled then return end
-			local data = {
-				PlaceId = placeId,
-				Time = os.time()
-			}
-			pcall(function()
-				writefile(FILE, HttpService:JSONEncode(data))
-			end)
-		end
-		local function LoadLastGame()
-			if not syde.ConfigEnabled then return nil end
-			if not isfile(FILE) then return nil end
-			local success, result = pcall(function()
-				return HttpService:JSONDecode(readfile(FILE))
-			end)
-			if success then
-				return result
-			end
-		end
-		local lastGame = LoadLastGame()
-		local placeId = game.PlaceId
-		if lastGame and lastGame.PlaceId then
-			placeId = lastGame.PlaceId
-		end
-		local success, info = pcall(function()
-			return MarketplaceService:GetProductInfoAsync(placeId, Enum.InfoType.Asset)
-		end)
-		if success and info then
-			QuickPlay.gtitle.Text = info.Name
-			local id=placeId 
-			local thumbnailUrl="https://www.roblox.com/asset-thumbnail/image?assetId="..id.."&width=768&height=432&format=png"
-			QuickPlay.thumb.Image=thumbnailUrl
-		else
-		end
-		task.delay(120, function()
-			if syde and syde.ConfigEnabled then
-				SaveLastGame(game.PlaceId)
-			end
-		end)
-		QuickPlay.Resume.interact.MouseButton1Click:Connect(function()
-			local lastGame = LoadLastGame()
-			if lastGame and lastGame.PlaceId then
-				TeleportService:Teleport(placeId)
-			end
-		end)
-	else
-		window.pages.home.Visible = false
-		window.tabs.Home.homeicon.interact.Interactable = false
-	end
+
 	function opensettings()
 		window.settings.Visible = true
 		window.dim.Visible = true
@@ -3972,21 +3669,7 @@ function syde:Init(library)
 		selected = false
 	}
 	function tbdata:InitTab(tab)
-		if Data.Home.Enabled then
-			if not tbdata.__homeBootstrapped then
-				tbdata.__homeBootstrapped = true
-				tbdata.first = "Home"
-				tbdata.homeActive = true
-				for _, temp in ipairs(pages:GetChildren()) do
-					if temp:IsA("ScrollingFrame") then
-						temp.Visible = false
-					end
-				end
-				if window and window.pages and window.pages.home then
-					window.pages.home.Visible = true
-				end
-			end
-		end
+	
 		local isFirstTab = not tbdata.first 
 		local tdata = {
 			Title = tab.Title;
@@ -4067,20 +3750,7 @@ function syde:Init(library)
 		end
 		local positionTweenInfo = TweenInfo.new(0.7, Enum.EasingStyle.Quart)
 		local colorTweenInfo = TweenInfo.new(0.3, Enum.EasingStyle.Exponential)
-		local HomeButton = (window and window.tabs and window.tabs.Home) and window.tabs.Home or nil
-		local HomePage = (window and window.pages and window.pages.home) and window.pages.home or nil
-		local function ApplyHomeButtonStyle(isActive)
-			if not HomeButton or not HomeButton.homeicon:FindFirstChild("ImageLabel") then
-				return
-			end
-			if isActive then
-				tweenservice:Create(HomeButton.homeicon, TweenInfo.new(1, Enum.EasingStyle.Exponential), { BackgroundTransparency = 0.45 }):Play()
-				tweenservice:Create(HomeButton.homeicon.ImageLabel, TweenInfo.new(1, Enum.EasingStyle.Exponential), { ImageTransparency = 0 }):Play()
-			else
-				tweenservice:Create(HomeButton.homeicon, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), { BackgroundTransparency = 0.85 }):Play()
-				tweenservice:Create(HomeButton.homeicon.ImageLabel, TweenInfo.new(1, Enum.EasingStyle.Exponential), { ImageTransparency = 0.67 }):Play()
-			end
-		end
+
 		local isInit = true
 		local function ApplyTabStyle(tabButton, isSelected)
 			local targetTextTransparency = isSelected and 0 or 0.6
@@ -4109,68 +3779,10 @@ function syde:Init(library)
 			tweenservice:Create(tabButton.indicator, colorTweenInfo, { BackgroundTransparency = isSelected and 0 or 1 }):Play()
 		end
 		ApplyTabStyle(Tab, isFirstTab)
-		if Data.Home.Enabled then
-			ApplyTabStyle(Tab, false)
-		else
-			ApplyTabStyle(Tab, isFirstTab)
-		end
-		local function ShowHome()
-			tbdata.homeActive = true
-			tbdata.first = "Home"
-			for _, otherPage in ipairs(pages:GetChildren()) do
-				if otherPage:IsA("ScrollingFrame") then
-					otherPage.Visible = false
-				end
-			end
-			for _, otherTab in ipairs(tabs:GetChildren()) do
-				if otherTab:IsA("Frame") then
-					ApplyTabStyle(otherTab, false)
-					otherTab.interact.Active = true
-				end
-			end
-			if HomePage then
-				HomePage.Visible = true
-				pcall(function() tweenservice:Create(HomePage, TweenInfo.new(0.45, Enum.EasingStyle.Quint), { BackgroundTransparency = 1 }):Play() end)
-			end
-			ApplyHomeButtonStyle(true)
-			window.pages.clipframe.Visible = false
-		end
-		local function HideHomeForTab()
-			tbdata.homeActive = false
-			if HomePage and HomePage.Visible then
-				HomePage.Visible = false  
-				pcall(function() 
-					HomePage.BackgroundTransparency = 1 
-				end)
-			end
-			ApplyHomeButtonStyle(false)
-			window.pages.clipframe.Visible = true
-		end
-		if tbdata.first == 'Home' then
-			ShowHome()
-		end
-		if HomeButton and HomeButton.homeicon:FindFirstChild("interact") and not tbdata.__homeHooked then
-			tbdata.__homeHooked = true
-			HomeButton.homeicon.interact.MouseButton1Click:Connect(function()
-				if tbdata.homeActive then return end 
-				local lockedFolder = pages:FindFirstChild("lockedpages")
-				if lockedFolder then
-					for _, lockedPage in ipairs(lockedFolder:GetChildren()) do
-						if lockedPage:IsA("TextButton") then
-							lockedPage.Visible = false
-						end
-					end
-				end
-				ShowHome()
-			end)
-		end
+
 		Tab.interact.MouseButton1Click:Connect(function()
 			if tbdata.first == tdata.Title then return end 
-			if Data.Home.Enabled then
-				if tbdata.homeActive then
-					HideHomeForTab()
-				end
-			end
+
 			local previous = tbdata.first
 			tbdata.first = tdata.Title
 			local prevPage = pages:FindFirstChild(previous)
