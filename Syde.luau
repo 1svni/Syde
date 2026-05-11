@@ -18,8 +18,8 @@ local camera =          workspace.CurrentCamera
 Library.Enabled = false
 local syde = {
 	theme = {
-		['Accent'] = Color3.fromRGB(255, 151, 227);
-		['HitBox'] = Color3.fromRGB(255, 151, 227);
+		['Accent'] = Color3.fromRGB(255, 255, 255);
+		['HitBox'] = Color3.fromRGB(255, 255, 255);
 		['DropShadow']   = ColorSequence.new(Color3.fromRGB(0, 0, 0));
 	};
 	Connections = {};
