@@ -84,10 +84,10 @@ do
 	local function IsNotNaN(x)
 		return x == x
 	end
-	local continue = IsNotNaN(camera:ScreenPointToRay(0,0).Origin.x)
-	while not continue do
+	local canContinue = IsNotNaN(camera:ScreenPointToRay(0,0).Origin.x)
+	while not canContinue do
 		RunService.RenderStepped:wait()
-		continue = IsNotNaN(camera:ScreenPointToRay(0,0).Origin.x)
+		canContinue = IsNotNaN(camera:ScreenPointToRay(0,0).Origin.x)
 	end
 end
 local binds = {}
@@ -444,10 +444,9 @@ function Bento:Update()
 	for _,row in ipairs(sortedRows) do
 		local width = 0
 		for _,item in ipairs(row.Items) do
-			width += self.Original[item.Frame].Size.X.Offset
+			width = width + self.Original[item.Frame].Size.X.Offset
 		end
-		width += (#row.Items-1) * self.Gap
-		if width > widestRow then
+		width = width + (#row.Items-1) * self.Gap		if width > widestRow then
 			widestRow = width
 		end
 	end
@@ -464,7 +463,7 @@ function Bento:Update()
 					original.Size.Y.Offset
 				)
 			})
-			y += original.Size.Y.Offset + self.Gap
+			 =  + 
 		end
 		for _,row in ipairs(sortedRows) do
 			for _,item in ipairs(row.Items) do
@@ -680,13 +679,13 @@ function syde:WiggleText(label)
 		charLabel.Position = UDim2.new(0, xOffset, 0.5, 0)
 		charLabel.Parent = container
 		charLabel.ZIndex = 99
-		xOffset += charLabel.TextBounds.X
+		 =  + 
 		table.insert(chars, charLabel)
 	end
 	local t = 0
 	local id = "Wiggle_" .. tostring(math.random(1, 999999))
 	RunService:BindToRenderStep(id, Enum.RenderPriority.First.Value, function(dt)
-		t += dt * 6
+		 =  + 
 		for i, charLabel in ipairs(chars) do
 			local offset = math.sin(t + i * 0.3) * 3 
 			charLabel.Position = UDim2.new(0, charLabel.Position.X.Offset, 0.5, offset)
@@ -965,7 +964,7 @@ function syde:Modal(Modal)
 		ModalInstance.Buttons.Cancel.UIStroke.Transparency = 1
 		local function openModal()
 			tweenservice:Create(ModalInstance.Content, TweenInfo.new(0.15, Enum.EasingStyle.Quint), {Size = UDim2.new(1, ModalInstance.Content.Size.X.Offset, 1, ModalInstance.Content.TextBounds.Y)}):Play()
-			activeModals += 1
+			 =  + 
 			tweenservice:Create(ModalInstance, TweenInfo.new(0.15, Enum.EasingStyle.Quint), {Size = UDim2.new(0, 350,0,  ModalInstance.Content.TextBounds.Y + 150)}):Play()
 			tweenservice:Create(ModalInstance, TweenInfo.new(0.15, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0}):Play()
 			tweenservice:Create(ModalInstance.UIStroke, TweenInfo.new(0.15, Enum.EasingStyle.Exponential), {Transparency = 0}):Play()
@@ -979,8 +978,7 @@ function syde:Modal(Modal)
 		end
 		openModal()
 		local function closeModal()
-			activeModals -= 1
-			ModalInstance.Buttons.Cancel.Interactable = false
+			activeModals = activeModals - 1			ModalInstance.Buttons.Cancel.Interactable = false
 			ModalInstance.Buttons.Confirm.Interactable = false
 			tweenservice:Create(ModalInstance, TweenInfo.new(0.15, Enum.EasingStyle.Quint), {Size = UDim2.new(0, 350,0, 147)}):Play()
 			tweenservice:Create(ModalInstance, TweenInfo.new(0.15, Enum.EasingStyle.Exponential), {BackgroundTransparency = 1}):Play()
@@ -1044,7 +1042,7 @@ local function updateToastPositions()
 			tweenservice:Create(toast, tweenInfo, {
 				Position = target
 			}):Play()
-			currentY += toast.Size.Y.Offset + toastSpacing
+			 =  + 
 		end
 	end
 end
@@ -1229,6 +1227,11 @@ syde:HidePH(tabs, 'btn')
 syde:HidePH(pages, 'page')
 function syde:Init(library)
 	ui.Enabled = true
+	local userinfodisabled = false
+	local tbdata = {
+		first = false,
+		selected = false
+	}
 	local UI_TAG = "sydeUILoader"
 	local MARKER_NAME = "SYDEUIDetector"
 	local INTERNAL_UUID = ("SYDE-" .. tostring(game.JobId):gsub("-", "") .. tostring(tick())):gsub("%.", "")
@@ -1275,7 +1278,7 @@ function syde:Init(library)
 		local lastTime = tick()
 		local frames = 0
 		runservice.RenderStepped:Connect(function()
-			frames += 1
+			 =  + 
 			local now = tick()
 			if now - lastTime >= 1 then
 				local fps = math.floor(frames / (now - lastTime))
@@ -1307,28 +1310,33 @@ function syde:Init(library)
 	local RunService = game:GetService("RunService")
 	local TweenService = game:GetService("TweenService")
 	for _, v in ipairs(top.functions:GetChildren()) do
-		if not v:IsA("Frame") then continue end
-		if v.Name == "plugins" or v.Name == "settings" or v.Name == "search" then v:Destroy() continue end
-		if not v:FindFirstChild("ImageLabel") then continue end
-		local image = v.ImageLabel
-		v.MouseEnter:Connect(function()
-			if not uiclosed then
-				TweenService:Create(
-					image,
-					TweenInfo.new(0.15, Enum.EasingStyle.Exponential),
-					{ ImageTransparency = 0.7 }
-				):Play()
+		if v:IsA("Frame") then 
+			if v.Name == "plugins" or v.Name == "settings" or v.Name == "search" then 
+				v:Destroy() 
+			else
+				if v:FindFirstChild("ImageLabel") then
+					local image = v.ImageLabel
+					v.MouseEnter:Connect(function()
+						if not uiclosed then
+							TweenService:Create(
+								image,
+								TweenInfo.new(0.15, Enum.EasingStyle.Exponential),
+								{ ImageTransparency = 0.7 }
+							):Play()
+						end
+					end)
+					v.MouseLeave:Connect(function()
+						if not uiclosed then
+							TweenService:Create(
+								image,
+								TweenInfo.new(0.15, Enum.EasingStyle.Exponential),
+								{ ImageTransparency = 0 }
+							):Play()
+						end
+					end)
+				end
 			end
-		end)
-		v.MouseLeave:Connect(function()
-			if not uiclosed then
-				TweenService:Create(
-					image,
-					TweenInfo.new(0.15, Enum.EasingStyle.Exponential),
-					{ ImageTransparency = 0 }
-				):Play()
-			end
-		end)
+		end
 	end
 	if not isMobile then
 		syde:Toast({
@@ -1607,7 +1615,7 @@ function syde:Init(library)
 			tweenservice:Create(result.info.badge["function"], TweenInfo.new(0.15, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()
 		end
 		local function searchFunctions(query)
-			searchDebounce += 1
+			 =  + 
 			local thisSearch = searchDebounce
 			task.delay(0.05, function()
 				if thisSearch ~= searchDebounce then return end
@@ -2463,9 +2471,8 @@ function syde:Init(library)
 			local lastPos
 			task.spawn(function()
 				while EnchancedView.Parent do
-					currentRotationX += (targetRotationX - currentRotationX) * 0.15
-					currentRotationY += (targetRotationY - currentRotationY) * 0.15
-					local rotationCFrame = CFrame.Angles(currentRotationX, currentRotationY, 0)
+					currentRotationX = currentRotationX + (targetRotationX - currentRotationX) * 0.15
+					currentRotationY = currentRotationY + (targetRotationY - currentRotationY) * 0.15					local rotationCFrame = CFrame.Angles(currentRotationX, currentRotationY, 0)
 					if ObjectClone:IsA("Model") then
 						ObjectClone:PivotTo(rotationCFrame)
 					else
@@ -2967,12 +2974,12 @@ function syde:Init(library)
 						if horizontal then
 							item.Size = UDim2.new(0, ITEM_WIDTH, 0, ITEM_HEIGHT)
 							item.Position = UDim2.new(1, -x, 0, 0)
-							x += ITEM_WIDTH + GAP
+							 =  + 
 							totalHeight = ITEM_HEIGHT
 						else
 							item.Size = UDim2.new(1, -4, 0, ITEM_HEIGHT)
 							item.Position = UDim2.new(1, 0, 0, -y)
-							y += ITEM_HEIGHT + GAP
+							 =  + 
 							totalHeight = y
 						end
 					end
@@ -3045,7 +3052,7 @@ function syde:Init(library)
 				local startX = recentContainer.AbsoluteSize.X - totalWidth 
 				for _, frame in ipairs(children) do
 					tweenservice:Create(frame, TweenInfo.new(0.15, Enum.EasingStyle.Quart), {Position = UDim2.new(0, startX , 0.8, -frame.Size.Y.Offset / 2) }):Play()
-					startX += frameSize + spacing
+					 =  + 
 				end
 			end
 			recentContainer.ChildAdded:Connect(function(child)
@@ -3622,7 +3629,7 @@ function syde:Init(library)
 			end
 			return data
 		end
-		function syde:Load
+		function syde:Load()
 		end
 		return initelement
 	end
